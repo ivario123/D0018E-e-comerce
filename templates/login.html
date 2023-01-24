@@ -1,0 +1,16 @@
+{%extends "base.html"%}
+{%block head%}
+<script src="../static/js/login.js"></script>
+{%endblock%}
+
+{%block content%}
+<h1>Login</h1>
+<div>
+    <h3>
+        Login form
+    </h3>
+    <input type="text" id="email" placeholder="Email">
+    <input type="password" id="pass" placeholder="Password">
+    <button type="submit" onclick="submit()">Login</button>
+</div>
+{%endblock%}

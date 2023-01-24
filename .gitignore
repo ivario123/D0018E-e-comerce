@@ -1,0 +1,6 @@
+# Ignore config files that may contain secrets or personal data.
+config/*
+secrets/*
+
+# Ignore files that are specific to your development machine.
+.vscode/*
