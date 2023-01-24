@@ -8,6 +8,7 @@ from ssql import SSql
 from configparser import ConfigParser
 from models import User
 from result import Result, Error, Ok
+
 ssql_secrets = ConfigParser()
 ssql_secrets.read("../secrets/ssql.cfg")
 config = {
@@ -36,12 +37,12 @@ def get_user_by_email(email):
     """
     Get a user by email
     """
-    return User(username="test", email="test")
     with ssql as (_conn, curs):
-        u = curs.execute(
-            "SELECT * FROM User WHERE email = %s;", (email,)).fetchone()
-        if u:
-            return User.from_sql(u)
+        curs.execute(
+            "SELECT Email,Username,Role FROM USER WHERE email = %s;", (email,))
+        result = curs.fetchone()
+        if result:
+            return User.from_sql(result)
         else:
             return None
 
@@ -56,13 +57,13 @@ def auth_user(email, sugested_pass) -> Result:
 
     otherwise it returns an error.
     """
-    return Ok(get_user_by_email(email))
     with ssql as (conn, curs):
-        u = curs.execute(
-            "SELECT password FROM User WHERE email = %s;", (email)
-        ).fetchone()
-        if u:
-            password = u[0]
+        curs.execute(
+            "SELECT Password FROM USER WHERE Email=%s;", (email,)
+        )
+        result = curs.fetchone()
+        if result:
+            password = result[0]
         else:
             return Error("No such user")
     if sha256_crypt.verify(
@@ -78,20 +79,22 @@ def add_new_user(user: User) -> Result:
     """
     Adds a new user to the sql database
     """
-    return Ok(user)
     with ssql as (conn, curs):
-        if curs.execute(
-            "SELECT * FROM User WHERE email = %s", (user.email)
-        ).fetchone():
+        curs.execute(
+            "SELECT * FROM USER WHERE email = %s", (user.email,)
+        )
+        if curs.fetchone():
             return Error("User already exists")
         curs.execute(
-            "INSERT INTO User (email, username, name, surname, password) VALUES (%s, %s, %s, %s, %s);",
-            *user.fields()
+            "INSERT INTO USER (Email, Username, Name, Surname, Password,Role) VALUES (%s, %s, %s, %s, %s, %s);",
+            (user.email, user.username, user.name,
+             user.surname, sha256_crypt.hash(user.password), "Admin")
         )
         # Check that the user now exists
-        if curs.execute(
-            "SELECT * FROM User where email = %s;", (user.email)
-        ):
+        curs.execute(
+            "SELECT * FROM USER where email = %s;", (user.email,)
+        )
+        if curs.fetchone():
             return Ok(user)
         else:
             Error("Failed to register user, try again later")

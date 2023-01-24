@@ -33,23 +33,23 @@ def load_user(email):
 
 @login_manager.unauthorized_handler
 def unauthorized():
-    return redirect(url_for("login"))
+    return redirect(url_for("login.login"))
 
 
 @require.fields(request)
 def handle_login(email, password):
-    print(email, password)
-
     def valid_login(user):
         session["email"] = email
         session["logged_in"] = True
-        print(session["logged_in"])
-        login_user(user)
-        return Ok("Login successful")
+        if login_user(user):
+
+            return Ok("Login successful")
+        else:
+            return Error((InvalidLogin, 400))
 
     return auth_user(email, password).match(
         ok=lambda user: valid_login(user),
-        error=lambda x: Error(x.value)
+        error=lambda x: Error(x)
     )
 
 
@@ -62,7 +62,7 @@ def login():
             error=lambda x: (f"{x[0]}", x[1])
         )
     else:
-        session["title"] = "Login"
+        session["title"] = "Logins"
         return render_template("login.html")
 
 

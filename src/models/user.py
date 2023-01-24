@@ -12,6 +12,7 @@ class User(UserMixin):
         self.name = name
         self.surname = surname
         self.password = password
+        self.role = "User"
 
     def fields(self):
         return [self.email, self.username, self.name, self.surname, self.password]
@@ -21,7 +22,9 @@ class User(UserMixin):
 
     def from_sql(sql):
         # sql is a tuple of (id, username, email)
-        return User(sql[0], sql[1], sql[2])
+        user = User(sql[1], sql[0])
+        user.role = sql[2]
+        return user
 
     def get_id(self):
         return self.email

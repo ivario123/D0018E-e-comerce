@@ -56,3 +56,19 @@ def fields(request):
             return func(*args, **kwargs)
         return wrapper
     return decorator
+
+
+def admin(session, callback):
+    """
+    decorator that checks that the session["admin"] is true
+    """
+
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            if session["admin"]:
+                return func(*args, **kwargs)
+            else:
+                return callback()
+        return wrapper
+    return decorator
