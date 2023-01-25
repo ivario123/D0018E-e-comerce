@@ -10,7 +10,8 @@ from flask import Blueprint, request, redirect, url_for, render_template, sessio
 import helpers.require as require
 from result import Result, Ok, Error, to_error
 from models import User
-from sql import *
+from sql.auth import *
+from require import *
 
 # Create nice error messages
 NoSuchUser = to_error(
