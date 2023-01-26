@@ -29,15 +29,38 @@ product page, etc.
 """
 
 
+class CategoryGroup:
+    def __init__(self, name, categories):
+        self.name = name
+        self.categories = categories
+
+
 @app.route("/")
 def index():
     if session.get("logged_in", False) == False:
         return redirect(url_for("login.login"))
+
+    """
+    This is just testing data
+    """
     session["title"] = "Bolaget eller nått"
     #items = get_item_by_name(ProductName="Goldstrike")
+    category_groups = [
+        CategoryGroup("Druva", [
+            "Albariño",
+            "Arneis",
+            "Assyrtiko",
+            "Barbera",
+        ]),
+        CategoryGroup("Förslutning", [
+            "Kork",
+            "Kapsyl",
+            "Kapsyl med kork",
+        ]),
+    ]
     items = get_all_items()
     print(items)
-    return render_template("index.html", user=current_user, items=items)
+    return render_template("index.html", user=current_user, items=items, category_groups=category_groups)
 
 
 if __name__ == "__main__":

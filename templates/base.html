@@ -11,82 +11,41 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../static/css/base.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <title>{{session["title"]}}</title>
     {% block head %}
 
     {% endblock %}
 </head>
 
-<body>
-    <!-- More or less lifted from the guide on bulmas main page-->
-    <nav class="navbar" role="navigation" aria-label="main navigation">
-        <div class="navbar-brand">
-            <a class="navbar-item" href="/">
-                <img src="https://sb-web-ecommerce-cms.azureedge.net/4a51ce/globalassets/logo.svg?q=75&w=2000"
-                    width="112" height="28">
-            </a>
+<body class="has-background-grey-lighter">
+    <div class="hero has-background-grey-lighter is-fullheight">
+        <div class="hero-head">
+            {% include "jinja_macros/navbar.html" %}
         </div>
-        <div id="navbarBasicExample" class="navbar-menu">
-            <div class="navbar-start">
-                <!-- This one is useless, just here as a placeholder for search and similar -->
-                <a href="/" class="navbar-item">
-                    Home
-                </a>
-            </div>
-            <div class="navbar-end">
-                {% if session["admin"] %}
-                <div class="navbar-item">
-                    <div class="buttons">
-                        <div class="button is-secondary">
-                            <a href="/admin">
-                                Admin
-                            </a>
-                        </div>
+        <div class="hero-body">
+            <div class="container">
+                {% block content %}
+                <div class="columns">
+                    <div class="column is-3 is-fixed center">
+                        <aside class="menu is-centered">
+                            {%block sidebar %}
+                            {% endblock %}
+                        </aside>
                     </div>
-                </div>
-                {% endif %}
-                {% if session["logged_in"] %}
-                <div class="navbar-item">
-                    <div class="buttons">
-                        <div class="button is-primary">
-                            <a href="/logout" class="navbar-item">
-                                Logout
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                {% else %}
-                <div class="navbar-item">
-                    <div class="buttons">
-                        <div class="button is-primary">
-                            <a href="/regster" class="navbar-item">
-                                Register
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                <div class="navbar-item">
-                    <div class="buttons">
-                        <div class="button is-secondary">
-                            <a href="/login" class="navbar-item">
-                                Login
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                {% endif %}
-            </div>
-    </nav>
-    <div class="columns is-centered">
-        <div class="column center">
-            {% block content %}
+                    <div class="column is-9" style="max-height:fit-content; overflow-x:hidden; overflow-y:scroll; ">
+                        {% block listings %}
 
-            {% endblock %}
+                        {% endblock %}
+                    </div>
+                </div>
+                {% endblock %}
+            </div>
+            <div class="columns">
+            </div>
         </div>
     </div>
-
 </body>
 
 </html>

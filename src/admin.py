@@ -24,7 +24,7 @@ def callback_non_admin():
 
 
 @admin.route("/create_product", methods=["GET", "POST"])
-@admin_required()
+#@admin_required()
 def create_product():
     print(request.data)
     if request.method == "POST":

@@ -1,0 +1,42 @@
+{%- macro navbar_button(title,url,class="is-secondary") -%}
+<div class="navbar-item">
+    <div class="buttons">
+        <div class="button {{class}}">
+            <a href="{{url}}">
+                {{title}}
+            </a>
+        </div>
+    </div>
+</div>
+{%-endmacro%}
+
+
+
+<!-- More or less lifted from the guide on bulmas main page-->
+<nav class="navbar has-background-grey-lighter" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+        <a class="navbar-item" href="/">
+            <img src="https://sb-web-ecommerce-cms.azureedge.net/4a51ce/globalassets/logo.svg?q=75&w=2000" width="112"
+                height="28">
+        </a>
+    </div>
+    <div id="navbarBasicExample" class="navbar-menu">
+        <div class="navbar-start">
+            <a href="/" class="navbar-item">
+                Home
+            </a>
+            {% block navbar %}
+            {% endblock %}
+        </div>
+        <div class="navbar-end">
+            {% if session["admin"] %}
+            {{ navbar_button("Admin","/admin") }}
+            {% endif %}
+            {% if session["logged_in"] %}
+            {{ navbar_button("Logout","/logout","is-primary") }}
+            {% else %}
+            {{ navbar_button("Register","/register",class="is-primary") }}
+            {{ navbar_button("Login","/login") }}
+            {% endif %}
+        </div>
+</nav>

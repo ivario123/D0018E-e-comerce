@@ -25,8 +25,6 @@ def create_item(ProductName, ProductDescription, Price, Image, Inventory, sql_qu
     cursor.execute(
         sql_query, (ProductName, ProductDescription, Price, Image, Inventory))
     # Check if the item was created
-    if not get_item_by_name(ProductName):
-        return False
     return True
 
 
