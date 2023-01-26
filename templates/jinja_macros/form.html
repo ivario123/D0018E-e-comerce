@@ -33,6 +33,33 @@
         {% endif %}
     </p>
 </div>
+{%- endmacro %}
+
+{%- macro form_field_with_icon_and_event(name,id,type,icon_left="",icon_right="",on_event="")%}
+<div class="field">
+    {% set ns = namespace(class = "") %}
+    {% if icon_left %}
+    {% set ns.class = "has-icons-left" %}
+    {% endif %}
+    {% if icon_right %}
+    {% set ns.class = ns.class + " has-icons-right" %}
+    {% endif %}
+
+    <p class="control {{ns.class}}">
+        <input class="input" id="{{id}}" type="{{type}}" placeholder="{{Name}}" oninput="{{on_event}}">
+        {% if icon_left %}
+        <span class="icon is-small is-left">
+            <i class="{{icon_left}}"></i>
+        </span>
+        {% endif %}
+        {% if icon_right %}
+        <span id="{{id}}_icon_right" class="icon is-small is-right">
+            <i class="{{icon_right}}"></i>
+        </span>
+        {% endif %}
+    </p>
+</div>
+
 
 {%- endmacro %}
 

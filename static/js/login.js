@@ -10,10 +10,37 @@ function select_elements(elements) {
     }
     return ret
 }
+
+function valid_email(email) {
+    // https://stackoverflow.com/questions/46155/how-to-validate-an-email-address-in-javascript
+    var re = /\S+@\S+\.\S+/;
+    return re.test(email);
+}
+
+function validate_email() {
+    var email = get_el("email").value;
+    let email_icon_right = document.getElementById("email_icon_right");
+    if (!valid_email(email)) {
+        // disable the icon
+        email_icon_right.disable = true;
+        email_icon_right.style.display = "none";
+        email_icon_right.style.color = "red"
+    }
+    else {
+        email_icon_right.disable = false;
+        email_icon_right.style.display = "";
+        email_icon_right.style.color = "green"
+    }
+}
+
 function submit() {
-    var uname = get_el("email").value;
+    var email = get_el("email").value;
+    if (!valid_email(email)) {
+        alert("Invalid email");
+        return;
+    }
     var pass = get_el("pass").value;
-    console.log("Login attempt: " + uname + " " + pass);
+    console.log("Login attempt: " + email + " " + pass);
 
     fetch("/login", {
         method: "POST",
@@ -21,7 +48,7 @@ function submit() {
             "Content-Type": "application/json"
         },
         body: JSON.stringify({
-            "email": uname,
+            "email": email,
             "password": pass
         })
     }).then(response => {
@@ -30,13 +57,18 @@ function submit() {
             window.location.href = "/"
         }
         else {
-            alert("Login failed")
-            window.location.href = "/login"
+            alert("Login failed").then(
+                window.location.href = "/login"
+            )
         }
     })
 }
 function register() {
     let [uname, pass, user_name, name, surname] = select_elements(["email", "pass", "username", "name", "surname"])
+    if (!valid_email(email)) {
+        alert("Invalid email");
+        return;
+    }
     fetch("/register", {
         method: "POST",
         headers: {

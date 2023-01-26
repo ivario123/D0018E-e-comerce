@@ -35,3 +35,12 @@ function submit_form() {
     }
     )
 }
+function update_preview() {
+    let [img_src, name, price, description] = select_elements(["image", "name", "price", "description"])
+    let preview_img = document.getElementById("preview_img")
+    let preview_title = document.getElementById("preview_title")
+    let preview_price = document.getElementById("preview_price")
+    preview_img.src = img_src
+    preview_title.innerHTML = name
+    preview_price.innerHTML = "Price: " + price
+}
