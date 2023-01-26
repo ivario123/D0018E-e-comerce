@@ -1,11 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
+<!-- 
+
+    This is based on the bulma documentation, which can be found here:
+    https://bulma.io/documentation/ 
+
+-->
 
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../static/css/base.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
     <title>{{session["title"]}}</title>
     {% block head %}
 
@@ -13,25 +20,73 @@
 </head>
 
 <body>
-    <ul class="header">
-        <li><a href="/">Home</a></li>
-        {% if session["logged_in"] %}
-        <li><a href="/logout">Logout</a></li>
-        {% else %}
-        <li><a href="/login">Login</a></li>
-        <li><a href="/register">Register</a></li>
-        {% endif %}
-        {% if session["admin"] %}
-        <li><a href="/admin">Admin</a></li>
-        {% endif %}
-    </ul>
+    <!-- More or less lifted from the guide on bulmas main page-->
+    <nav class="navbar" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+            <a class="navbar-item" href="/">
+                <img src="https://sb-web-ecommerce-cms.azureedge.net/4a51ce/globalassets/logo.svg?q=75&w=2000"
+                    width="112" height="28">
+            </a>
+        </div>
+        <div id="navbarBasicExample" class="navbar-menu">
+            <div class="navbar-start">
+                <!-- This one is useless, just here as a placeholder for search and similar -->
+                <a href="/" class="navbar-item">
+                    Home
+                </a>
+            </div>
+            <div class="navbar-end">
+                {% if session["admin"] %}
+                <div class="navbar-item">
+                    <div class="buttons">
+                        <div class="button is-secondary">
+                            <a href="/admin">
+                                Admin
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                {% if session["logged_in"] %}
+                <div class="navbar-item">
+                    <div class="buttons">
+                        <div class="button is-primary">
+                            <a href="/logout" class="navbar-item">
+                                Logout
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                <div class="navbar-item">
+                    <div class="buttons">
+                        <div class="button is-primary">
+                            <a href="/regster" class="navbar-item">
+                                Register
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="navbar-item">
+                    <div class="buttons">
+                        <div class="button is-secondary">
+                            <a href="/login" class="navbar-item">
+                                Login
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+    </nav>
+    <div class="columns is-centered">
+        <div class="column center">
+            {% block content %}
 
-    {% block content %}
+            {% endblock %}
+        </div>
+    </div>
 
-    {% endblock %}
-    <footer>
-        <p>Footer</p>
-    </footer>
 </body>
 
 </html>

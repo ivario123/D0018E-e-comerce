@@ -1,0 +1,25 @@
+{% macro listing(product) -%}
+<div class="card column is-half is-center">
+    <div class="card-header center">
+        <img class="center" src="{{ product.image }}" alt="Image for : {{product.name}}" width="124px">
+    </div>
+
+    <div class="card-content">
+        <h3>
+            <b>{{ product.name }}</b>
+        </h3>
+        <p>{{ product.description }}</p>
+        <p class="price"> Price = {{ product.price }}</p>
+
+    </div>
+</div>
+
+{%- endmacro %}
+
+{% macro list_container(products) -%}
+<div class="container is-center">
+    {% for product in products %}
+    {{ listing(product) }}
+    {% endfor %}
+</div>
+{%- endmacro %}

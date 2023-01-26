@@ -3,6 +3,7 @@ This file will need to be updated when the sql schemas are done.
 """
 from models import Item
 from . import ssql
+from ssql_builder import SSqlBuilder as ssql_builder
 
 
 def item_from_sql(item):
@@ -16,45 +17,44 @@ def item_from_sql(item):
     )
 
 
-def get_all_items():
+@ssql_builder.insert(ssql, "PRODUCT")
+def create_item(ProductName, ProductDescription, Price, Image, Inventory, sql_query=None, connection=None, cursor=None):
+    """
+    Create an item
+    """
+    cursor.execute(
+        sql_query, (ProductName, ProductDescription, Price, Image, Inventory))
+    # Check if the item was created
+    if not get_item_by_name(ProductName):
+        return False
+    return True
+
+
+@ssql_builder.base(ssql)
+def get_all_items(connection=None, cursor=None):
     """
     Get all items
     """
-    with ssql as (_conn, curs):
-        curs.execute(
-            "SELECT * FROM PRODUCT;")
-        result = curs.fetchall()
-        print(result)
-        if result:
-            return [item_from_sql(item) for item in result]
-        else:
-            return None
+    cursor.execute(
+        "SELECT ProductName,ProductDescription,Price,Inventory,Image,SN FROM PRODUCT;")
+    result = cursor.fetchall()
+    print(result)
+    if result:
+        return [item_from_sql(item) for item in result]
+    else:
+        return None
 
 
-def get_item_by_name(name):
+@ssql_builder.select(ssql, table_name="PRODUCT", select_fields=["ProductName", "ProductDescription", "Price", "Inventory", "Image", "SN"])
+def get_item_by_name(ProductName, sql_query=None, connection=None, cursor=None):
     """
     Get an item by name
     """
-    with ssql as (_conn, curs):
-        curs.execute(
-            "SELECT  * FROM PRODUCT WHERE ProductName = %s;", (name,))
-            #(ProductName,ProductDescription,Price,Inventory,Image,SN) FROM PRODUCT WHERE ProductName = %s;", (name,))
-        result = curs.fetchall()
-        print(result)
-        if result:
-            return [item_from_sql(item) for item in result]
-        else:
-            return None
-
-
-def add_item(Item):
-    """
-    Add an item to the database
-    """
-    print(Item.fields())
-    with ssql as (_conn, curs):
-        curs.execute(
-            "INSERT INTO PRODUCT (ProductName, ProductDescription, Price, Inventory, Image) VALUES ('test', 'test', 10, 10, 'test');",
-
-        )
-        return True
+    cursor.execute(
+        sql_query, (ProductName,))
+    result = cursor.fetchall()
+    print(result)
+    if result:
+        return [item_from_sql(item) for item in result]
+    else:
+        return None

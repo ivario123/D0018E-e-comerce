@@ -7,20 +7,21 @@ from passlib.hash import sha256_crypt
 from models import User
 from result import Result, Error, Ok
 from . import ssql
+from ssql_builder import SSqlBuilder as ssql_builder
 
 
-def get_user_by_email(email):
+@ssql_builder.select(ssql, table_name="USER", select_fields=["Email", "Username", "Role"])
+def get_user_by_email(Email, sql_query=None, connection=None, cursor=None):
     """
     Get a user by email
     """
-    with ssql as (_conn, curs):
-        curs.execute(
-            "SELECT Email,Username,Role FROM USER WHERE email = %s;", (email,))
-        result = curs.fetchone()
-        if result:
-            return User.from_sql(result)
-        else:
-            return None
+    cursor.execute(
+        sql_query, (Email,))
+    result = cursor.fetchone()
+    if result:
+        return User.from_sql(result)
+    else:
+        return None
 
 
 def auth_user(email, sugested_pass) -> Result:

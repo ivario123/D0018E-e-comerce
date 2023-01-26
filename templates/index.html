@@ -1,13 +1,13 @@
 {% extends "base.html" %}
-{% block content %}
-
-{% for item in items %}
-
-{{ item.name }}, {{ item.price }}, {{ item.description }}
-
-{% endfor %}
-
-
-<h1>Home</h1>
-<p>Home page content</p>
+{% from "jinja_macros/product_listing.html" import listing %}
+{% block head %}
+<link rel="stylesheet" href="../static/css/center_of_page.css">
 {% endblock %}
+
+{% block content %}
+<div class="centered_content">s
+    {% for item in items %}
+    {{ listing(item) }}
+    {% endfor %}
+    {% endblock %}
+</div>

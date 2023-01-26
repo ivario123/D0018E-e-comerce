@@ -1,0 +1,30 @@
+{%extends "base.html"%}
+{%block head%}
+<script src="../../static/js/create_item.js"></script>
+{%endblock%}
+{%block content%}
+<h1>Create new product</h1>
+
+<div>
+    <h3>
+        Product form
+    </h3>
+    <ul>
+        <li>
+            <input type="text" id="name" placeholder="Name">
+        </li>
+        <li>
+            <input type="text" id="price" placeholder="Price">
+        </li>
+        <li>
+            <input type="text" id="description" placeholder="Description">
+        </li>
+        <li>
+            <input type="text" id="image" placeholder="Image">
+        </li>
+        <li>
+            <button type="submit" onclick="submit_form()">Create</button>
+        </li>
+    </ul>
+</div>
+{%endblock%}
