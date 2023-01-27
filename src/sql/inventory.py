@@ -25,13 +25,12 @@ def create_item(ProductName, ProductDescription, Price, Image, Inventory, sql_qu
     """
     cursor.execute(
         sql_query, (ProductName, ProductDescription, Price, Image, Inventory))
-    # Check if the item was created
     return True
 
 
 @ssql_builder.base(ssql)
 def get_all_items(connection=None, cursor=None):
-    """
+    """ 
     Get all items
     """
     cursor.execute(

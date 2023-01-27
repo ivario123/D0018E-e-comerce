@@ -44,6 +44,7 @@ def index():
     #items = get_item_by_name(ProductName="Goldstrike")
     category_groups = get_all_categories_grouped_by_supercategory()
     items = get_all_items()
+    print(items)
     if items is None:
         items = []
 

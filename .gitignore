@@ -4,3 +4,5 @@ secrets/*
 
 # Ignore files that are specific to your development machine.
 .vscode/*
+
+secrets/ssq.cfg

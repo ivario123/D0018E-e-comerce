@@ -12,38 +12,32 @@ function select_elements(elements) {
 }
 function submit_form() {
     let [name, description, price, image] = select_elements(["name", "description", "price", "image", "category"]);
+    //category = category.value;
+    let body =
 
-    name = name.value;
-    description = description.value;
-    price = price.value;
-    image = image.value;
-    category = category.value;
-    console.log(name, description, price, image, category)
-    let body = {
-        "name": name,
-        "description": description,
-        "price": price,
-        "image": image,
-        "category": category
-    }
-
-    fetch("/admin/create_product", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(body)
-    }).then(response => {
-        console.log(response)
-        if (response.status == 200) {
-            window.location.href = "/admin"
+        fetch("/admin/create_product", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                "name": name,
+                "description": description,
+                "price": price,
+                "image": image,
+                //"category": category
+            })
+        }).then(response => {
+            console.log(response)
+            if (response.status == 200) {
+                window.location.href = "/admin"
+            }
+            else {
+                alert("Item creation failed")
+                window.location.href = "/admin/create_product"
+            }
         }
-        else {
-            alert("Item creation failed")
-            window.location.href = "/admin/create_product"
-        }
-    }
-    )
+        )
 }
 function update_preview() {
     let [img_src, name, price, description] = select_elements(["image", "name", "price", "description"])
