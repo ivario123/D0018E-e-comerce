@@ -59,6 +59,9 @@ def index():
         ]),
     ]
     items = get_all_items()
+    if items is None:
+        items = []
+
     print(items)
     return render_template("index.html", user=current_user, items=items, category_groups=category_groups)
 

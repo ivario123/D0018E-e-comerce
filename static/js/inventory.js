@@ -44,3 +44,49 @@ function update_preview() {
     preview_title.innerHTML = name
     preview_price.innerHTML = "Price: " + price
 }
+
+function submit_super_category() {
+    let name = get_el("name").value;
+    fetch("/admin/create_supercategory", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            "name": name
+        })
+    }).then(response => {
+        if (response.status == 200) {
+            window.location.href = "/"
+        }
+        else {
+            alert("Super Category creation failed")
+            window.location.href = "/admin/create_supercategory"
+        }
+    });
+
+}
+function submit_category() {
+    let name = get_el("name").value;
+    let super_category = get_el("super_category").value;
+    fetch("/admin/create_category", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            "name": name,
+            "supercategory": super_category
+        })
+    }).then(response => {
+        if (response.status == 200) {
+            console.log(response)
+            alert("Category creation successful")
+            //window.location.href = "/"
+        }
+        else {
+            alert("Category creation failed")
+            window.location.href = "/admin/create_category"
+        }
+    });
+}

@@ -2,7 +2,7 @@
 {% from "jinja_macros/form.html" import form_field,form_button,form_title %}
 {% from "jinja_macros/product_listing.html" import listing %}
 {%block head%}
-<script src="../../static/js/create_item.js"></script>
+<script src="../../static/js/inventory.js"></script>
 {%endblock%}
 {%- macro form_field_with_on_event(label, name, type, on_event) -%}
 <div class="field">
@@ -40,11 +40,29 @@
                 {{form_field_with_on_event("Name","name","text","update_preview()")}}
                 {{form_field_with_on_event("Price","price","text","update_preview()")}}
                 {{form_field_with_on_event("Description","description","text","update_preview()")}}
-                {{form_button("Create","submit_form()")}}
+                <div class="select is-fullwidth" style="padding: bottom 100px;">
+                    <label class="label">Category</label>
+                    <p class="control">
+                        <select class="control" id="category">
+                            <option>Select Category</option>
+                            {% for group in super_categories %}
+                            <optgroup label="{{group.name}}">
+                                {% for category in group.categories %}
+                                <option value="{{category}}">{{category}}</option>
+                                {% endfor %}
+                            </optgroup>
+                            {% endfor %}
+                        </select>
+                    </p>
+                </div>
             </div>
+            {{form_button("Create","submit_form()")}}
         </div>
     </div>
 </div>
 <script>
+    $(function () {
+        $('select').selectize();
+    });
 </script>
 {%endblock%}
