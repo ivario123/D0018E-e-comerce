@@ -40,24 +40,9 @@ def index():
     if session.get("logged_in", False) == False:
         return redirect(url_for("login.login"))
 
-    """
-    This is just testing data
-    """
     session["title"] = "Bolaget eller nått"
     #items = get_item_by_name(ProductName="Goldstrike")
-    category_groups = [
-        CategoryGroup("Druva", [
-            "Albariño",
-            "Arneis",
-            "Assyrtiko",
-            "Barbera",
-        ]),
-        CategoryGroup("Förslutning", [
-            "Kork",
-            "Kapsyl",
-            "Kapsyl med kork",
-        ]),
-    ]
+    category_groups = get_all_categories_grouped_by_supercategory()
     items = get_all_items()
     if items is None:
         items = []

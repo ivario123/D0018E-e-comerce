@@ -29,8 +29,8 @@
             {% endblock %}
         </div>
         <div class="navbar-end">
-            {% if session["admin"] %}
             {{ navbar_button("Admin","/admin") }}
+            {% if session["admin"] %}
             {% endif %}
             {% if session["logged_in"] %}
             {{ navbar_button("Logout","/logout","is-primary") }}

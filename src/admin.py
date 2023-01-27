@@ -65,3 +65,8 @@ def create_supercategory_endpoint():
     else:
         session["title"] = "Create supercategory"
         return render_template("admin/create_category_group.html")
+
+
+@admin.route("/", methods=["GET"])
+def index():
+    return render_template("admin/index.html")

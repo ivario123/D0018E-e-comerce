@@ -35,10 +35,6 @@ function validate_email() {
 
 function submit() {
     var email = get_el("email").value;
-    if (!valid_email(email)) {
-        alert("Invalid email");
-        return;
-    }
     var pass = get_el("pass").value;
     console.log("Login attempt: " + email + " " + pass);
 
@@ -65,10 +61,6 @@ function submit() {
 }
 function register() {
     let [uname, pass, user_name, name, surname] = select_elements(["email", "pass", "username", "name", "surname"])
-    if (!valid_email(email)) {
-        alert("Invalid email");
-        return;
-    }
     fetch("/register", {
         method: "POST",
         headers: {

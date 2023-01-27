@@ -11,22 +11,32 @@ function select_elements(elements) {
     return ret
 }
 function submit_form() {
-    let [name, description, price, image] = select_elements(["name", "description", "price", "image"]);
+    let [name, description, price, image] = select_elements(["name", "description", "price", "image", "category"]);
+
+    name = name.value;
+    description = description.value;
+    price = price.value;
+    image = image.value;
+    category = category.value;
+    console.log(name, description, price, image, category)
+    let body = {
+        "name": name,
+        "description": description,
+        "price": price,
+        "image": image,
+        "category": category
+    }
+
     fetch("/admin/create_product", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
         },
-        body: JSON.stringify({
-            "name": name,
-            "description": description,
-            "price": price,
-            "image": image
-        })
+        body: JSON.stringify(body)
     }).then(response => {
         console.log(response)
         if (response.status == 200) {
-            window.location.href = "/"
+            window.location.href = "/admin"
         }
         else {
             alert("Item creation failed")
@@ -57,7 +67,7 @@ function submit_super_category() {
         })
     }).then(response => {
         if (response.status == 200) {
-            window.location.href = "/"
+            window.location.href = "/admin"
         }
         else {
             alert("Super Category creation failed")
@@ -82,7 +92,7 @@ function submit_category() {
         if (response.status == 200) {
             console.log(response)
             alert("Category creation successful")
-            //window.location.href = "/"
+            window.location.href = "/admin"
         }
         else {
             alert("Category creation failed")
