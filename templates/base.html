@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- 
+
+    This is based on the bulma documentation, which can be found here:
+    https://bulma.io/documentation/ 
+
+-->
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <title>{{session["title"]}}</title>
+    {% block head %}
+
+    {% endblock %}
+</head>
+
+<body class="has-background-grey-lighter">
+    <div class="hero has-background-grey-lighter is-fullheight">
+        <div class="hero-head">
+            {% include "jinja_macros/navbar.html" %}
+        </div>
+        <div class="hero-body">
+            <div class="container">
+                {% block content %}
+                <div class="columns">
+                    <div class="column is-3 is-fixed center">
+                        <aside class="menu is-centered">
+                            {%block sidebar %}
+                            {% endblock %}
+                        </aside>
+                    </div>
+                    <div class="column is-9" style="max-height:fit-content; overflow-x:hidden; overflow-y:scroll; ">
+                        {% block listings %}
+
+                        {% endblock %}
+                    </div>
+                </div>
+                {% endblock %}
+            </div>
+            <div class="columns">
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

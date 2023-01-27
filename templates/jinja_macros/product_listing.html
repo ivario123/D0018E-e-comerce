@@ -1,0 +1,38 @@
+{% macro listing(product) -%}
+<div class="card column is-9 is-center has-background-light">
+    <div class="card-header center">
+        <img class="center" src="{{ product.image }}" alt="Image for : {{product.name}}" width="124px">
+    </div>
+
+    <div class="card-content">
+        <h3>
+            <b>{{ product.name }}</b>
+        </h3>
+        <!--<p>{{ product.description }}</p>-->
+        <p class="price"> Price = {{ product.price }}</p>
+
+    </div>
+</div>
+{%- endmacro %}
+
+{% macro list_container(products) -%}
+{% set ns = namespace(counter=0) %}
+<div class="tile has-background-grey-lighter is-ancestor is-centered center">
+    <div class="tile is-vertical is-fullwidth">
+        {% for product in products %}
+        {% if ns.counter % 4 == 0 %}
+        <div class="tile center">
+            <div class="tile  is-parent">
+                {% endif %}
+                <div class="tile is-child">
+                    {{ listing(product) }}
+                    {% set ns.counter = ns.counter + 1 %}
+                </div>
+                {% if ns.counter % 4 == 0 %}
+            </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+</div>
+{%- endmacro %}

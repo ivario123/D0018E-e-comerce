@@ -1,0 +1,34 @@
+{%extends "base.html"%}
+{%block head%}
+<script src="../static/js/login.js"></script>
+{%endblock%}
+{% from "jinja_macros/form.html" import
+form_field,form_button,form_title,form_field_with_icon,form_field_with_icon_and_event %}
+
+
+{%block content%}
+
+
+<div class="columns is-centered">
+    <div class="column is-4">
+        <div class="box">
+            {{form_title("Register")}}
+            <div class="has-text-centered is-vertical">
+
+                <p class="label">Email</p>
+                {{form_field_with_icon_and_event("Email","email","text",icon_left="fa fa-envelope",icon_right="fa
+                fa-check",on_event="validate_email()")}}
+                {{form_field("Username","username","text")}}
+                {{form_field("First Name","name","text")}}
+                {{form_field("Last Name","surname","text")}}
+                <p class="label">Password</p>
+                {{form_field_with_icon("Password","pass","password",icon_left="fa fa-lock")}}
+                {{form_button("Register","register()")}}
+            </div>
+        </div>
+    </div>
+</div>
+{%endblock%}
+
+{%block listings%}
+{%endblock%}
