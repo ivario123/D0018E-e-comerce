@@ -8,3 +8,5 @@ secrets/*
 secrets/ssq.cfg
 secrets/ssql.cfg
 *.pyc
+
+src/__pycache__/*
