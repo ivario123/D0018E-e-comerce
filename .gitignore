@@ -6,3 +6,4 @@ secrets/*
 .vscode/*
 
 secrets/ssq.cfg
+secrets/ssql.cfg
