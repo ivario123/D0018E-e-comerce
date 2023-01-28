@@ -1,3 +1,9 @@
+{%block head%}
+<script src="../static/js/search.js"></script>
+{%endblock%}
+
+{% from "jinja_macros/form.html" import form_field,form_button%}
+
 {%- macro navbar_button(title,url,class="is-secondary") -%}
 <div class="navbar-item">
     <div class="buttons">
@@ -9,7 +15,6 @@
     </div>
 </div>
 {%-endmacro%}
-
 
 
 <!-- More or less lifted from the guide on bulmas main page-->
@@ -28,6 +33,22 @@
             {% block navbar %}
             {% endblock %}
         </div>
+
+
+
+        {% if session["logged_in"] %}
+        <div class="navbar-search">
+            <div class="field has-addons">
+                <div class="control">
+                    <input class="input" type="text" id="search" placeholder="Search">
+                </div>
+                <div class="control" onclick="submit_search()">
+                    <input id="serach" class="button is-primary" type="submit" value="Serach">
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
         <div class="navbar-end">
             {{ navbar_button("Admin","/admin") }}
             {% if session["admin"] %}

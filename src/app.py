@@ -3,6 +3,7 @@ The main flask app
 """
 
 from auth import auth_blueprint, login_manager
+from search import search_blueprint
 from admin import admin
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 from flask_login import current_user
@@ -20,6 +21,7 @@ app.static_folder = "../static"
 
 app.register_blueprint(auth_blueprint)
 app.register_blueprint(admin)
+app.register_blueprint(search_blueprint)
 app.login_manager = login_manager
 
 

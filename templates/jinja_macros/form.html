@@ -5,6 +5,17 @@
 </div>
 {%- endmacro %}
 
+{%- macro form_field_with_button(name,id,type)%}
+<div class="field has-addons">
+    <div class="control">
+        <input class="input" type="{{type}}" id="{{id}}" placeholder="{{name}}">
+    </div>
+    <div class="control" onclick="submit_search()">
+        <input id="serach" class="button is-primary" type="submit" value="Serach">
+    </div>
+</div>
+{%- endmacro %}
+
 <!-- 
 
     Meant to be used with font awesome icons
