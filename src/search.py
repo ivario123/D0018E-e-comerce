@@ -6,21 +6,18 @@ from sql.auth import *
 from require import response, fields
 from sql.search import *
 
-search_blueprint = Blueprint("search", __name__, template_folder="../templates")
-
-
+search_blueprint = Blueprint("search",__name__,template_folder="../templates")
 
 @require.fields(request)
-def search_request(search_input) -> Result:
+def handle_search(search_input) -> Result:
     return search_db(search_input)
 
-@search_blueprint.route("/search", methods=["GET", "POST"])
-def search_handle():
+@search_blueprint.route("/search", methods =["POST"])
+def search_database():
     if request.method == "POST":
-        result = search_request()
-        if result:
-            return response(200)
-        else:
-            return response(500)
+        return handle_search().match(
+            ok = lambda _: response("Search successful", code = 200),
+            error = lambda x: response(f"{x[0]}", code=x[1])
+        )
     else:
-        return redirect(url_for("index"))
+        return response(500)

@@ -27,7 +27,8 @@ function submit_search(){
         console.log(response)
         if(response.status == 200){
             alert("Search success")
-            window.location.href = "/search"
+            //TODO make search show products with matching search_input
+            window.location.href = "/admin"
         }
         else {
             alert("Search failed")
