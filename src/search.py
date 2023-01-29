@@ -12,10 +12,21 @@ search_blueprint = Blueprint("search",__name__,template_folder="../templates")
 def handle_search(search_input) -> Result:
     return search_db(search_input)
 
+@require.fields(request)
+def fetch_items():
+    return
+    
+
 @search_blueprint.route("/search", methods =["POST"])
 def search_database():
     if request.method == "POST":
-        return handle_search().match(
+        item_exist = handle_search().match
+        if item_exist:
+            session["title"] = "Bolaget SEARCH"
+            fetch_items()
+            print("fetched")
+        #TODO chance return under to the return of fetching correct products
+        return item_exist(
             ok = lambda _: response("Search successful", code = 200),
             error = lambda x: response(f"{x[0]}", code=x[1])
         )

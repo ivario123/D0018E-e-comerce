@@ -36,23 +36,19 @@ class CategoryGroup:
         self.name = name
         self.categories = categories
 
-//TODO List items
+#TODO List items
 @app.route("/")
 def index():
     if session.get("logged_in", False) == False:
         return redirect(url_for("login.login"))
-
-    session["title"] = "Bolaget eller nått"
+    session["title"] = "Bolaget eller något"
     #items = get_item_by_name(ProductName="Goldstrike")
     category_groups = get_all_categories_grouped_by_supercategory()
     items = get_all_items()
-    print(items)
     if items is None:
         items = []
-
     print(items)
     return render_template("index.html", user=current_user, items=items, category_groups=category_groups)
-
 
 if __name__ == "__main__":
     app.debug = True
