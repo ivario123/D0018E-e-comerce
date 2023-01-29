@@ -12,3 +12,4 @@ def search_db(search_input) -> Result:
         else:
             Error("Failed to search, try again later")
 
+#TODO Add searched items into index template

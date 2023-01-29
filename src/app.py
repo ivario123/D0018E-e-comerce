@@ -36,7 +36,7 @@ class CategoryGroup:
         self.name = name
         self.categories = categories
 
-
+//TODO List items
 @app.route("/")
 def index():
     if session.get("logged_in", False) == False:
