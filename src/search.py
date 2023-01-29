@@ -17,13 +17,10 @@ def search_request(search_input) -> Result:
 @search_blueprint.route("/search", methods=["GET", "POST"])
 def search_handle():
     if request.method == "POST":
-        print("search_request()")
         result = search_request()
-        print("search completed")
-        return result.match(  
-            ok=lambda _: response("Found something", code=200),
-            error=lambda x: response("error", code=418)
-        )
+        if result:
+            return response(200)
+        else:
+            return response(500)
     else:
-        print("badbing")
         return redirect(url_for("index"))

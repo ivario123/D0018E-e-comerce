@@ -26,12 +26,12 @@ function submit_search(){
     }).then(response => {
         console.log(response)
         if(response.status == 200){
+            alert("Search success")
             window.location.href = "/search"
         }
         else {
-            alert("Search failed").then(
-                window.location.href = "/"
-            )
+            alert("Search failed")
+            window.location.href = "/"
         }
     })
 }
