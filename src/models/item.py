@@ -1,4 +1,4 @@
-
+import json
 class Item:
     """
     An item has :
@@ -17,6 +17,9 @@ class Item:
         self.stock = stock
         self.image = image
         self.serial_number = serial_number
+
+    def toJSON(self):
+        return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4)
 
     def fields(self):
         return [self.name, self.description, self.price, self.stock, self.image, self.serial_number]

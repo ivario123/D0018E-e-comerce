@@ -63,7 +63,7 @@ def get_item_by_SN(SN, sql_query=None, connection=None, cursor=None):
     Get an item by SN
     """
     cursor.execute(
-        "SELECT * FROM PRODUCT WHERE SN=%s", (SN,))
+        "SELECT ProductName,ProductDescription,Price,Inventory,Image,SN FROM PRODUCT WHERE SN=%s;",(SN,))
     result = cursor.fetchall()
     print(result)
     if result:

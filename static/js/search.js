@@ -27,12 +27,10 @@ function submit_search(){
         console.log(response)
         if(response.status == 200){
             alert("Search success")
-            //TODO make search show products with matching search_input
             window.location.href = "/search"
         }
         else {
             alert("Search failed")
-            window.location.href = "/"
         }
     })
 }
