@@ -10,7 +10,8 @@ search_blueprint = Blueprint("search",__name__,template_folder="../templates")
 
 @require.fields(request)
 def fetch_items(search_input):
-    items_searched = get_item_by_SN(search_input)
+    search_input = '%' + search_input + '%'
+    items_searched = get_item_by_search_name(search_input)
     category_groups = get_all_categories_grouped_by_supercategory()
     if items_searched is None:
         items_searched = []

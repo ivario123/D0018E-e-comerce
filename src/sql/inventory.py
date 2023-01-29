@@ -57,20 +57,6 @@ def get_item_by_name(ProductName, sql_query=None, connection=None, cursor=None):
     else:
         return None
         
-@ssql_builder.select(ssql, table_name="PRODUCT", select_fields=["ProductName", "ProductDescription", "Price", "Inventory", "Image", "SN"])
-def get_item_by_SN(SN, sql_query=None, connection=None, cursor=None):
-    """
-    Get an item by SN
-    """
-    cursor.execute(
-        "SELECT ProductName,ProductDescription,Price,Inventory,Image,SN FROM PRODUCT WHERE SN=%s;",(SN,))
-    result = cursor.fetchall()
-    print(result)
-    if result:
-        return [item_from_sql(item) for item in result]
-    else:
-        return None
-
 
 @ssql_builder.insert(ssql, "SUPERCATEGORY")
 def create_supercategory(Name, sql_query=None, connection=None, cursor=None):
@@ -128,3 +114,33 @@ def get_all_categories_grouped_by_supercategory(connection=None, cursor=None):
         else:
             category_groups.append(CategoryGroup(cat[1], [cat[0]]))
     return category_groups
+
+
+# search queries
+@ssql_builder.select(ssql, table_name="PRODUCT", select_fields=["ProductName", "ProductDescription", "Price", "Inventory", "Image", "SN"])
+def get_item_by_search_SN(SN, sql_query=None, connection=None, cursor=None):
+    """
+    Get an item by SN
+    """
+    cursor.execute(
+        "SELECT ProductName,ProductDescription,Price,Inventory,Image,SN FROM PRODUCT WHERE SN=%s;",(SN,))
+    result = cursor.fetchall()
+    print(result)
+    if result:
+        return [item_from_sql(item) for item in result]
+    else:
+        return None
+
+@ssql_builder.select(ssql, table_name="PRODUCT", select_fields=["ProductName", "ProductDescription", "Price", "Inventory", "Image", "SN"])
+def get_item_by_search_name(name, sql_query=None, connection=None, cursor=None):
+    """
+    Get an item by SN
+    """
+    cursor.execute(
+        "SELECT ProductName,ProductDescription,Price,Inventory,Image,SN FROM PRODUCT WHERE ProductName LIKE %s;",(name,))
+    result = cursor.fetchall()
+    print(result)
+    if result:
+        return [item_from_sql(item) for item in result]
+    else:
+        return None
