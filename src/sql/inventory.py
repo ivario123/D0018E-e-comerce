@@ -56,6 +56,20 @@ def get_item_by_name(ProductName, sql_query=None, connection=None, cursor=None):
         return [item_from_sql(item) for item in result]
     else:
         return None
+        
+@ssql_builder.select(ssql, table_name="PRODUCT", select_fields=["ProductName", "ProductDescription", "Price", "Inventory", "Image", "SN"])
+def get_item_by_SN(SN, sql_query=None, connection=None, cursor=None):
+    """
+    Get an item by SN
+    """
+    cursor.execute(
+        "SELECT * FROM PRODUCT WHERE SN=%s", (SN,))
+    result = cursor.fetchall()
+    print(result)
+    if result:
+        return [item_from_sql(item) for item in result]
+    else:
+        return None
 
 
 @ssql_builder.insert(ssql, "SUPERCATEGORY")
