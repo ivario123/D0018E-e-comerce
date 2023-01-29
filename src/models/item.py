@@ -23,7 +23,3 @@ class Item:
 
     def __repr__(self):
         return f"Item('{self.name}', '{self.description}', '{self.price}', '{self.stock}', '{self.image}', '{self.serial_number}')"
-
-    def id_from_sql(sql):
-        id = Item(serial_number=sql[0])
-        return id
