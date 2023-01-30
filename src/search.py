@@ -1,8 +1,6 @@
-from flask_login import LoginManager, login_user, logout_user, login_required, current_user
-from flask import Blueprint, request, redirect, url_for, render_template, session
+from flask import Blueprint, request, render_template, session
 import require as require
 from flask_login import current_user
-from result import Result, Ok, Error, to_error
 from sql.auth import *
 from sql.inventory import *
 
