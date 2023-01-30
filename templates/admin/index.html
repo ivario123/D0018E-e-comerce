@@ -18,13 +18,16 @@
     <li>
         <a href="/admin/users/create">Create user</a>
     </li>
+    <li>
+        <a href="/admin/make_admin">Make user admin</a>
+    </li>
 </ul>
 <p class="menu-label">
     Products
 </p>
 <ul class="menu-list">
     <li>
-        <a href="/admin/create_supercategory">Create a new category group</a>
+        <a href="/admin/create_super_category">Create a new category group</a>
     </li>
     <li>
         <a href="/admin/create_category">Create a new category</a>
@@ -40,7 +43,7 @@
 <ul class="menu-list">
     {% for category in group.categories %}
     <li>
-        <a href="/category/{{category.id}}">{{category}}</a>
+        <a href="/category/{{category}}">{{category}}</a>
     </li>
     {% endfor %}
 </ul>

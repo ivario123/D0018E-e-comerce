@@ -1,0 +1,50 @@
+<p class="menu-label">
+    <b>Profile</b>
+</p>
+<ul class="menu-list">
+    <li>
+        <a href="/user/profile">Profile</a>
+    </li>
+    <li>
+        <a href="/user/orders">Orders</a>
+    </li>
+</ul>
+<div class="control">
+    <p class="menu-label">
+        <b>Categories</b>
+    </p>
+    <p class="control">
+        <a class="button is-primary" onclick="filter_categories()">
+            <span>Filter</span>
+        </a>
+    </p>
+</div>
+
+{% for group in category_groups %}
+<p class="menu-label">
+    {{group.name}}
+</p>
+<div class="control">
+    {% for category in group.categories %}
+    <label class="checkbox">
+        <input type="checkbox" id="{{category.name}}" onclick="update_category('{{category.name}}')" {% if
+            category.selected %} checked {%endif%}>
+        {{category.name}}
+    </label>
+    {% endfor %}
+</div>
+{% endfor %}
+<script>
+    let categories = [{% for category in selected_categories %}"{{category}}"{% if not loop.last %}, {% endif %} {% endfor %}];
+    function update_category(category) {
+        if (!categories.includes(category)) {
+            categories.push(category);
+        }
+        else {
+            categories.splice(categories.indexOf(category), 1);
+        }
+    }
+    function filter_categories() {
+        window.location.href = "/category?categories=" + JSON.stringify(categories);
+    }
+</script>

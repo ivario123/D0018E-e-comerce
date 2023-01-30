@@ -11,33 +11,30 @@ function select_elements(elements) {
     return ret
 }
 function submit_form() {
-    let [name, description, price, image] = select_elements(["name", "description", "price", "image", "category"]);
-    //category = category.value;
-    let body =
-
-        fetch("/admin/create_product", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                "name": name,
-                "description": description,
-                "price": price,
-                "image": image,
-                //"category": category
-            })
-        }).then(response => {
-            console.log(response)
-            if (response.status == 200) {
-                window.location.href = "/admin"
-            }
-            else {
-                alert("Item creation failed")
-                window.location.href = "/admin/create_product"
-            }
+    let [name, description, price, image, category] = select_elements(["name", "description", "price", "image", "category"]);
+    console.log(name, description, price, image, category)
+    fetch("/admin/create_product", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            "name": name,
+            "description": description,
+            "price": price,
+            "image": image,
+            "category": category
+        })
+    }).then(response => {
+        console.log(response)
+        if (response.status == 200) {
+            window.location.href = "/"
         }
-        )
+        else {
+            alert("Item creation failed")
+            window.location.href = "/admin/create_product"
+        }
+    })
 }
 function update_preview() {
     let [img_src, name, price, description] = select_elements(["image", "name", "price", "description"])
@@ -51,7 +48,7 @@ function update_preview() {
 
 function submit_super_category() {
     let name = get_el("name").value;
-    fetch("/admin/create_supercategory", {
+    fetch("/admin/create_super_category", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -65,7 +62,7 @@ function submit_super_category() {
         }
         else {
             alert("Super Category creation failed")
-            window.location.href = "/admin/create_supercategory"
+            window.location.href = "/admin/create_super_category"
         }
     });
 
@@ -80,7 +77,7 @@ function submit_category() {
         },
         body: JSON.stringify({
             "name": name,
-            "supercategory": super_category
+            "super_category": super_category
         })
     }).then(response => {
         if (response.status == 200) {

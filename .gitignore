@@ -5,4 +5,8 @@ secrets/*
 # Ignore files that are specific to your development machine.
 .vscode/*
 
+<<<<<<< Updated upstream
 secrets/ssq.cfg
+=======
+__pycache__/*
+>>>>>>> Stashed changes

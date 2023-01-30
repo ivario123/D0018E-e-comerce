@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- 
+
+    This is based on the bulma documentation, which can be found here:
+    https://bulma.io/documentation/ 
+
+-->
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <title>Category search</title>
+    
+
+    
+</head>
+
+<body class="has-background-grey-lighter">
+    <div class="hero has-background-grey-lighter is-fullheight">
+        <div class="hero-head">
+            
+
+
+
+<!-- More or less lifted from the guide on bulmas main page-->
+<nav class="navbar has-background-grey-lighter" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+        <a class="navbar-item" href="/">
+            <img src="https://sb-web-ecommerce-cms.azureedge.net/4a51ce/globalassets/logo.svg?q=75&w=2000" width="112"
+                height="28">
+        </a>
+    </div>
+    <div id="navbarBasicExample" class="navbar-menu">
+        <div class="navbar-start">
+            <a href="/" class="navbar-item">
+                Home
+            </a>
+            
+            
+        </div>
+        <div class="navbar-end">
+            
+            <div class="navbar-item">
+    <div class="buttons">
+        <div class="button is-secondary">
+            <a href="/admin">
+                Admin
+            </a>
+        </div>
+    </div>
+</div>
+            
+            
+            <div class="navbar-item">
+    <div class="buttons">
+        <div class="button is-primary">
+            <a href="/logout">
+                Logout
+            </a>
+        </div>
+    </div>
+</div>
+            
+        </div>
+</nav>
+        </div>
+        <div class="hero-body">
+            <div class="container">
+                
+                <div class="columns">
+                    <div class="column is-3 is-fixed center">
+                        <aside class="menu is-centered">
+                            
+<p class="menu-label">
+    <b>Profile</b>
+</p>
+<ul class="menu-list">
+    <li>
+        <a href="/user/profile">Profile</a>
+    </li>
+    <li>
+        <a href="/user/orders">Orders</a>
+    </li>
+</ul>
+<div class="control">
+    <p class="menu-label">
+        <b>Categories</b>
+    </p>
+    <p class="control">
+        <a class="button is-primary" onclick="filter_categories()">
+            <span>Filter</span>
+        </a>
+    </p>
+</div>
+
+
+<p class="menu-label">
+    Behållare
+</p>
+<div class="control">
+    
+    <label class="checkbox">
+        <input type="checkbox" id="Flaska" onclick="update_category('Flaska')"  checked >
+        Flaska
+    </label>
+    
+</div>
+
+<p class="menu-label">
+    Category 1
+</p>
+<div class="control">
+    
+    <label class="checkbox">
+        <input type="checkbox" id="subcategory 1" onclick="update_category('subcategory 1')"  checked >
+        subcategory 1
+    </label>
+    
+</div>
+
+<p class="menu-label">
+    Category 2
+</p>
+<div class="control">
+    
+    <label class="checkbox">
+        <input type="checkbox" id="subcategory 3" onclick="update_category('subcategory 3')"  checked >
+        subcategory 3
+    </label>
+    
+</div>
+
+<p class="menu-label">
+    Category 3
+</p>
+<div class="control">
+    
+    <label class="checkbox">
+        <input type="checkbox" id="subcategory 5" onclick="update_category('subcategory 5')" >
+        subcategory 5
+    </label>
+    
+</div>
+
+<p class="menu-label">
+    Druva
+</p>
+<div class="control">
+    
+    <label class="checkbox">
+        <input type="checkbox" id="Aglianico" onclick="update_category('Aglianico')" >
+        Aglianico
+    </label>
+    
+</div>
+
+<p class="menu-label">
+    test
+</p>
+<div class="control">
+    
+    <label class="checkbox">
+        <input type="checkbox" id="test" onclick="update_category('test')" >
+        test
+    </label>
+    
+</div>
+
+<script>
+    let categories = ["Flaska",  "subcategory 1",  "subcategory 3" ];
+    function update_category(category) {
+        if (!categories.includes(category)) {
+            categories.push(category);
+        }
+        else {
+            categories.splice(categories.indexOf(category), 1);
+        }
+    }
+    function filter_categories() {
+        window.location.href = "/category?categories=" + JSON.stringify(categories);
+    }
+</script>
+
+                        </aside>
+                    </div>
+                    <div class="column is-9" style="max-height:fit-content; overflow-x:hidden; overflow-y:scroll; ">
+                        
+<p class="title is-3">Items in category : [&#39;Flaska&#39;, &#39;subcategory 1&#39;, &#39;subcategory 3&#39;]</p>
+
+<div class="tile has-background-grey-lighter is-ancestor is-centered center">
+    <div class="tile is-vertical is-fullwidth">
+        
+        
+        <div class="tile center">
+            <div class="tile  is-parent">
+                
+                <div class="tile is-child">
+                    <div class="card column is-9 is-center has-background-light">
+    <div class="card-header center">
+        <img class="center" src="https://product-cdn.systembolaget.se/productimages/27719985/27719985_400.png?q=75&amp;w=2000" alt="Image for : Taurasi" width="124px">
+    </div>
+
+    <div class="card-content">
+        <h3>
+            <b>Taurasi</b>
+        </h3>
+        <!--<p>Smakrikt, fruktigt vin med fatkaraktär, inslag av mörka körsbär, svartpeppar, plommon, lakrits, salvia, hallon, tobak och vanilj. Serveras vid cirka 18°C till rätter av mörkt kött, gärna grillat.</p>-->
+        <p class="price"> Price = 201</p>
+
+    </div>
+</div>
+                    
+                </div>
+                
+        
+        
+                <div class="tile is-child">
+                    <div class="card column is-9 is-center has-background-light">
+    <div class="card-header center">
+        <img class="center" src="https://product-cdn.systembolaget.se/productimages/874444/874444_400.png?q=75&amp;w=2000" alt="Image for : något vin" width="124px">
+    </div>
+
+    <div class="card-content">
+        <h3>
+            <b>något vin</b>
+        </h3>
+        <!--<p>Billigt skit</p>-->
+        <p class="price"> Price = 2</p>
+
+    </div>
+</div>
+                    
+                </div>
+                
+        
+        
+                <div class="tile is-child">
+                    <div class="card column is-9 is-center has-background-light">
+    <div class="card-header center">
+        <img class="center" src="https://product-cdn.systembolaget.se/productimages/27719985/27719985_400.png?q=75&amp;w=2000" alt="Image for : Taurasi" width="124px">
+    </div>
+
+    <div class="card-content">
+        <h3>
+            <b>Taurasi</b>
+        </h3>
+        <!--<p>Smakrikt, fruktigt vin med fatkaraktär, inslag av mörka körsbär, svartpeppar, plommon, lakrits, salvia, hallon, tobak och vanilj. Serveras vid cirka 18°C till rätter av mörkt kött, gärna grillat.</p>-->
+        <p class="price"> Price = 201</p>
+
+    </div>
+</div>
+                    
+                </div>
+                
+        
+        
+                <div class="tile is-child">
+                    <div class="card column is-9 is-center has-background-light">
+    <div class="card-header center">
+        <img class="center" src="https://product-cdn.systembolaget.se/productimages/874444/874444_400.png?q=75&amp;w=2000" alt="Image for : Casa Vinironia Palloncino" width="124px">
+    </div>
+
+    <div class="card-content">
+        <h3>
+            <b>Casa Vinironia Palloncino</b>
+        </h3>
+        <!--<p>Fruktig, frisk och lÃ¤ttvin med inslag av citrus, Ã¤pple och pÃ¤ron. Serveras vid cirka 8Â°C till lÃ¤ttare rÃ¤tter av fisk och skaldjur.</p>-->
+        <p class="price"> Price = 71</p>
+
+    </div>
+</div>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+        
+    </div>
+</div>
+
+                    </div>
+                </div>
+                
+            </div>
+            <div class="columns">
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

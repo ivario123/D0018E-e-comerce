@@ -1,9 +1,6 @@
-"""
-This file will need to be updated when the sql schemas are done.
-"""
 from models import Item
 from models.category import CategoryGroup
-from . import ssql
+from .. import ssql
 from ssql_builder import SSqlBuilder as ssql_builder
 
 
@@ -18,25 +15,25 @@ def item_from_sql(item):
     )
 
 
-@ssql_builder.insert(ssql, "PRODUCT")
-def create_item(ProductName, ProductDescription, Price, Image, Inventory, sql_query=None, connection=None, cursor=None):
-    """
-    Create an item
-    """
+@ssql_builder.base(ssql)
+def get_all_items_with_category(category, connection=None, cursor=None):
+    print("get_all_items_with_category")
     cursor.execute(
-        sql_query, (ProductName, ProductDescription, Price, Image, Inventory))
-    return True
+        "SELECT ProductName,ProductDescription,Price,Inventory,Image,SN FROM PRODUCT WHERE SN IN (SELECT SN FROM CATEGORY_ASSIGN WHERE Category=%s);", (category,))
+    result = cursor.fetchall()
+    print(result)
+    if result:
+        return [item_from_sql(item) for item in result]
+    else:
+        return None
 
 
 @ssql_builder.base(ssql)
 def get_all_items(connection=None, cursor=None):
-    """ 
-    Get all items
-    """
+    # Not using ssql_builder.select because we do not provide a where clause which is required by the select function
     cursor.execute(
         "SELECT ProductName,ProductDescription,Price,Inventory,Image,SN FROM PRODUCT;")
     result = cursor.fetchall()
-    print(result)
     if result:
         return [item_from_sql(item) for item in result]
     else:
@@ -45,35 +42,17 @@ def get_all_items(connection=None, cursor=None):
 
 @ssql_builder.select(ssql, table_name="PRODUCT", select_fields=["ProductName", "ProductDescription", "Price", "Inventory", "Image", "SN"])
 def get_item_by_name(ProductName, sql_query=None, connection=None, cursor=None):
-    """
-    Get an item by name
-    """
     cursor.execute(
         sql_query, (ProductName,))
     result = cursor.fetchall()
-    print(result)
     if result:
         return [item_from_sql(item) for item in result]
     else:
         return None
 
 
-@ssql_builder.insert(ssql, "SUPERCATEGORY")
-def create_supercategory(Name, sql_query=None, connection=None, cursor=None):
-    """
-    Create a supercategory
-    """
-    cursor.execute(
-        sql_query, (Name,))
-    # Check if the supercategory was created
-    return True
-
-
 @ssql_builder.base(ssql)
-def get_all_supercategories(connection=None, cursor=None):
-    """
-    Get all supercategories
-    """
+def get_all_super_categories(connection=None, cursor=None):
     cursor.execute(
         "SELECT Name FROM SUPERCATEGORY;")
     result = cursor.fetchall()
@@ -83,28 +62,13 @@ def get_all_supercategories(connection=None, cursor=None):
         return []
 
 
-@ssql_builder.insert(ssql, "CATEGORY")
-def create_category(Name, Super, sql_query=None, connection=None, cursor=None):
-    """
-    Create a category
-    """
-    cursor.execute(
-        sql_query, (Name, Super))
-
-    print(cursor.rowcount, "record inserted.")
-    # Check if the category was created
-    return True
-
-
 @ssql_builder.base(ssql)
-def get_all_categories_grouped_by_supercategory(connection=None, cursor=None):
-    """
-    Get all categories grouped by supercategory
-    """
+def get_all_categories_grouped_by_super_category(connection=None, cursor=None):
     cursor.execute(
         "SELECT ANY_VALUE(Name),Super FROM CATEGORY GROUP BY Super;")
     result = cursor.fetchall()
     category_groups = []
+
     if not result:
         return []
 
@@ -113,4 +77,5 @@ def get_all_categories_grouped_by_supercategory(connection=None, cursor=None):
             category_groups[cat[1]].categories.append(cat[0])
         else:
             category_groups.append(CategoryGroup(cat[1], [cat[0]]))
+
     return category_groups
