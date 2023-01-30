@@ -9,6 +9,7 @@ search_blueprint = Blueprint("search",__name__,template_folder="../templates")
 @require.fields(request)
 def fetch_items(search_input):
     search_input = '%' + search_input + '%'
+    #TODO add search by SN and category
     items_searched = get_item_by_search_name(search_input)
     category_groups = get_all_categories_grouped_by_supercategory()
     if items_searched is None:
@@ -23,4 +24,5 @@ def search_database():
         session["items"] = fetch_items()
         return session["items"]
     if request.method == "GET":
+        #TODO remove session after return and make sure user is logged in
         return session["items"]
