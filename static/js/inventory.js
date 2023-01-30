@@ -10,9 +10,25 @@ function select_elements(elements) {
     }
     return ret
 }
+function get_multi_select(id) {
+    var select = document.getElementById(id);
+    var result = [];
+    var options = select && select.options;
+    var opt;
+    for (var i = 0, iLen = options.length; i < iLen; i++) {
+        opt = options[i];
+        if (opt.selected) {
+            result.push(opt.value || opt.text);
+        }
+    }
+    return result;
+}
+
 function submit_form() {
-    let [name, description, price, image, category] = select_elements(["name", "description", "price", "image", "category"]);
-    console.log(name, description, price, image, category)
+    let [name, description, price, image] = select_elements(["name", "description", "price", "image"]);
+    console.log(name, description, price, image)
+    let category = get_multi_select("category")
+    console.log(category)
     fetch("/admin/create_product", {
         method: "POST",
         headers: {
