@@ -134,7 +134,7 @@ def get_item_by_search_SN(SN, sql_query=None, connection=None, cursor=None):
 @ssql_builder.select(ssql, table_name="PRODUCT", select_fields=["ProductName", "ProductDescription", "Price", "Inventory", "Image", "SN"])
 def get_item_by_search_name(name, sql_query=None, connection=None, cursor=None):
     """
-    Get an item by SN
+    Get an item by name
     """
     cursor.execute(
         "SELECT ProductName,ProductDescription,Price,Inventory,Image,SN FROM PRODUCT WHERE ProductName LIKE %s;",(name,))
