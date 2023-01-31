@@ -1,4 +1,6 @@
-
+"""
+Initiate the SSql class and set up the config
+"""
 
 from ssql import SSql
 from configparser import ConfigParser
@@ -24,5 +26,5 @@ config = {
 ssql = SSql(config["ssh"], config["mysql"])
 """
 our ssql connection, this should not be in global scope since python has no mutex 
-locking, but it's fine for now
+locking, but it"s fine for now
 """

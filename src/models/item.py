@@ -1,14 +1,5 @@
 
 class Item:
-    """
-    A item has :
-    - name
-    - description
-    - price
-    - stock
-    - image
-    - serial number ( primary key )
-    """
 
     def __init__(self, name, description, price, stock, image, serial_number):
         self.name = name

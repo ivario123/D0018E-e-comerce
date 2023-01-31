@@ -34,6 +34,7 @@ def auth_user(email, sugested_pass) -> Result:
         if result:
             password = result[0]
         else:
+            conn.rollback()
             return Error("No such user")
     if sha256_crypt.verify(
         sugested_pass,
@@ -64,4 +65,5 @@ def add_new_user(user: User) -> Result:
         if curs.fetchone():
             return Ok(user)
         else:
+            conn.rollback()
             Error("Failed to register user, try again later")

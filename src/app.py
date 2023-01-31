@@ -29,7 +29,7 @@ app.login_manager = login_manager
 @login_required
 def index():
     session["title"] = "D0018E - Wine Shop"
-    category_groups = get_all_categories_grouped_by_super_category()
+    category_groups = super_categories_and_sub()
     items = get_all_items()
     if items is None:
         items = []

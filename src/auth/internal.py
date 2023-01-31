@@ -9,8 +9,6 @@ from sql.auth import *
 # Create nice error messages
 NoSuchUser = to_error(
     "No such user", "The login request was for a user that does not exist")
-WrongPassword = to_error(
-    "Wrong password", "The login request was for a user that does not exist")
 InvalidLogin = to_error(
     "Invalid login", "The login request was for a user that does not exist")
 # ---

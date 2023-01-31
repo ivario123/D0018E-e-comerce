@@ -2,9 +2,21 @@ from models import Item
 from models.category import CategoryGroup
 from .. import ssql
 from ssql_builder import SSqlBuilder as ssql_builder
+from typing import List
 
 
 def item_from_sql(item):
+    """
+    Assumes that the item is in the following order:
+    (
+        ProductName,
+        ProductDescription,
+        Price,
+        Inventory,
+        Image,
+        SN
+    )
+    """
     return Item(
         name=item[0],
         description=item[1],
@@ -16,19 +28,19 @@ def item_from_sql(item):
 
 
 @ssql_builder.base(ssql)
-def get_all_items_with_category(category, connection=None, cursor=None):
-    print("get_all_items_with_category")
+def get_all_items_with_category(categories: List[str], connection=None, cursor=None):
+    fmt = ",".join(['%s' for _ in categories])
+    query = f"SELECT ProductName,ProductDescription,Price,Inventory,Image,SN FROM PRODUCT WHERE SN IN (SELECT SN FROM CATEGORY_ASSIGN WHERE Category IN ({fmt}) GROUP BY SN HAVING COUNT(*)={len(categories)});"
     cursor.execute(
-        "SELECT ProductName,ProductDescription,Price,Inventory,Image,SN FROM PRODUCT WHERE SN IN (SELECT SN FROM CATEGORY_ASSIGN WHERE Category=%s);", (category,))
+        query, categories)
     result = cursor.fetchall()
-    print(result)
     if result:
         return [item_from_sql(item) for item in result]
     else:
         return None
 
 
-@ssql_builder.base(ssql)
+@ ssql_builder.base(ssql)
 def get_all_items(connection=None, cursor=None):
     # Not using ssql_builder.select because we do not provide a where clause which is required by the select function
     cursor.execute(
@@ -40,7 +52,7 @@ def get_all_items(connection=None, cursor=None):
         return None
 
 
-@ssql_builder.select(ssql, table_name="PRODUCT", select_fields=["ProductName", "ProductDescription", "Price", "Inventory", "Image", "SN"])
+@ ssql_builder.select(ssql, table_name="PRODUCT", select_fields=["ProductName", "ProductDescription", "Price", "Inventory", "Image", "SN"])
 def get_item_by_name(ProductName, sql_query=None, connection=None, cursor=None):
     cursor.execute(
         sql_query, (ProductName,))
@@ -51,7 +63,7 @@ def get_item_by_name(ProductName, sql_query=None, connection=None, cursor=None):
         return None
 
 
-@ssql_builder.base(ssql)
+@ ssql_builder.base(ssql)
 def get_all_super_categories(connection=None, cursor=None):
     cursor.execute(
         "SELECT Name FROM SUPERCATEGORY;")
@@ -62,8 +74,8 @@ def get_all_super_categories(connection=None, cursor=None):
         return []
 
 
-@ssql_builder.base(ssql)
-def get_all_categories_grouped_by_super_category(connection=None, cursor=None):
+@ ssql_builder.base(ssql)
+def super_categories_and_sub(connection=None, cursor=None):
     cursor.execute(
         "SELECT ANY_VALUE(Name),Super FROM CATEGORY GROUP BY Super;")
     result = cursor.fetchall()

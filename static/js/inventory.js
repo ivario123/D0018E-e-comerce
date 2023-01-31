@@ -3,9 +3,7 @@ function get_el(id) {
 }
 function select_elements(elements) {
     var ret = []
-    console.log(elements)
     for (var i = 0; i < elements.length; i++) {
-        console.log(elements[i])
         ret.push(document.getElementById(elements[i]).value)
     }
     return ret
@@ -26,9 +24,7 @@ function get_multi_select(id) {
 
 function submit_form() {
     let [name, description, price, image] = select_elements(["name", "description", "price", "image"]);
-    console.log(name, description, price, image)
     let category = get_multi_select("category")
-    console.log(category)
     fetch("/admin/create_product", {
         method: "POST",
         headers: {
@@ -42,7 +38,6 @@ function submit_form() {
             "category": category
         })
     }).then(response => {
-        console.log(response)
         if (response.status == 200) {
             window.location.href = "/"
         }
@@ -97,7 +92,6 @@ function submit_category() {
         })
     }).then(response => {
         if (response.status == 200) {
-            console.log(response)
             alert("Category creation successful")
             window.location.href = "/admin"
         }

@@ -70,16 +70,14 @@ def create_product():
         return response(create_product_internal(), code=200)
     else:
         session["title"] = "Create product"
-        return render_template("admin/create_product.html", super_categories=get_all_categories_grouped_by_super_category())
+        return render_template("admin/create_product.html", super_categories=super_categories_and_sub())
 
 
 @admin.route("/create_category", methods=["GET", "POST"])
 @login_required
 @admin_required(non_admin_callback)
 def create_category_endpoint():
-    print("create_category_endpoint")
     if request.method == "POST":
-        print("create_category_endpoint POST")
         return response(create_category_internal(), code=200)
     else:
         session["title"] = "Create category"
