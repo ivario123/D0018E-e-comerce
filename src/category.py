@@ -1,5 +1,5 @@
 from flask.blueprints import Blueprint
-from flask import render_template, request, session
+from flask import redirect, render_template, request, session
 from flask_login import login_required
 from require import fields
 from sql.inventory.getters import get_all_items_with_category, super_categories_and_sub
@@ -28,6 +28,8 @@ def select_categories():
 @login_required
 def category_page():
     categories = selected_categories()
+    if categories == []:
+        return redirect("/")
     items = get_all_items_with_category(categories)
     # Save the selected categories
     session["selected_categories"] = categories

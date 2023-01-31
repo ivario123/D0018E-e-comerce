@@ -30,8 +30,8 @@ def item_from_sql(item):
 @ssql_builder.base(ssql)
 def get_all_items_with_category(categories: List[str], connection=None, cursor=None):
     fmt = ",".join(['%s' for _ in categories])
-    query = f"""SELECT ProductName,ProductDescription,Price,Inventory,Image,SN FROM PRODUCT WHERE SN IN 
-    (SELECT SN FROM CATEGORY_ASSIGN WHERE Category IN ({fmt}) GROUP BY SN HAVING COUNT(SN)={len(categories)});"""
+    query = f"""SELECT ProductName,ProductDescription,Price,Inventory,Image,SN FROM PRODUCT WHERE SN IN
+        (SELECT SN FROM CATEGORY_ASSIGN WHERE Category IN ({fmt}) GROUP BY SN HAVING COUNT(*)={len(categories)}) ORDER BY ProductName;"""
     cursor.execute(
         query, categories)
     result = cursor.fetchall()
@@ -96,6 +96,5 @@ def super_categories_and_sub(connection=None, cursor=None):
         super_cats[category[1]].append(
             Category(category[0], supercategory=category[1]))
     for group in category_groups:
-        print(group)
         group.categories = super_cats[group.name]
     return category_groups
