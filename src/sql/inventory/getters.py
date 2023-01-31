@@ -1,5 +1,5 @@
 from models import Item
-from models.category import CategoryGroup
+from models.category import Category, CategoryGroup
 from .. import ssql
 from ssql_builder import SSqlBuilder as ssql_builder
 from typing import List
@@ -30,14 +30,15 @@ def item_from_sql(item):
 @ssql_builder.base(ssql)
 def get_all_items_with_category(categories: List[str], connection=None, cursor=None):
     fmt = ",".join(['%s' for _ in categories])
-    query = f"SELECT ProductName,ProductDescription,Price,Inventory,Image,SN FROM PRODUCT WHERE SN IN (SELECT SN FROM CATEGORY_ASSIGN WHERE Category IN ({fmt}) GROUP BY SN HAVING COUNT(*)={len(categories)});"
+    query = f"""SELECT ProductName,ProductDescription,Price,Inventory,Image,SN FROM PRODUCT WHERE SN IN 
+    (SELECT SN FROM CATEGORY_ASSIGN WHERE Category IN ({fmt}) GROUP BY SN HAVING COUNT(SN)={len(categories)});"""
     cursor.execute(
         query, categories)
     result = cursor.fetchall()
     if result:
         return [item_from_sql(item) for item in result]
     else:
-        return None
+        return []
 
 
 @ ssql_builder.base(ssql)
@@ -49,7 +50,7 @@ def get_all_items(connection=None, cursor=None):
     if result:
         return [item_from_sql(item) for item in result]
     else:
-        return None
+        return []
 
 
 @ ssql_builder.select(ssql, table_name="PRODUCT", select_fields=["ProductName", "ProductDescription", "Price", "Inventory", "Image", "SN"])
@@ -77,17 +78,24 @@ def get_all_super_categories(connection=None, cursor=None):
 @ ssql_builder.base(ssql)
 def super_categories_and_sub(connection=None, cursor=None):
     cursor.execute(
-        "SELECT ANY_VALUE(Name),Super FROM CATEGORY GROUP BY Super;")
+        "SELECT Name FROM SUPERCATEGORY;")
+    super = cursor.fetchall()
+    cursor.execute(
+        f"SELECT Name,Super FROM CATEGORY;")
     result = cursor.fetchall()
-    category_groups = []
-
+    category_groups = [
+        CategoryGroup(x[0], []) for x in super
+    ]
     if not result:
         return []
-
-    for cat in result:
-        if cat[1] in category_groups:
-            category_groups[cat[1]].categories.append(cat[0])
-        else:
-            category_groups.append(CategoryGroup(cat[1], [cat[0]]))
-
+    # Hashmap to the rescue
+    super_cats = {
+        x[0]: [] for x in super
+    }
+    for category in result:
+        super_cats[category[1]].append(
+            Category(category[0], supercategory=category[1]))
+    for group in category_groups:
+        print(group)
+        group.categories = super_cats[group.name]
     return category_groups

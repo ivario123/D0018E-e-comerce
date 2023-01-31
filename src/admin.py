@@ -10,7 +10,6 @@ admin = Blueprint("admin", "admin",
 
 @fields(request)
 def create_product_internal(name, price, description, image):
-    print("create_product_internal with name: " + name + " and price: " + price)
     return create_item(
         ProductName=name,
         Price=price,
@@ -27,10 +26,7 @@ def callback_non_admin():
 @admin.route("/create_product", methods=["GET", "POST"])
 # @admin_required()
 def create_product():
-    print(request)
-    print(request.data)
     if request.method == "POST":
-        print(request.json)
         return response(create_product_internal(), code=200)
     else:
         session["title"] = "Create product"
@@ -39,16 +35,12 @@ def create_product():
 
 @fields(request)
 def create_category_internal(name, supercategory):
-    print("create_category_internal with name: " +
-          name + " and supercategory: " + supercategory)
     return create_category(Name=name, Super=supercategory)
 
 
 @ admin.route("/create_category", methods=["GET", "POST"])
 def create_category_endpoint():
-    print("create_category_endpoint")
     if request.method == "POST":
-        print("create_category_endpoint POST")
         return response(create_category_internal(), code=200)
     else:
         session["title"] = "Create category"

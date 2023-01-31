@@ -7,7 +7,4 @@ secrets/*
 
 secrets/ssq.cfg
 __pycache__/*
-<<<<<<< HEAD
-=======
 *cache*
->>>>>>> 51a9dc9 (Filter on category works, needs a bugfix but that can be merged at a later point)

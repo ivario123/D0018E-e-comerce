@@ -3,7 +3,6 @@ function make_admin() {
 
     var form = document.getElementById("email");
     var email = form.value;
-    console.log(email);
     fetch("/admin/make_admin", {
         method: "POST",
         headers: {
