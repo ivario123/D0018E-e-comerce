@@ -38,12 +38,13 @@ def index():
     )
 
 @app.route("/product_info/<int:serial_number>", methods=["POST", "GET"])
+@login_required
 def product_info(serial_number):
     if session.get("logged_in", False) == False:
         return redirect(url_for("login.login"))
 
     session["title"] = "Product information"
-    category_groups = get_all_categories_grouped_by_supercategory()
+    category_groups = super_categories_and_sub()
     items = get_all_items()
     item = get_item_by_serial_number(serial_number)[0]
     print("<app.route /product_info> Clicked product info for: ", item.name)

@@ -9,18 +9,18 @@ ssql_secrets = ConfigParser()
 ssql_secrets.read("../secrets/ssql.cfg")
 config = {
     "ssh": {
-        "host": ssql_secrets.get("ssh", "host"),
-        "port": int(ssql_secrets.get("ssh", "port")),
-        "user": ssql_secrets.get("ssh", "user_name"),
-        "pass": ssql_secrets.get("ssh", "password"),
+        "host": "130.240.200.96",
+        "port": 22,
+        "user": "amuobi-4",
+        "pass": "vBoMgtRDJQpkWeHN",
     },
     "mysql": {
-        "host": ssql_secrets.get("mysql", "host"),
-        "port": int(ssql_secrets.get("mysql", "port")),
-        "user": ssql_secrets.get("mysql", "user_name"),
-        "pass": ssql_secrets.get("mysql", "password"),
-        "database": "first_test",
-    },
+        "host": "127.0.0.1",
+        "port": 3306,
+        "user": "Master",
+        "pass": "!123456789PASSWORD987654321password%",
+        "database": "first_test"
+    }
 }
 
 ssql = SSql(config["ssh"], config["mysql"])
