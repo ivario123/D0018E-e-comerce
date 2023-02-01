@@ -33,7 +33,7 @@ def login():
         result = handle_login()
         return result.match(
             ok=lambda _: response("Login successful", code=200),
-            error=lambda x: response(f"{x[0]}", code=x[1])
+            error=lambda x: response(f"{x[0]}", code=x[1]),
         )
     else:
         session["title"] = "Login"
@@ -45,7 +45,7 @@ def register():
     if request.method == "POST":
         return handle_register().match(
             ok=lambda _: response("Registered"),
-            error=lambda x: response(f"{x[0]}", code=x[1])
+            error=lambda x: response(f"{x[0]}", code=x[1]),
         )
     else:
         session["title"] = "Register"

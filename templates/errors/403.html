@@ -1,19 +1,22 @@
-{%extends "base.html"%}
+{% extends "base.html" %}
 {% block content %}
-<div class="columns is-centered">
-    <div class="column is-4">
-        <div class="box">
-            <h1 class="title is-4 has-text-centered is-warning">403 Forbidden</h1>
-            <p class="has-text-centered">
-                You are not authorized to access this page.
-                Reason stated:
-            </p>
-            <p class="has-text-centered">
-                {% if reason %}{{ reason }}{% else %}unknown{% endif %}
-            </p>
-
-            <p class="has-text-centered">Please login to a user that has the correct privileges</p>
+    <div class="columns is-centered">
+        <div class="column is-4">
+            <div class="box">
+                <h1 class="title is-4 has-text-centered is-warning">403 Forbidden</h1>
+                <p class="has-text-centered">
+                    You are not authorized to access this page.
+                    Reason stated:
+                </p>
+                <p class="has-text-centered">
+                    {% if reason %}
+                        {{ reason }}
+                    {% else %}
+                        unknown
+                    {% endif %}
+                </p>
+                <p class="has-text-centered">Please login to a user that has the correct privileges</p>
+            </div>
         </div>
     </div>
-</div>
 {% endblock %}

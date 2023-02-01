@@ -1,28 +1,32 @@
-{%extends "base.html"%}
-{%block head%}
-<script src="../static/js/inventory.js"></script>
-{%endblock%}
+{% extends "base.html" %}
+{% block head %}
+    <script src="../static/js/inventory.js"></script>
+{% endblock %}
 {% from "jinja_macros/form.html" import
 form_field,form_button,form_title,form_field_with_icon,form_field_with_icon_and_event %}
-{%block content%}
-<div class="columns is-centered">
-    <div class="column is-4">
-        <div class="box">
-            {{form_title("Create Category")}}
-            <div class="has-text-centered is-vertical">
-                {{form_field("Name","name","text")}}
-                <p class="label">Category Group</p>
-                <div class="select is-fullwidth">
-                    <select id="super_category">
-                        <option>Select Category Group</option>
-                        {% for super_category in super_categories %}
-                        <option value="{{super_category}}">{{super_category}}</option>
-                        {% endfor %}
-                    </select>
+{% block content %}
+    <div class="columns is-centered">
+        <div class="column is-4">
+            <div class="box">
+                {{ form_title("Create Category")}}
+                <div class="has-text-centered is-vertical">
+                    {{ form_field("Name","name","text")}}
+                    <p class="label">Category Group</p>
+                    <div class="select is-fullwidth">
+                        <select id="super_category">
+                            <option>
+                                Select Category Group
+                            </option>
+                            {% for super_category in super_categories %}
+                                <option value="{{ super_category }}">
+                                    {{ super_category }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    {{ form_button("Create","submit_category()")}}
                 </div>
-                {{form_button("Create","submit_category()")}}
             </div>
         </div>
     </div>
-</div>
-{%endblock%}
+{% endblock %}

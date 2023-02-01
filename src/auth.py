@@ -5,7 +5,13 @@ these endpoints include login, logout and register
 """
 
 
-from flask_login import LoginManager, login_user, logout_user, login_required, current_user
+from flask_login import (
+    LoginManager,
+    login_user,
+    logout_user,
+    login_required,
+    current_user,
+)
 from flask import Blueprint, request, redirect, url_for, render_template, session
 import require as require
 from result import Result, Ok, Error, to_error
@@ -15,11 +21,14 @@ from require import response, fields
 
 # Create nice error messages
 NoSuchUser = to_error(
-    "No such user", "The login request was for a user that does not exist")
+    "No such user", "The login request was for a user that does not exist"
+)
 WrongPassword = to_error(
-    "Wrong password", "The login request was for a user that does not exist")
+    "Wrong password", "The login request was for a user that does not exist"
+)
 InvalidLogin = to_error(
-    "Invalid login", "The login request was for a user that does not exist")
+    "Invalid login", "The login request was for a user that does not exist"
+)
 # ---
 
 login_manager = LoginManager()
@@ -50,9 +59,9 @@ def handle_login(email, password):
         session["admin"] = res.role == "admin"
         session["logged_in"] = True
         return Ok(res)
+
     return auth_user(email, password).match(
-        ok=lambda user: valid_login(user),
-        error=lambda x: Error(x)
+        ok=lambda user: valid_login(user), error=lambda x: Error(x)
     )
 
 
@@ -62,7 +71,7 @@ def login():
         result = handle_login()
         return result.match(
             ok=lambda _: response("Login successful", code=200),
-            error=lambda x: response(f"{x[0]}", code=x[1])
+            error=lambda x: response(f"{x[0]}", code=x[1]),
         )
     else:
         session["title"] = "Login"
@@ -71,8 +80,9 @@ def login():
 
 @require.fields(request)
 def handle_register(username, email, password, name, surname) -> Result:
-    u = User(username=username, email=email, name=name,
-             surname=surname, password=password)
+    u = User(
+        username=username, email=email, name=name, surname=surname, password=password
+    )
     return add_new_user(u)
 
 
@@ -81,7 +91,7 @@ def register():
     if request.method == "POST":
         return handle_register().match(
             ok=lambda _: response("Registered"),
-            error=lambda x: response(f"{x[0]}", code=x[1])
+            error=lambda x: response(f"{x[0]}", code=x[1]),
         )
     else:
         session["title"] = "Register"

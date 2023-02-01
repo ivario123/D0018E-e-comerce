@@ -1,11 +1,6 @@
 {% extends "base.html" %}
 {% from "jinja_macros/product_listing.html" import list_container %}
-
 {% block sidebar %}
-{% include "jinja_macros/sidebar.html" %}
+    {% include "jinja_macros/sidebar.html" %}
 {% endblock %}
-
-
-{% block listings %}
-{{ list_container(items) }}
-{% endblock %}
+{% block listings %}{{ list_container(items) }}{% endblock %}

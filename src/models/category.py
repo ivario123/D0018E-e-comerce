@@ -1,4 +1,3 @@
-
 class Category:
     def __init__(self, name, supercategory):
         self.name = name

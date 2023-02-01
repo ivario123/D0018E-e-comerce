@@ -2,20 +2,20 @@
 {% from "jinja_macros/form.html" import
 form_field,form_button,form_title,form_field_with_icon,form_field_with_icon_and_event %}
 {% block head %}
-<script src="../static/js/login.js"></script>
-<script src="../static/js/make_admin.js"></script>
+    <script src="../static/js/login.js"></script>
+    <script src="../static/js/make_admin.js"></script>
 {% endblock %}
 {% block content %}
-<div class="columns is-centered">
-    <div class="column is-4">
-        <div class="box">
-            {{form_title("User to grant admin privileges")}}
-            <div class="has-text-centered is-vertical">
-                {{form_field_with_icon_and_event("Email","email","text",icon_left="fa fa-envelope",icon_right="fa
-                fa-check",on_event="validate_email()")}}
-                {{form_button("Login","make_admin()")}}
+    <div class="columns is-centered">
+        <div class="column is-4">
+            <div class="box">
+                {{ form_title("User to grant admin privileges")}}
+                <div class="has-text-centered is-vertical">
+                    {{form_field_with_icon_and_event("Email","email","text",icon_left="fa fa-envelope",icon_right="fa
+                    fa-check",on_event="validate_email()")}}
+                    {{ form_button("Login","make_admin()")}}
+                </div>
             </div>
         </div>
     </div>
-</div>
 {% endblock %}

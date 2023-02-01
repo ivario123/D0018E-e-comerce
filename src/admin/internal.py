@@ -1,4 +1,3 @@
-
 from flask import request
 from require import fields
 from sql.inventory.management import *
@@ -19,8 +18,7 @@ def create_product_internal(name, price, description, image, category):
         category = [category]
     for cat in category:
         assign_category_to_item(
-            SN=get_item_by_name(name)[0].serial_number,
-            Category=cat
+            SN=get_item_by_name(name)[0].serial_number, Category=cat
         )
 
 

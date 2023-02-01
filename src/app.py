@@ -33,11 +33,14 @@ def index():
     items = get_all_items()
     if items is None:
         items = []
-    return render_template("index.html", user=current_user, items=items, category_groups=category_groups)
+    return render_template(
+        "index.html", user=current_user, items=items, category_groups=category_groups
+    )
 
 
 if __name__ == "__main__":
     import random
+
     # Generate a random secret key, resetting session every time
     app.secret_key = ["x" for x in range(0, random.randint(0, 100))]
     app.debug = True

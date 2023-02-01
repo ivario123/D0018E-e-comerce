@@ -1,101 +1,105 @@
-{%extends "base.html"%}
+{% extends "base.html" %}
 {% from "jinja_macros/form.html" import form_field,form_button,form_title %}
 {% from "jinja_macros/product_listing.html" import listing %}
-{%block head%}
-<script src="../../static/js/inventory.js"></script>
-{%endblock%}
+{% block head %}
+    <script src="../../static/js/inventory.js"></script>
+{% endblock %}
 {%- macro form_field_with_on_event(label, name, type, on_event) -%}
-<div class="field">
-    <p class="label">{{label}}</p>
-    <input class="input" type="{{type}}" id="{{name}}" placeholder="{{label}}" oninput="{{on_event}}">
-</div>
+    <div class="field">
+        <p class="label">{{ label }}</p>
+        <input class="input"
+               type="{{ type }}"
+               id="{{ name }}"
+               placeholder="{{ label }}"
+               oninput="{{ on_event }}">
+    </div>
 {%- endmacro -%}
 {%- macro begin_tile() -%}
-<div class="tile center">
-    <div class="tile  is-parent">
+    <div class="tile center">
+        <div class="tile  is-parent">
         {%- endmacro -%}
         {%- macro end_tile() -%}
+        </div>
     </div>
-</div>
 {%- endmacro -%}
 {%- macro tile_with_field(field) %}
-<div class="tile is-child">
-    <div class="field">
-        {{field}}
+    <div class="tile is-child">
+        <div class="field">{{ field }}</div>
     </div>
-</div>
 {%- endmacro -%}
 {%- macro horizontal_list(items) -%}
-{{begin_tile()}}
-{% for item in items %}
-{{tile_with_field(item)}}
-{% endfor %}
-{{end_tile()}}
+    {{ begin_tile()}}
+    {% for item in items %}{{ tile_with_field(item)}}{% endfor %}
+    {{ end_tile()}}
 {%- endmacro -%}
-
-{%block content%}
-<div class="columns is-centered is-full-height">
-    <div class="column  is-5">
-        <div class="box">
-            {{form_title("Create new product")}}
-            <!-- Product preview, more or less the same as the product listing -->
-            <div class="center is-center">
-                <b>Preview</b>
-                <div class="center" style="width: 100%;">
-                    <div class="card column is-9 is-center has-background-light">
-                        <div class="card-header center">
-                            <img id="preview_img" class="center" src="img_src" alt="Image for : name" width="124px">
-                        </div>
-
-                        <div class="card-content">
-                            <h3>
-                                <b id="preview_title">some_name</b>
-                            </h3>
-                            <p id="preview_price" ,class="price"> Price = some_price</p>
-
+{% block content %}
+    <div class="columns is-centered is-full-height">
+        <div class="column  is-5">
+            <div class="box">
+                {{ form_title("Create new product")}}
+                <!-- Product preview, more or less the same as the product listing -->
+                <div class="center is-center">
+                    <b>Preview</b>
+                    <div class="center" style="width: 100%;">
+                        <div class="card column is-9 is-center has-background-light">
+                            <div class="card-header center">
+                                <img id="preview_img"
+                                     class="center"
+                                     src="img_src"
+                                     alt="Image for : name"
+                                     width="124px">
+                            </div>
+                            <div class="card-content">
+                                <h3>
+                                    <b id="preview_title">some_name</b>
+                                </h3>
+                                <p id="preview_price" ,class="price">Price = some_price</p>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <!-- Form fields -->
-            <div class="has-text-centered is-vertical">
-                <div class="tile is-ancestor is-centered center">
-                    <div class="tile is-vertical is-fullwidth">
-                        {{horizontal_list([
-                        form_field_with_on_event("Image","image","text","update_preview()"),
-                        form_field_with_on_event("Name","name","text","update_preview()"),
-                        ])}}
-                        {{horizontal_list([
-                        form_field_with_on_event("Price","price","text","update_preview()"),
-                        form_field_with_on_event("Description","description","text","update_preview()"),
-                        ])}}
-                        {{begin_tile()}}
-                        <div class="tile is-child">
-                            <label class="label">Category</label>
-                            <div style="padding-bottom: 10px;">
-                                <div class="select is-half-width is-multiple">
-                                    <p class="control">
-                                        <select class="control" id="category" multiple>
-                                            <option>Select Category</option>
-                                            {% for group in super_categories %}
-                                            <optgroup label="{{group.name}}">
-                                                {% for category in group.categories %}
-                                                <option value="{{category.name}}">{{category.name}}</option>
+                <!-- Form fields -->
+                <div class="has-text-centered is-vertical">
+                    <div class="tile is-ancestor is-centered center">
+                        <div class="tile is-vertical is-fullwidth">
+                            {{horizontal_list([
+                            form_field_with_on_event("Image","image","text","update_preview()"),
+                            form_field_with_on_event("Name","name","text","update_preview()"),
+                            ])}}
+                            {{horizontal_list([
+                            form_field_with_on_event("Price","price","text","update_preview()"),
+                            form_field_with_on_event("Description","description","text","update_preview()"),
+                            ])}}
+                            {{ begin_tile()}}
+                            <div class="tile is-child">
+                                <label class="label">Category</label>
+                                <div style="padding-bottom: 10px;">
+                                    <div class="select is-half-width is-multiple">
+                                        <p class="control">
+                                            <select class="control" id="category" multiple>
+                                                <option>
+                                                    Select Category
+                                                </option>
+                                                {% for group in super_categories %}
+                                                    <optgroup label="{{ group.name }}">
+                                                        {% for category in group.categories %}
+                                                            <option value="{{ category.name }}">
+                                                                {{ category.name }}
+                                                            </option>
+                                                        {% endfor %}
+                                                    </optgroup>
                                                 {% endfor %}
-                                            </optgroup>
-                                            {% endfor %}
-                                        </select>
-                                    </p>
+                                            </select>
+                                        </p>
+                                    </div>
                                 </div>
+                                {{ form_button("Create","submit_form()")}}
                             </div>
-                            {{form_button("Create","submit_form()")}}
+                            {{ end_tile()}}
                         </div>
-                        {{end_tile()}}
                     </div>
-
                 </div>
             </div>
         </div>
     </div>
-</div>
-{%endblock%}
+{% endblock %}

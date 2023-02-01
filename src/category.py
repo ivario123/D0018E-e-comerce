@@ -5,8 +5,10 @@ from require import fields
 from sql.inventory.getters import get_all_items_with_category, super_categories_and_sub
 from json import loads
 import ast
-category = Blueprint("category", __name__,
-                     template_folder="templates", url_prefix="/category")
+
+category = Blueprint(
+    "category", __name__, template_folder="templates", url_prefix="/category"
+)
 
 
 def selected_categories():
@@ -37,5 +39,10 @@ def category_page():
     session["title"] = "Category search"
     # Render the page
     all_categories = select_categories()
-    return render_template("category.html", items=items, category=categories,
-                           category_groups=all_categories, selected_categories=categories)
+    return render_template(
+        "category.html",
+        items=items,
+        category=categories,
+        category_groups=all_categories,
+        selected_categories=categories,
+    )
