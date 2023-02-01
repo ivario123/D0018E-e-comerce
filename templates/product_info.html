@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% from "jinja_macros/product_listing.html" import list_container %}
+{% from "jinja_macros/product_listing.html" import listing %}
+{% block head %}
+<link rel="stylesheet" href="../static/css/center_of_page.css">
+{% endblock %}
+
+
+{% block content %}
+    <div class="columns">
+        <div class="column is-3 is-fixed center">
+            
+            <aside class="menu is-centered">
+                <p class="menu-label">
+                    Profile
+                </p>
+                <ul class="menu-list">
+                    <li>
+                        <a href="/user/profile">Profile</a>
+                    </li>
+                    <li>
+                        <a href="/user/orders">Orders</a>
+                    </li>
+                </ul>
+                
+                {% for group in category_groups %}
+                <p class="menu-label">
+                    {{group.name}}
+                </p>
+                <ul class="menu-list">
+                    {% for category in group.categories %}
+                    <li>
+                        <a href="/category/{{category.id}}">{{category}}</a>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% endfor %}
+            </aside>
+        </div>
+
+        <div class="column is-9" style="max-height:fit-content; overflow-x:hidden; overflow-y:auto; ">
+            
+            <p style="font-size:30px; text-align:center;"><strong>Product information about {{item.name}}</strong></p>
+            
+            <div style="display: flex;">
+                <div class="image" style="flex: 1;">
+                    <img class="center" src="{{ item.image }}" alt="Image for : {{item.name}}">
+                </div>
+
+                <div class="info" style="flex: 4; padding-left: 5%;">
+                    <ul>
+                        <li>Price: {{item.price}} kr</li>
+                        <li>Stock: {{item.stock}}</li>
+                    </ul>
+
+                    <div class="field has-addons" style="padding-top: 2%">
+
+                        <div class="control">
+                            <input class="input" type="text" placeholder="Amount to buy">
+                        </div>
+                        
+                        <div class="control">
+                            <a class="button is-info">
+                                Buy
+                            </a>
+                        </div>
+
+                    </div>
+
+                    <p style="padding-top: 2%;">{{item.description}}</p>
+
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+

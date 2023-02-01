@@ -58,6 +58,21 @@ def get_item_by_name(ProductName, sql_query=None, connection=None, cursor=None):
         return None
 
 
+@ssql_builder.select(ssql, table_name="PRODUCT", select_fields=["ProductName", "ProductDescription", "Price", "Inventory", "Image", "SN"])
+def get_item_by_serial_number(SN, sql_query=None, connection=None, cursor=None):
+    """
+    Get an item by serial number
+    """
+    cursor.execute(
+        sql_query, (SN,))
+    result = cursor.fetchall()
+    print(result)
+    if result:
+        return [item_from_sql(item) for item in result]
+    else:
+        return None
+
+
 @ssql_builder.insert(ssql, "SUPERCATEGORY")
 def create_supercategory(Name, sql_query=None, connection=None, cursor=None):
     """

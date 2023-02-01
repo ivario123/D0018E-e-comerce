@@ -1,18 +1,21 @@
 {% macro listing(product) -%}
-<div class="card column is-9 is-center has-background-light">
-    <div class="card-header center">
-        <img class="center" src="{{ product.image }}" alt="Image for : {{product.name}}" width="124px">
-    </div>
+<a href="/product_info/{{product.serial_number}}">
+    <div class="card column is-9 is-center has-background-light">
+        <div class="card-header center">
+            <img class="center" src="{{ product.image }}" alt="Image for : {{product.name}}" width="124px">
+        </div>
+    
+        <div class="card-content">
+        
+            <h3>
+                <b>{{ product.name }}</b>
+            </h3>
+            <!--<p>{{ product.description }}</p>-->
+            <p class="price"> Price = {{ product.price }}</p>
 
-    <div class="card-content">
-        <h3>
-            <b>{{ product.name }}</b>
-        </h3>
-        <!--<p>{{ product.description }}</p>-->
-        <p class="price"> Price = {{ product.price }}</p>
-
+        </div>
     </div>
-</div>
+</a>
 {%- endmacro %}
 
 {% macro list_container(products) -%}

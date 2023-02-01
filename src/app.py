@@ -51,6 +51,18 @@ def index():
     print(items)
     return render_template("index.html", user=current_user, items=items, category_groups=category_groups)
 
+@app.route("/product_info/<int:serial_number>", methods=["POST", "GET"])
+def product_info(serial_number):
+    if session.get("logged_in", False) == False:
+        return redirect(url_for("login.login"))
+
+    session["title"] = "Product information"
+    category_groups = get_all_categories_grouped_by_supercategory()
+    items = get_all_items()
+    item = get_item_by_serial_number(serial_number)[0]
+    print("<app.route /product_info> Clicked product info for: ", item.name)
+
+    return render_template("product_info.html", user=current_user, item=item, items=items, category_groups=category_groups)
 
 if __name__ == "__main__":
     app.debug = True
