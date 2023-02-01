@@ -1,3 +1,9 @@
+{%block head%}
+<script src="../static/js/search.js"></script>
+{%endblock%}
+
+{% from "jinja_macros/form.html" import form_field,form_button%}
+
 {%- macro navbar_button(title,url,class="is-secondary") -%}
 <div class="navbar-item">
     <div class="buttons">
