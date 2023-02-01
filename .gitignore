@@ -6,3 +6,7 @@ secrets/*
 .vscode/*
 
 secrets/ssq.cfg
+__pycache__/*
+*cache*
+
+*__pycache__*

@@ -3,4 +3,7 @@
 {% block sidebar %}
     {% include "jinja_macros/sidebar.html" %}
 {% endblock %}
-{% block listings %}{{ list_container(items) }}{% endblock %}
+{% block listings %}
+    <p class="title is-3">Items in category : {{ category }}</p>
+    {{ list_container(items) }}
+{% endblock %}
