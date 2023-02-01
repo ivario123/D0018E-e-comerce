@@ -1,5 +1,5 @@
 {% macro listing(product) -%}
-<div class="card column is-9 is-center has-background-light">
+<div class="card column is-9 is-center has-background-light" style="max-width:10em; min-width:10em;">
     <div class="card-header center">
         <img class="center" src="{{ product.image }}" alt="Image for : {{product.name}}" width="124px">
     </div>
@@ -8,7 +8,6 @@
         <h3>
             <b>{{ product.name }}</b>
         </h3>
-        <!--<p>{{ product.description }}</p>-->
         <p class="price"> Price = {{ product.price }}</p>
 
     </div>

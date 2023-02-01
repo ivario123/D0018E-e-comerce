@@ -5,31 +5,12 @@ these endpoints include login, logout and register
 """
 
 
-from flask_login import (
-    LoginManager,
-    login_user,
-    logout_user,
-    login_required,
-    current_user,
-)
+from flask_login import LoginManager, logout_user, login_required
 from flask import Blueprint, request, redirect, url_for, render_template, session
 import require as require
-from result import Result, Ok, Error, to_error
-from models import User
 from sql.auth import *
-from require import response, fields
-
-# Create nice error messages
-NoSuchUser = to_error(
-    "No such user", "The login request was for a user that does not exist"
-)
-WrongPassword = to_error(
-    "Wrong password", "The login request was for a user that does not exist"
-)
-InvalidLogin = to_error(
-    "Invalid login", "The login request was for a user that does not exist"
-)
-# ---
+from require import response
+from auth.internal import *
 
 login_manager = LoginManager()
 
@@ -46,25 +27,6 @@ def unauthorized():
     return redirect(url_for("login.login"))
 
 
-@require.fields(request)
-def handle_login(email, password):
-    def valid_login(user):
-        if not login_user(user):
-            return Error((InvalidLogin, 400))
-        res = get_user_by_email(email)
-        if res is None:
-            session["logged_in"] = False
-            return Error((NoSuchUser, 400))
-        session["email"] = res.email
-        session["admin"] = res.role == "admin"
-        session["logged_in"] = True
-        return Ok(res)
-
-    return auth_user(email, password).match(
-        ok=lambda user: valid_login(user), error=lambda x: Error(x)
-    )
-
-
 @auth_blueprint.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
@@ -76,14 +38,6 @@ def login():
     else:
         session["title"] = "Login"
         return render_template("login.html")
-
-
-@require.fields(request)
-def handle_register(username, email, password, name, surname) -> Result:
-    u = User(
-        username=username, email=email, name=name, surname=surname, password=password
-    )
-    return add_new_user(u)
 
 
 @auth_blueprint.route("/register", methods=["GET", "POST"])

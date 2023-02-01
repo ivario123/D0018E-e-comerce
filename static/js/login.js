@@ -3,9 +3,7 @@ function get_el(id) {
 }
 function select_elements(elements) {
     var ret = []
-    console.log(elements)
     for (var i = 0; i < elements.length; i++) {
-        console.log(elements[i])
         ret.push(document.getElementById(elements[i]).value)
     }
     return ret
@@ -36,7 +34,6 @@ function validate_email() {
 function submit() {
     var email = get_el("email").value;
     var pass = get_el("pass").value;
-    console.log("Login attempt: " + email + " " + pass);
 
     fetch("/login", {
         method: "POST",
@@ -48,7 +45,6 @@ function submit() {
             "password": pass
         })
     }).then(response => {
-        console.log(response)
         if (response.status == 200) {
             window.location.href = "/"
         }
@@ -74,7 +70,6 @@ function register() {
             "surname": surname,
         })
     }).then(response => {
-        console.log(response)
         if (response.status == 200) {
             window.location.href = "/"
         }
