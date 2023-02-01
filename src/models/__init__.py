@@ -5,3 +5,5 @@ schemas.
 
 from .user import User
 from .item import Item
+from .category import CategoryGroup
+from .category import Category
