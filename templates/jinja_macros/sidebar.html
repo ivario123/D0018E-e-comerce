@@ -9,40 +9,80 @@
         <a href="/user/orders">Orders</a>
     </li>
 </ul>
-<div class="control">
-    <p class="menu-label">
-        <b>Categories</b>
-    </p>
-    <p class="control">
-        <a class="button is-primary" onclick="filter_categories()">
-            <span>Filter</span>
-        </a>
-    </p>
-</div>
 
-{% for group in category_groups %}
+
+
 <p class="menu-label">
-    {{group.name}}
+    <b>Categories</b>
 </p>
-<div class="control">
-    {% for category in group.categories %}
-    <label class="checkbox">
-        <input type="checkbox" id="{{category.name}}" onclick="update_category('{{category.name}}')" {% if
-            category.selected %} checked {%endif%}>
-        {{category.name}}
-    </label>
-    <br>
-    {% endfor %}
+
+<p class="control">
+    <a class="button is-primary" onclick="filter_categories()">
+        <span>Filter</span>
+    </a>
+</p>
+{% for group in category_groups %}
+<div>
+    <div class="control" id="{{group.name}}">
+        <p class="menu-label has-icon-left" onclick="fold_away('{{group.name}}')" id="header">
+            <span class="icon is-small is-left" id="{{group.name}}_icon">
+                <i class="fa fa-caret-right"></i>
+            </span>
+            {{group.name}}
+        </p>
+    </div>
+    <div id="category_group_{{group.name}}" style="display: none;">
+        <ul class="menu-list has-text-centered">
+            {% for category in group.categories %}
+            <li>
+                <a id="{{category.name}}_link" onclick="update_category('{{category.name}}')">{{category.name}}</a>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
 </div>
 {% endfor %}
+
+
+
+
+
+
 <script>
+    function fold_away(id) {
+        var x = document.getElementById("category_group_" + id);
+        var icon = document.getElementById(id + "_icon");
+        console.log(icon);
+        if (x.style.display === "none") {
+            x.style.display = "block";
+            icon.innerHTML = "<i class='fa fa-caret-down'></i>";
+
+        } else {
+            x.style.display = "none";
+            icon.innerHTML = "<i class='fa fa-caret-right'></i>";
+        }
+    }
+
     let categories = [{% for category in selected_categories %}"{{category}}"{% if not loop.last %}, {% endif %} {% endfor %}];
+    onload = function () {
+        categories.forEach(function (category) {
+            let el = document.getElementById(category + "_link");
+            let container = el.parentElement.parentElement.parentElement;
+            let header = container.parentElement.children[0].children[0];
+            let icon = header.children[0];
+            icon.innerHTML = "<i class='fa fa-caret-down'></i>";
+            container.style.display = "block";
+            el.classList.add("has-text-primary");
+        });
+    };
     function update_category(category) {
         if (!categories.includes(category)) {
+            document.getElementById(category + "_link").classList.add("has-text-primary");
             categories.push(category);
         }
         else {
             categories.splice(categories.indexOf(category), 1);
+            document.getElementById(category + "_link").classList.remove("has-text-primary");
         }
     }
     function filter_categories() {
