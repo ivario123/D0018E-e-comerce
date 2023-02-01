@@ -107,7 +107,6 @@ def get_item_by_search_SN(SN, sql_query=None, connection=None, cursor=None):
     cursor.execute(
         "SELECT ProductName,ProductDescription,Price,Inventory,Image,SN FROM PRODUCT WHERE SN=%s;",(SN,))
     result = cursor.fetchall()
-    print(result)
     if result:
         return [item_from_sql(item) for item in result]
     else:
@@ -121,7 +120,6 @@ def get_item_by_search_name(name, sql_query=None, connection=None, cursor=None):
     cursor.execute(
         "SELECT ProductName,ProductDescription,Price,Inventory,Image,SN FROM PRODUCT WHERE ProductName LIKE %s;",(name,))
     result = cursor.fetchall()
-    print(result)
     if result:
         return [item_from_sql(item) for item in result]
     else:

@@ -21,11 +21,6 @@ def fetch_items(search_input):
 @search_blueprint.route("/search", methods =["GET", "POST"])
 def search_database():
     if request.method == "POST":
-        print("clicked")
-        print("clicked")
-        print("clicked")
-        print("clicked")
-
         session["items"] = fetch_items()
         session["search_check"] = True
         return response(200)
