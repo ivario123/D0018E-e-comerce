@@ -10,7 +10,9 @@ search_blueprint = Blueprint("search",__name__,template_folder="../templates")
 @require.fields(request)
 def fetch_items(search_input):
     if not search_input:
-        return render_template("index.html", user = current_user, items=[])
+        items = get_all_items()
+        category_groups = super_categories_and_sub()
+        return render_template("index.html", user = current_user, items=items, category_groups=category_groups)
     search_input = '%' + search_input + '%'
     items_searched = get_item_by_search_name(search_input)
     if items_searched is None:
@@ -25,9 +27,11 @@ def search_database():
         session["search_check"] = True
         return response(200)
     if request.method == "GET":
-        # makes sure that the template returned matches searched, if the url was just typed then return empty search
+        # makes sure that the template returned matches searched, if the url was just typed then return all products
         if session["search_check"]:
             session["search_check"] = False
             return session["items"]
         else:
-            return render_template("index.html", user = current_user, items = [])
+            items = get_all_items()
+            category_groups = super_categories_and_sub()
+            return render_template("index.html", user = current_user, items=items, category_groups=category_groups)
