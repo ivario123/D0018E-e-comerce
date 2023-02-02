@@ -35,11 +35,13 @@
                             {% endblock %}
                         </aside>
                     </div>
+                    {% block right_col %}
                     <div class="column is-9" style="max-height:fit-content; overflow-x:hidden; overflow-y:scroll; ">
                         {% block listings %}
 
                         {% endblock %}
                     </div>
+                    {% endblock %}
                 </div>
                 {% endblock %}
             </div>

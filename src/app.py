@@ -38,7 +38,6 @@ def index():
     )
 
 @app.route("/product_info/<int:serial_number>", methods=["POST", "GET"])
-@login_required
 def product_info(serial_number):
     if session.get("logged_in", False) == False:
         return redirect(url_for("login.login"))
