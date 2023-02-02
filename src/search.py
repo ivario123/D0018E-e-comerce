@@ -1,4 +1,4 @@
-from flask import Blueprint, request, render_template, session
+from flask import Blueprint, request, render_template, session, redirect, url_for
 import require as require
 from require import response
 from flask_login import current_user
@@ -10,9 +10,7 @@ search_blueprint = Blueprint("search",__name__,template_folder="../templates")
 @require.fields(request)
 def fetch_items(search_input):
     if not search_input:
-        items = get_all_items()
-        category_groups = super_categories_and_sub()
-        return render_template("index.html", user = current_user, items=items, category_groups=category_groups)
+        return redirect(url_for('index'))   
     search_input = '%' + search_input + '%'
     items_searched = get_item_by_search_name(search_input)
     if items_searched is None:
@@ -32,6 +30,4 @@ def search_database():
             session["search_check"] = False
             return session["items"]
         else:
-            items = get_all_items()
-            category_groups = super_categories_and_sub()
-            return render_template("index.html", user = current_user, items=items, category_groups=category_groups)
+            return redirect(url_for('index'))
