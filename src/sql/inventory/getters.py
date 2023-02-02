@@ -63,6 +63,15 @@ def get_item_by_name(ProductName, sql_query=None, connection=None, cursor=None):
     else:
         return None
 
+@ ssql_builder.select(ssql, table_name="PRODUCT", select_fields=["ProductName", "ProductDescription", "Price", "Inventory", "Image", "SN"])
+def get_item_by_serial_number(SN, sql_query=None, connection=None, cursor=None):
+    cursor.execute(
+        sql_query, (SN,))
+    result = cursor.fetchall()
+    if result:
+        return [item_from_sql(item) for item in result]
+    else:
+        return None
 
 @ ssql_builder.base(ssql)
 def get_all_super_categories(connection=None, cursor=None):

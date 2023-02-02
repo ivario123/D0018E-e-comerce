@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% from "jinja_macros/product_listing.html" import list_container %}
+{% from "jinja_macros/product_listing.html" import listing %}
+
+<!-- We want to replace the sidebar -->
+{% block sidebar %}
+    <p class="menu-label">
+        <b>Profile</b>
+    </p>
+    <ul class="menu-list">
+        <li>
+            <a href="/user/profile">Profile</a>
+        </li>
+        <li>
+            <a href="/user/orders">Orders</a>
+        </li>
+    </ul>
+{% endblock %}
+<!-- The right column, we don't need to rebuild the entire thing -->
+{% block right_col %}
+    <div class="column is-9"
+         style="max-height:fit-content;
+                overflow-x:hidden;
+                overflow-y:auto">
+        <p style="font-size:30px; text-align:center;">
+            <strong >Product information about {{ item.name }}</strong>
+        </p>
+        <div style="display: flex;">
+            <div class="image" style="flex: 1;">
+                <img class="center"
+                     src="{{ item.image }}"
+                     alt="Image for : {{ item.name }}">
+            </div>
+            <div class="info" style="flex: 4; padding-left: 5%;">
+                <ul>
+                    <li>Price: {{ item.price }} kr</li>
+                    <li>Stock: {{ item.stock }}</li>
+                </ul>
+                <div class="field has-addons" style="padding-top: 2%">
+                    <div class="control">
+                        <input class="input" type="text" placeholder="Amount to buy">
+                    </div>
+                    <div class="control">
+                        <a class="button is-info">Buy</a>
+                    </div>
+                </div>
+                <p style="padding-top: 2%;">{{ item.description }}</p>
+            </div>
+        </div>
+    </div>
+{% endblock %}
