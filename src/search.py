@@ -10,7 +10,7 @@ search_blueprint = Blueprint("search",__name__,template_folder="../templates")
 @require.fields(request)
 def fetch_items(search_input):
     if not search_input:
-        return redirect(url_for('index'))   
+        return None
     search_input = '%' + search_input + '%'
     items_searched = get_item_by_search_name(search_input)
     if items_searched is None:
@@ -22,7 +22,8 @@ def fetch_items(search_input):
 def search_database():
     if request.method == "POST":
         session["items"] = fetch_items()
-        session["search_check"] = True
+        if session["items"] is not None:
+            session["search_check"] = True
         return response(200)
     if request.method == "GET":
         # makes sure that the template returned matches searched, if the url was just typed then return all products
