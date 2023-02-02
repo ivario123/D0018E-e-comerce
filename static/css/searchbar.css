@@ -1,0 +1,37 @@
+.search {}
+
+.search input {
+    outline: 0;
+    border-bottom: 1px solid grey;
+    border-left: 1px solid grey;
+    color: black
+}
+
+.search input:hover {
+    border: 0;
+    border-bottom: 1px solid #ba825d;
+    border-left: 1px solid #ba825d;
+}
+
+.search input:focus {
+    border: 0;
+    border-bottom: 1px solid #ff6600;
+    border-left: 1px solid #ff6600;
+}
+
+.search_button {
+    border-bottom: 1px grey solid;
+    border-right: 1px grey solid
+}
+
+.search_button:hover {
+    border: 0;
+    border-bottom: 1px #ba825d solid;
+    border-right: 1px #ba825d solid
+}
+
+.search_button:focus {
+    border: 0;
+    border-bottom: 1px #ff6600 solid;
+    border-right: 1px #ff6600 solid
+}
