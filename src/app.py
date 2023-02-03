@@ -6,7 +6,8 @@ from auth import auth_blueprint, login_manager
 from search import search_blueprint
 from admin import admin
 from category import category
-from flask import Flask, render_template, request, redirect, url_for, flash, session
+from product import product_blueprint
+from flask import Flask, render_template, session
 from flask_login import current_user, login_required
 from sql.inventory.getters import *
 
@@ -24,6 +25,7 @@ app.register_blueprint(search_blueprint)
 app.register_blueprint(auth_blueprint)
 app.register_blueprint(admin)
 app.register_blueprint(category)
+app.register_blueprint(product_blueprint)
 app.login_manager = login_manager
 
 
@@ -39,21 +41,7 @@ def index():
         "index.html", user=current_user, items=items, category_groups=category_groups
     )
 
-@app.route("/product_info/<int:serial_number>", methods=["POST", "GET"])
-@login_required
-def product_info(serial_number):
-    session["title"] = "Product information"
-    category_groups = super_categories_and_sub()
-    items = get_all_items()
-    item = get_item_by_serial_number(serial_number)[0]
-    print("<app.route /product_info> Clicked product info for: ", item.name)
-
-    return render_template("product_info.html", user=current_user, item=item, items=items, category_groups=category_groups)
 
 if __name__ == "__main__":
-    import random
-
-    # Generate a random secret key, resetting session every time
-    app.secret_key = ["x" for x in range(0, random.randint(0, 100))]
     app.debug = True
     app.run(host="0.0.0.0", port=5000)

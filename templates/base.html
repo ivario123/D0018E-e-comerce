@@ -1,54 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
-<!-- 
+    <!-- 
 
     This is based on the bulma documentation, which can be found here:
     https://bulma.io/documentation/ 
 
 -->
-
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <title>{{session["title"]}}</title>
-    {% block head %}
-
-    {% endblock %}
-</head>
-
-<body class="has-background-grey-lighter">
-    <div class="hero has-background-grey-lighter is-fullheight">
-        <div class="hero-head">
-            {% include "jinja_macros/navbar.html" %}
-        </div>
-        <div class="hero-body" style="min-height: 100%;">
-            <div class="container" style="min-height: 100%;">
-                {% block content %}
-                <div class="columns">
-                    <div class="column is-3 is-fixed center">
-                        <aside class="menu is-centered">
-                            {%block sidebar %}
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet"
+              href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+        <link rel="stylesheet"
+              href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"
+              integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w=="
+              crossorigin="anonymous"
+              referrerpolicy="no-referrer"/>
+        <title>{{ session["title"] }}</title>
+        {% block head %}{% endblock %}
+    </head>
+    <body class="has-background-grey-lighter">
+        <div class="hero has-background-grey-lighter is-fullheight">
+            <div class="hero-head">{% include "jinja_macros/navbar.html" %}</div>
+            <div class="hero-body" style="min-height: 100%;">
+                <div class="container" style="min-height: 100%;">
+                    {% block content %}
+                        <div class="columns">
+                            <div class="column is-3 is-fixed center">
+                                <aside class="menu is-centered">
+                                    {% block sidebar %}{% endblock %}
+                                </aside>
+                            </div>
+                            {% block right_col %}
+                                <div class="column is-9"
+                                     style="max-height:fit-content;
+                                            overflow-x:hidden;
+                                            overflow-y:scroll">
+                                    {% block listings %}{% endblock %}
+                                </div>
                             {% endblock %}
-                        </aside>
-                    </div>
-                    {% block right_col %}
-                    <div class="column is-9" style="max-height:fit-content; overflow-x:hidden; overflow-y:scroll; ">
-                        {% block listings %}
-
-                        {% endblock %}
-                    </div>
+                        </div>
                     {% endblock %}
                 </div>
-                {% endblock %}
-            </div>
-            <div class="columns">
+                <div class="columns"></div>
             </div>
         </div>
-    </div>
-</body>
-
+    </body>
 </html>
