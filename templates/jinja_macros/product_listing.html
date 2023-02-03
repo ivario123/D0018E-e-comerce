@@ -10,6 +10,11 @@
                     <br/>
                 </b>
             {% endfor %}
+{% macro listing(product) -%}
+<div class="card column is-9 is-center has-background-light" style="max-width:10em; min-width:10em;">
+    <a href="/product/info/{{product.serial_number}}" style="color:black;">
+        <div class="card-header center">
+            <img class="center" src="{{ product.image }}" alt="Image for : {{product.name}}" width="124px">
         </div>
     {%- endmacro -%}
     {% macro listing(product) -%}

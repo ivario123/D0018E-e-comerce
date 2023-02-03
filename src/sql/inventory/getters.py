@@ -28,6 +28,23 @@ def item_from_sql(item):
     )
 
 
+@ssql_builder.select(ssql, "REVIEW", ["Rating,Text,Email"])
+def get_reviews_for(sn, sql_query=None, connection=None, cursor=None):
+    # Gets all the reviews for a given product,
+    cursor.execute(sql_query, (sn,))
+
+    def get_uname(email):
+        sql_query = "SELECT UserName FROM USER WHERE Email=%s"
+        cursor.execute(sql_query, (email,))
+        return cursor.fetchone()[0]
+    ret = cursor.fetchall()
+    if not ret:
+        connection.rollback()
+        return []
+
+    return [Review.from_sql(x, get_uname(x[2])) for x in ret]
+
+
 @ssql_builder.base(ssql)
 def get_average_review_for(SN, connection=None, cursor=None):
     sql_query = "SELECT ROUND(AVG(Rating)) FROM REVIEW WHERE SN=%s;"
