@@ -55,6 +55,44 @@
          style="max-height:fit-content;
                 overflow-x:hidden;
                 overflow-y:auto">
+        <article class="media">
+            <figure class="media-left">
+                <a href="/product/info/{{ item.serial_number }}" style="color:black;">
+                    <img class="center"
+                         src="{{ item.image }}"
+                         alt="Image for : {{ item.name }}"
+                         style="max-height:50em;
+                                max-width:12em;
+                                height:auto;
+                                width:auto">
+                </a>
+            </figure>
+            <div class="media-content">
+                <div class="content">
+                    <a href="/product/info/{{ item.serial_number }}" style="color:black;">
+                        <div class="content">
+                            <h3>
+                                <strong >{{ item.name }}</strong>
+                            </h3>
+                            <p class="price">Price = {{ item.price }}</p>
+                        </div>
+                    </a>
+                </div>
+                <nav class="level is-mobile">
+                    <div class="level-left">
+                        <a class="level-item">
+                            <span class="icon is-small"><i class="fas fa-reply"></i></span>
+                        </a>
+                        <a class="level-item">
+                            <span class="icon is-small"><i class="fas fa-retweet"></i></span>
+                        </a>
+                        <a class="level-item">
+                            <span class="icon is-small"><i class="fas fa-heart"></i></span>
+                        </a>
+                    </div>
+                </nav>
+            </div>
+        </article>
         <p style="font-size:30px; text-align:center;">
             <strong >Product information about {{ item.name }}</strong>
         </p>
