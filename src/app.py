@@ -35,6 +35,9 @@ def index():
     session["title"] = "D0018E - Wine Shop"
     category_groups = super_categories_and_sub()
     items = get_all_items()
+    for item in items:
+        item.add_rating(get_average_review_for(item.serial_number))
+
     if items is None:
         items = []
     return render_template(
