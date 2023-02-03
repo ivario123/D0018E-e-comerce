@@ -2,6 +2,16 @@ number_of_stars = 0;
 function submit_review(id) {
     let review_field = document.getElementsByClassName("textarea")[0];
     let review = review_field.value;
+    // Reviews need to be valid
+    if (review === "") {
+        alert("A review needs to have text");
+        return
+    }
+    if (number_of_stars === 0) {
+        alert("Number of stars need to be larger than 0");
+        return
+    }
+    // Send data to the server
     fetch("/product/review/new", {
         method: "POST",
         headers: {
