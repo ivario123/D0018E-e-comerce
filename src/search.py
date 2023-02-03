@@ -23,7 +23,7 @@ def search_database():
     if request.method == "POST":
         session["items"] = fetch_items()
         if session["items"] is False:
-            session["search_check"] = True
+            session["search_check"] = False
         return response(200)
     if request.method == "GET":
         # makes sure that the template returned matches searched, if the url was just typed then return all products
