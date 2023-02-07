@@ -15,6 +15,8 @@ def fetch_items(search_input):
     items_searched = get_item_by_search_name(search_input)
     if items_searched is None:
         items_searched = []
+    for item in items_searched:
+        item.add_rating(get_average_review_for(item.serial_number))
     return render_template("index.html", user = current_user, items=items_searched)
     
 

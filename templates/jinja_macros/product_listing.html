@@ -1,39 +1,56 @@
-{% macro listing(product) -%}
-<div class="card column is-9 is-center has-background-light" style="max-width:10em; min-width:10em;">
-    <a href="/product/info/{{product.serial_number}}" style="color:black;">
-        <div class="card-header center">
-            <img class="center" src="{{ product.image }}" alt="Image for : {{product.name}}" width="124px">
+{%- macro rating(ProductRating) -%}
+    <div class="control" style="padding-bottom:2em;">
+        {% for i in range(0,5) %}
+            {% if i < ProductRating %}
+                <b style="color:gold;">
+                {% else %}
+                    <b style="color:black;">
+                    {% endif %}
+                    <span class="fa fa-star star"></span>
+                    <br/>
+                </b>
+            {% endfor %}
         </div>
-
-        <div class="card-content">
-            <h3>
-                <b>{{ product.name }}</b>
-            </h3>
-            <p class="price"> Price = {{ product.price }}</p>
-
-        </div>
-    </a>
-</div>
-{%- endmacro %}
-
-{% macro list_container(products) -%}
-{% set ns = namespace(counter=0) %}
-<div class="tile has-background-grey-lighter is-ancestor is-centered center">
-    <div class="tile is-vertical is-fullwidth">
-        {% for product in products %}
-        {% if ns.counter % 4 == 0 %}
-        <div class="tile center">
-            <div class="tile  is-parent">
-                {% endif %}
-                <div class="tile is-child">
-                    {{ listing(product) }}
-                    {% set ns.counter = ns.counter + 1 %}
+    {%- endmacro -%}
+    {% macro listing(product) -%}
+        <div class="card column is-9 is-center has-background-light"
+             style="max-width:13em;
+                    min-width:13em">
+            <a href="/product/info/{{ product.serial_number }}" style="color:black;">
+                <div class="card-header center">
+                    {{ rating(product.rating)}}
+                    <img class="center"
+                         src="{{ product.image }}"
+                         alt="Image for : {{ product.name }}"
+                         width="124px">
                 </div>
-                {% if ns.counter % 4 == 0 %}
+                <div class="card-content">
+                    <h3>
+                        <b>{{ product.name }}</b>
+                    </h3>
+                    <p class="price">Price = {{ product.price }}</p>
+                </div>
+            </a>
+        </div>
+    {%- endmacro %}
+    {% macro list_container(products) -%}
+        {% set ns = namespace(counter=0) %}
+        <div class="tile has-background-grey-lighter is-ancestor is-centered center">
+            <div class="tile is-vertical is-fullwidth">
+                {% for product in products %}
+                    {% if ns.counter % 4 == 0 %}
+                        <div class="tile center">
+                            <div class="tile  is-parent">
+                            {% endif %}
+                            <div class="tile is-child">
+                                {{ listing(product) }}
+                                {% set ns.counter = ns.counter + 1 %}
+                            </div>
+                            {% if ns.counter % 4 == 0 %}
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
             </div>
         </div>
-        {% endif %}
-        {% endfor %}
-    </div>
-</div>
-{%- endmacro %}
+    {%- endmacro %}
