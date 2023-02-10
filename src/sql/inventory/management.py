@@ -7,6 +7,12 @@ from .. import ssql
 from ssql_builder import SSqlBuilder as ssql_builder
 
 
+@ssql_builder.insert(ssql, "REVIEW")
+def create_review(SN, Text, Rating, Email, sql_query=None, connection=None, cursor=None):
+    cursor.execute(sql_query, (SN, Text, Rating, Email,))
+    return cursor.rowcount != 0
+
+
 @ssql_builder.insert(ssql, "PRODUCT")
 def create_item(ProductName, ProductDescription, Price, Image, Inventory, sql_query=None, connection=None, cursor=None):
     """
