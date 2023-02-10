@@ -1,7 +1,40 @@
 {% extends "base.html" %}
+{% block head %}<script src="../../static/js/review.js"></script>{% endblock %}
 {% from "jinja_macros/product_listing.html" import list_container %}
 {% from "jinja_macros/product_listing.html" import listing %}
-
+{%- macro star() -%}
+    <span class="fa fa-star fa-2xl star"></span>
+{%- endmacro -%}
+{%- macro rating() -%}
+    <div class="control" style="padding: 1em; padding-bottom:2em;">
+        {% for i in range(0,5) %}
+            <a style="color:black" onclick="stars({{ i+1 }})" id="star{{ i+1 }}">{{ star()}}</a>
+        {% endfor %}
+    </div>
+{%- endmacro -%}
+{%- macro review(data) -%}
+    <div class="card">
+        <header class="card-header">
+            <p class="card-header-title">{{ data.username }}</p>
+            <div class="control" style="padding: 1em; padding-bottom:2em;">
+                <div>
+                    {% for i in range(0,5) %}
+                        {% if i < data.rating %}
+                            <b style="color:gold;">
+                                {{ star()}}
+                            </b>
+                        {% else %}
+                            <b style="color:black;">
+                                {{ star()}}
+                            </b>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </header>
+        <div class="card-content">{{ data.text }}</div>
+    </div>
+{%- endmacro -%}
 <!-- We want to replace the sidebar -->
 {% block sidebar %}
     <p class="menu-label">
@@ -47,5 +80,36 @@
                 <p style="padding-top: 2%;">{{ item.description }}</p>
             </div>
         </div>
-    </div>
-{% endblock %}
+        <hr style="border:0;
+                   border-top: 1px dotted black"
+            class="has-background-grey-lighter"/>
+        <div style="padding-top: 2em;">
+            <div class="field">
+                <label class="label">Add a review</label>
+                {{ rating() }}
+                <div class="control">
+                    <textarea class="textarea" placeholder="Your perfect review here"></textarea>
+                </div>
+            </div>
+            <div class="field is-grouped">
+                <div class="control">
+                    <button class="button is-link"
+                            onclick="submit_review({{ item.serial_number }})">Submit</button>
+                </div>
+                <div class="control">
+                    <button class="button is-link is-light" onclick="window.location.href = '/'">Cancel</button>
+                </div>
+            </div>
+        </div>
+        <div style="padding-top: 2em;">
+            <p style="font-size:30px; text-align:center; padding-bottom:1em;">
+                <strong>Reviews</strong>
+            </p>
+            {% for r in reviews %}
+                {{ review(r) }}
+                <hr style="border: 0;
+                           border-top:1px dotted black"
+                    class="has-background-grey-lighter"/>
+            {% endfor %}
+        </div>
+    {% endblock %}

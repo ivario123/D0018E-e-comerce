@@ -1,5 +1,6 @@
 from models import Item
 from models.category import Category, CategoryGroup
+from models.review import Review
 from .. import ssql
 from ssql_builder import SSqlBuilder as ssql_builder
 from typing import List
@@ -25,6 +26,33 @@ def item_from_sql(item):
         image=item[4],
         serial_number=item[5]
     )
+
+
+@ssql_builder.base(ssql)
+def get_average_review_for(SN, connection=None, cursor=None):
+    sql_query = "SELECT ROUND(AVG(Rating)) FROM REVIEW WHERE SN=%s;"
+    cursor.execute(sql_query, (SN,))
+    ret = cursor.fetchone()
+    if ret:
+        return ret[0]
+    return 0
+
+
+@ssql_builder.select(ssql, "REVIEW", ["Rating,Text,Email"])
+def get_reviews_for(sn, sql_query=None, connection=None, cursor=None):
+    # Gets all the reviews for a given product,
+    cursor.execute(sql_query, (sn,))
+
+    def get_uname(email):
+        sql_query = "SELECT UserName FROM USER WHERE Email=%s"
+        cursor.execute(sql_query, (email,))
+        return cursor.fetchone()[0]
+    ret = cursor.fetchall()
+    if not ret:
+        connection.rollback()
+        return []
+
+    return [Review.from_sql(x, get_uname(x[2])) for x in ret]
 
 
 @ssql_builder.base(ssql)
@@ -63,6 +91,7 @@ def get_item_by_name(ProductName, sql_query=None, connection=None, cursor=None):
     else:
         return None
 
+
 @ ssql_builder.select(ssql, table_name="PRODUCT", select_fields=["ProductName", "ProductDescription", "Price", "Inventory", "Image", "SN"])
 def get_item_by_serial_number(SN, sql_query=None, connection=None, cursor=None):
     cursor.execute(
@@ -72,6 +101,7 @@ def get_item_by_serial_number(SN, sql_query=None, connection=None, cursor=None):
         return [item_from_sql(item) for item in result]
     else:
         return None
+
 
 @ ssql_builder.base(ssql)
 def get_all_super_categories(connection=None, cursor=None):
@@ -108,18 +138,20 @@ def super_categories_and_sub(connection=None, cursor=None):
         group.categories = super_cats[group.name]
     return category_groups
 
+
 @ssql_builder.select(ssql, table_name="PRODUCT", select_fields=["ProductName", "ProductDescription", "Price", "Inventory", "Image", "SN"])
 def get_item_by_search_SN(SN, sql_query=None, connection=None, cursor=None):
     """
     Get an item by SN
     """
     cursor.execute(
-        "SELECT ProductName,ProductDescription,Price,Inventory,Image,SN FROM PRODUCT WHERE SN=%s;",(SN,))
+        "SELECT ProductName,ProductDescription,Price,Inventory,Image,SN FROM PRODUCT WHERE SN=%s;", (SN,))
     result = cursor.fetchall()
     if result:
         return [item_from_sql(item) for item in result]
     else:
         return None
+
 
 @ssql_builder.select(ssql, table_name="PRODUCT", select_fields=["ProductName", "ProductDescription", "Price", "Inventory", "Image", "SN"])
 def get_item_by_search_name(name, sql_query=None, connection=None, cursor=None):
@@ -127,7 +159,7 @@ def get_item_by_search_name(name, sql_query=None, connection=None, cursor=None):
     Get an item by name
     """
     cursor.execute(
-        "SELECT ProductName,ProductDescription,Price,Inventory,Image,SN FROM PRODUCT WHERE ProductName LIKE %s;",(name,))
+        "SELECT ProductName,ProductDescription,Price,Inventory,Image,SN FROM PRODUCT WHERE ProductName LIKE %s;", (name,))
     result = cursor.fetchall()
     if result:
         return [item_from_sql(item) for item in result]

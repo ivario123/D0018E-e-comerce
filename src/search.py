@@ -5,22 +5,33 @@ from flask_login import current_user
 from sql.auth import *
 from sql.inventory.getters import *
 
-search_blueprint = Blueprint("search",__name__,template_folder="../templates",url_prefix="/search")
+search_blueprint = Blueprint(
+    "search", __name__, template_folder="../templates")
 
+
+@require.fields(request)
 def fetch_items(search_input):
+    if not search_input:
+        return redirect(url_for('index'))
     search_input = '%' + search_input + '%'
     items_searched = get_item_by_search_name(search_input)
     if items_searched is None:
         items_searched = []
-    return render_template("index.html", user = current_user, items=items_searched)
-    
+    for item in items_searched:
+        item.add_rating(get_average_review_for(item.serial_number))
+    return render_template("index.html", user=current_user, items=items_searched)
 
-@search_blueprint.route("/<string:filter>", methods =["GET"])
-def search_database(filter):
-    return fetch_items(filter)
 
-# IF SEARCH IS EMPTY
-@search_blueprint.route("/", methods=["GET"])
-def empty_search():
-    items_searched = get_all_items()
-    return render_template("index.html", user = current_user, items=items_searched)
+@search_blueprint.route("/search", methods=["GET", "POST"])
+def search_database():
+    if request.method == "POST":
+        session["items"] = fetch_items()
+        session["search_check"] = True
+        return response(200)
+    if request.method == "GET":
+        # makes sure that the template returned matches searched, if the url was just typed then return all products
+        if session["search_check"]:
+            session["search_check"] = False
+            return session["items"]
+        else:
+            return redirect(url_for('index'))
