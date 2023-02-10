@@ -5,12 +5,9 @@ from flask_login import current_user
 from sql.auth import *
 from sql.inventory.getters import *
 
-search_blueprint = Blueprint("search",__name__,template_folder="../templates")
+search_blueprint = Blueprint("search",__name__,template_folder="../templates",url_prefix="/search")
 
-@require.fields(request)
 def fetch_items(search_input):
-    if not search_input:
-        return None
     search_input = '%' + search_input + '%'
     items_searched = get_item_by_search_name(search_input)
     if items_searched is None:
@@ -18,17 +15,12 @@ def fetch_items(search_input):
     return render_template("index.html", user = current_user, items=items_searched)
     
 
-@search_blueprint.route("/search", methods =["GET", "POST"])
-def search_database():
-    if request.method == "POST":
-        session["items"] = fetch_items()
-        if session["items"] is not None:
-            session["search_check"] = True
-        return response(200)
-    if request.method == "GET":
-        # makes sure that the template returned matches searched, if the url was just typed then return all products
-        if session["search_check"]:
-            session["search_check"] = False
-            return session["items"]
-        else:
-            return redirect(url_for('index'))
+@search_blueprint.route("/<string:filter>", methods =["GET"])
+def search_database(filter):
+    return fetch_items(filter)
+
+# IF SEARCH IS EMPTY
+@search_blueprint.route("/", methods=["GET"])
+def empty_search():
+    items_searched = get_all_items()
+    return render_template("index.html", user = current_user, items=items_searched)

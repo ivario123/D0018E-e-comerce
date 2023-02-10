@@ -11,22 +11,14 @@ function select_elements(elements) {
     return ret
 }
 
-function submit_search(){
+function submit_search() {
     var search = get_el("search").value;
     console.log(search);
+    if (search == '') {
+        window.location.href = "/"
+    }
+    else {
+        window.location.href = "/search/" + search
+    }
 
-    fetch("/search", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            "search_input": search
-        })
-    }).then(response => {
-        console.log(response)
-        if(response.status == 200){
-            window.location.href = "/search"
-        }
-    })
 }
