@@ -1,10 +1,30 @@
 {% extends "base.html" %}
 {% from "jinja_macros/product_listing.html" import list_container %}
-{%block head%}
 
-<script src="../static/js/inventory.js"></script>
+{%block head%}
+    <script src="../static/js/inventory.js"></script>
 {%endblock%}
+
 {% block sidebar %}
     {% include "jinja_macros/sidebar.html" %}
 {% endblock %}
-{% block listings %}{{ list_container(items) }}{% endblock %}
+
+{% block listings %}
+    {{ list_container(items) }}
+{% endblock %}
+
+{% block pages %}
+<nav class="pagination is-centered" role="navigation" aria-label="pagination">
+    <a class="pagination-previous">Previous</a>
+    <a class="pagination-next">Next page</a>
+    <ul class="pagination-list">
+      <li><a class="pagination-link is-current" aria-label="Goto page 1">1</a></li>
+      <li><a class="pagination-link" aria-label="Goto page 2">2</a></li>
+      <li><a class="pagination-link" aria-label="Goto page 3">3</a></li>
+      <li><span class="pagination-ellipsis">&hellip;</span></li>
+      <li><a class="pagination-link" aria-label="Page 5" aria-current="page">5</a></li>
+      <li><span class="pagination-ellipsis">&hellip;</span></li>
+      <li><a class="pagination-link" aria-label="Goto page 10">10</a></li>
+    </ul>
+</nav>
+{% endblock %}

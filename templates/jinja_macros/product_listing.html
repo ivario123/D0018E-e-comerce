@@ -12,9 +12,31 @@
             {% endfor %}
 {%- endmacro -%}
 {%- macro modal(product) -%}
+    <script>
+        // Script for closing the product information modal
+        document.addEventListener('DOMContentLoaded', () => {
+            function closeAllModals() {
+                (document.querySelectorAll('.modal') || []).forEach(($modal) => {
+                closeModal($modal);
+                });
+            }
+
+            (document.querySelectorAll('.modal-background, .modal-close, .modal-card-head .delete, .modal-card-foot .button') || []).forEach(($close) => {
+                const $target = $close.closest('.modal');
+
+                $close.addEventListener('click', () => {
+                    closeModal($target);
+                });
+            });
+        });
+    </script>
     <div class="modal" id="{{ product.name }}_modal">
         <div class="modal-background"></div>
         <div class="modal-card"style="border-radius: 1em;">
+            <header class="modal-card-head">
+                <p class="modal-card-title">Product information</p>
+                <button class="delete is-large" aria-label="close"></button>
+            </header>
             <section class="modal-card-body">
                 <article class="media">
                     <figure class="media-left">
@@ -32,9 +54,9 @@
                                 <div class="content">
                                     <div class="level is-mobile">
                                         <!-- These should be fetched from the db -->
-                                        <span class="tag is-link">Flaska: Some_flaska</span>
-                                        <span class="tag is-success">Druva: Some_druva</span>
-                                        <span class="tag is-primary">Färg: Some_färg</span>
+                                        <span class="tag is-link">Bottle: Some_bottle</span>
+                                        <span class="tag is-success">Grape: Some_grape</span>
+                                        <span class="tag is-primary">Colour: Some_colour</span>
                                     </div>
                                     <article class="message is-dark is-large">
                                         <div class="message-header">
@@ -50,7 +72,9 @@
             </section>
             <footer class="modal-card-foot has-text-centered"
                     style="justify-content:space-between">
-                <div>Pris : {{ product.price }} Kr/styck</div>
+                <div>In stock : {{ product.stock }}</div>    
+                <div>Price : {{ product.price }} Kr/bottle</div>
+                {% if product.stock > 0 %}
                 <div class="field has-addons">
                     <div class="controll">
                         <input type="number" min="1" class="input is-numerical">
@@ -59,6 +83,18 @@
                         <button class="button is-success is-pulled-right">Add to cart</button>
                     </div>
                 </div>
+                {% else %}
+                <fieldset disabled>
+                    <div class="field has-addons">
+                        <div class="controll">
+                            <input type="number" min="0" class="input is-numerical">
+                        </div>
+                        <div class="controll">
+                            <button class="button is-success is-pulled-right">Out of stock</button>
+                        </div>
+                    </div>
+                </fieldset>
+                {% endif %}
             </footer>
         </div>
     </div>
