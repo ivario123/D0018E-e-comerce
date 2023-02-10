@@ -1,0 +1,157 @@
+{%- macro cart() -%}
+    <script>
+        function remove(id){
+            let element = document.getElementById(id+"_basket");
+            let product_price =  Number(document.getElementById(id+"_orderd_price").innerHTML);
+            let ordered_amount =  Number(document.getElementById(id+"_ordered_amount").innerHTML);
+            let old_amount = document.getElementById("total_price").innerHTML;
+
+            document.getElementById("total_price").innerHTML -= product_price*ordered_amount;
+            document.getElementById("basket_size").innerHTML -= 1;
+            let parent = element.parentElement;
+            
+            element.parentElement.removeChild(element);
+            let base = window.location.origin;
+            
+            fetch(base+"/order/basket/update",{
+                method:"POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body:JSON.stringify({
+                    "ProductName":id,
+                    "Amount":0
+                })
+            }).then(response =>{
+                if (response.status == 200){
+                }
+                else{
+                    document.getElementById("total_price").innerHTML = old_amount;
+                    document.getElementById("basket_size").innerHTML += 1;
+                    parent.appendChild(element);
+                    alert("404 The sever might be down");
+                }
+            })
+        }
+        function update_element(id,direction){
+            let product_price =  Number(document.getElementById(id+"_orderd_price").innerHTML);
+            let ordered_amount =  document.getElementById(id+"_ordered_amount");
+            let total_price =  document.getElementById("total_price");
+            let old_total_price = total_price.innerHTML;
+            let old_ordered_amount = ordered_amount.innerHTML;
+            if(direction){ 
+                // Added one
+                total_price.innerHTML = Number(total_price.innerHTML)+product_price;
+                ordered_amount.innerHTML = Number(ordered_amount.innerHTML)+1;
+            }
+            else{
+                // Removed one
+                total_price.innerHTML = Number(total_price.innerHTML)-product_price;
+                ordered_amount.innerHTML = Number(ordered_amount.innerHTML)-1;
+            }
+            // Now we post the new number of elements in the basket
+            let base = window.location.origin;
+            fetch(base+"/order/basket/update",{
+                method:"POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body:JSON.stringify({
+                    "ProductName":id,
+                    "Amount":ordered_amount.innerHTML
+                })
+            }).then(response =>{
+                if (response.status == 200){
+                }
+                else{
+                    ordered_amount.innerHTML = old_ordered_amount;
+                    total_price.innerHTML = old_total_price;
+                    alert("404 The sever might be down");
+                }
+            })
+
+            if (Number(ordered_amount) === 0){
+                remove(id)
+            }
+
+            
+        }
+    </script>
+    {% set ns = namespace() %}
+    {% set ns.total_cost=0 %}
+    {% set ns.items = get_cart_for_user(session["email"]) %}
+    <script></script>
+    <div class="navbar-item has-dropdown is-hoverable">
+        <a class="navbar-link is-arrowless">
+            <span class="fa-layers fa-fw">
+                <i class="fa-solid fa-cart-shopping">
+                </i>
+                <span class="fa-layers-counter" id="basket_size">{{ ns.items|length }}</span>
+            </span>
+        </a>
+        <div class="navbar-dropdown is-right" style="padding: 1rem;">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>
+                            <abbr title="Position">Product</abbr>
+                        </th>
+                        <th>Qty</th>
+                        <th>Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in ns.items %}
+                        {% set ns.total_cost = ns.total_cost+item[0].price*item[1] %}
+                        {{ cart_element(item[0],item[1]) }}
+                    {% endfor %}
+                </tbody>
+            </table>
+            <div class="card-foot">
+                <div class="level is-mobile">
+                    <div>
+                        Total price :
+                        <b id="total_price">{{ ns.total_cost }}</b>
+                        Kr
+                    </div>
+                    <a class="button is-success">Checkout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{%- endmacro -%}
+{%- macro cart_element(product,amount) -%}
+    <tr id="{{ product.name }}_basket">
+        <th>
+            <div>
+                <img height="40" width="13" src="{{ product.image }}" alt="Image for : "/>
+                {{ product.name }}
+            </div>
+        </th>
+        <th>
+            <div class="level is-mobile">
+                <a style="color:black"
+                   onclick="update_element('{{ product.name }}',true)">
+                    <i class="fa-solid fa-plus"></i>
+                </a>
+                <p style="padding-left:1rem;
+                          padding-right:1rem"
+                   id="{{ product.name }}_ordered_amount">{{ amount }}</p>
+                <a style="color:black"
+                   onclick="update_element('{{ product.name }}',false)">
+                    <i class="fa-solid fa-minus"></i>
+                </a>
+            </div>
+        </th>
+        <th>
+            <p>
+                Price: <b id="{{ product.name }}_orderd_price">{{ product.price }}</b>Kr
+            </p>
+        </th>
+        <th>
+            <a style="color:black;" onclick="remove('{{ product.name }}')">
+                <i class="fa-regular fa-trash-can"></i>
+            </a>
+        </th>
+    </tr>
+{%- endmacro -%}

@@ -1,24 +1,24 @@
-{%block head%}
-<script src="../static/js/search.js"></script>
-{%endblock%}
-
-{% from "jinja_macros/form.html" import form_field,form_button%}
-
+{% from "jinja_macros/cart.html" import cart%}
+{% block head %}<script src="../static/js/search.js"></script>{% endblock %}
+{% from "jinja_macros/form.html" import form_field,form_button %}
 {%- macro navbar_button(title,url,class="is-secondary") -%}
-<div class="navbar-item">
-    <div class="buttons">
-        <div class="button {{ class }}">
-            <a href="{{ url }}">{{ title }}</a>
+    <div class="navbar-item">
+        <div class="buttons">
+            <div class="button {{ class }}">
+                <a href="{{ url }}">{{ title }}</a>
+            </div>
         </div>
     </div>
-</div>
 {%- endmacro %}
 <!-- More or less lifted from the guide on bulmas main page-->
-<nav class="navbar has-background-grey-lighter" role="navigation" aria-label="main navigation">
+<nav class="navbar has-background-grey-lighter"
+     role="navigation"
+     aria-label="main navigation">
     <div class="navbar-brand">
         <a class="navbar-item" href="/">
-            <img src="https://sb-web-ecommerce-cms.azureedge.net/4a51ce/globalassets/logo.svg?q=75&w=2000" width="112"
-                height="28" alt="Logo here" />
+            <img src="https://sb-web-ecommerce-cms.azureedge.net/4a51ce/globalassets/logo.svg?q=75&w=2000"
+                 height="300"
+                 alt="Logo here"/>
         </a>
     </div>
     <div id="navbarBasicExample" class="navbar-menu">
@@ -26,31 +26,19 @@
             <a href="/" class="navbar-item">Home</a>
             {% block navbar %}{% endblock %}
         </div>
-
         <!--TODO move search bar down a little-->
-        {% if session["logged_in"] %}
-        <div class="navbar-search has-background-grey-lighter">
-            <div class="field has-addons has-background-grey-lighter">
-                <div class="control has-background-grey-lighter search"> <input
-                        class="input has-background-grey-lighter has-text-black" id="search" placeholder="Search">
-                </div>
-                <div class="control" onclick="submit_search()"> <input id="search"
-                        class="button has-background-grey-lighter has-text-black has-border-bottom-right-radius search_button"
-                        type="submit" value="Search"> </div>
-            </div>
-        </div>
-        {% endif %}
-
+        {% if session["logged_in"] %}{% endif %}
         <div class="navbar-end">
+            {{cart()}}
             {% if session["admin"] %}{{ navbar_button("Admin","/admin") }}{% endif %}
             {% if session["logged_in"] %}
-            {{ navbar_button("Logout","/logout","is-primary") }}
+                {{ navbar_button("Logout","/logout","is-primary") }}
             {% else %}
-            {% if session["title"] == "Login" %}
-            {{ navbar_button("Register","/register",class="is-primary") }}
-            {% else %}
-            {{ navbar_button("Login","/login") }}
-            {% endif %}
+                {% if session["title"] == "Login" %}
+                    {{ navbar_button("Register","/register",class="is-primary") }}
+                {% else %}
+                    {{ navbar_button("Login","/login") }}
+                {% endif %}
             {% endif %}
         </div>
     </div>

@@ -3,7 +3,9 @@ from models.category import Category, CategoryGroup
 from models.review import Review
 from .. import ssql
 from ssql_builder import SSqlBuilder as ssql_builder
-from typing import List
+from typing import List, Tuple
+from mysql.connector.connection import MySQLConnection
+from mysql.connector.connection import MySQLCursor
 
 
 def item_from_sql(item):
@@ -73,7 +75,19 @@ def get_reviews_for(sn, sql_query=None, connection=None, cursor=None):
 
 
 @ssql_builder.base(ssql)
-def get_all_items_with_category(categories: List[str], connection=None, cursor=None):
+def get_cart_for_user(email: str, connection: MySQLConnection = None, cursor: MySQLCursor = None) -> List[Tuple[Item, int]]:
+    if not email:
+        return []
+    query = f"""SELECT PRODUCT.ProductName,PRODUCT.ProductDescription,PRODUCT.Price,PRODUCT.Inventory,PRODUCT.Image,PRODUCT.SN,BASKET.Amount FROM PRODUCT INNER JOIN BASKET ON PRODUCT.SN = BASKET.SN WHERE BASKET.Email=%s ;"""
+    cursor.execute(query, (email,))
+    result = cursor.fetchall()
+    if result:
+        return [(item_from_sql(x), x[-1]) for x in result]
+    return []
+
+
+@ssql_builder.base(ssql)
+def get_all_items_with_category(categories: List[str], connection: MySQLConnection = None, cursor: MySQLCursor = None):
     fmt = ",".join(['%s' for _ in categories])
     query = f"""SELECT ProductName,ProductDescription,Price,Inventory,Image,SN FROM PRODUCT WHERE SN IN
         (SELECT SN FROM CATEGORY_ASSIGN WHERE Category IN ({fmt}) GROUP BY SN HAVING COUNT(*)={len(categories)}) ORDER BY ProductName;"""
@@ -81,13 +95,14 @@ def get_all_items_with_category(categories: List[str], connection=None, cursor=N
         query, categories)
     result = cursor.fetchall()
     if result:
-        return [item_from_sql(item) for item in result]
+
+        ret = [item_from_sql(item) for item in result]
     else:
         return []
 
 
 @ ssql_builder.base(ssql)
-def get_all_items(connection=None, cursor=None):
+def get_all_items(connection: MySQLConnection = None, cursor: MySQLCursor = None):
     # Not using ssql_builder.select because we do not provide a where clause which is required by the select function
     cursor.execute(
         "SELECT ProductName,ProductDescription,Price,Inventory,Image,SN FROM PRODUCT;")
@@ -99,7 +114,7 @@ def get_all_items(connection=None, cursor=None):
 
 
 @ ssql_builder.select(ssql, table_name="PRODUCT", select_fields=["ProductName", "ProductDescription", "Price", "Inventory", "Image", "SN"])
-def get_item_by_name(ProductName, sql_query=None, connection=None, cursor=None):
+def get_item_by_name(ProductName, sql_query=None, connection: MySQLConnection = None, cursor: MySQLCursor = None):
     cursor.execute(
         sql_query, (ProductName,))
     result = cursor.fetchall()
@@ -110,7 +125,7 @@ def get_item_by_name(ProductName, sql_query=None, connection=None, cursor=None):
 
 
 @ ssql_builder.select(ssql, table_name="PRODUCT", select_fields=["ProductName", "ProductDescription", "Price", "Inventory", "Image", "SN"])
-def get_item_by_serial_number(SN, sql_query=None, connection=None, cursor=None):
+def get_item_by_serial_number(SN, sql_query=None, connection: MySQLConnection = None, cursor: MySQLCursor = None):
     cursor.execute(
         sql_query, (SN,))
     result = cursor.fetchall()
@@ -121,7 +136,7 @@ def get_item_by_serial_number(SN, sql_query=None, connection=None, cursor=None):
 
 
 @ ssql_builder.base(ssql)
-def get_all_super_categories(connection=None, cursor=None):
+def get_all_super_categories(connection: MySQLConnection = None, cursor: MySQLCursor = None):
     cursor.execute(
         "SELECT Name FROM SUPERCATEGORY;")
     result = cursor.fetchall()
@@ -132,7 +147,7 @@ def get_all_super_categories(connection=None, cursor=None):
 
 
 @ ssql_builder.base(ssql)
-def super_categories_and_sub(connection=None, cursor=None):
+def super_categories_and_sub(connection: MySQLConnection = None, cursor: MySQLCursor = None):
     cursor.execute(
         "SELECT Name FROM SUPERCATEGORY;")
     super = cursor.fetchall()
@@ -157,7 +172,7 @@ def super_categories_and_sub(connection=None, cursor=None):
 
 
 @ssql_builder.select(ssql, table_name="PRODUCT", select_fields=["ProductName", "ProductDescription", "Price", "Inventory", "Image", "SN"])
-def get_item_by_search_SN(SN, sql_query=None, connection=None, cursor=None):
+def get_item_by_search_SN(SN, sql_query=None, connection: MySQLConnection = None, cursor: MySQLCursor = None):
     """
     Get an item by SN
     """
@@ -171,7 +186,7 @@ def get_item_by_search_SN(SN, sql_query=None, connection=None, cursor=None):
 
 
 @ssql_builder.select(ssql, table_name="PRODUCT", select_fields=["ProductName", "ProductDescription", "Price", "Inventory", "Image", "SN"])
-def get_item_by_search_name(name, sql_query=None, connection=None, cursor=None):
+def get_item_by_search_name(name, sql_query=None, connection: MySQLConnection = None, cursor: MySQLCursor = None):
     """
     Get an item by name
     """
