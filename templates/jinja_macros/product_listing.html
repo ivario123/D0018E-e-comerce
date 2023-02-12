@@ -15,15 +15,12 @@
     <script>
         // Script for closing the product information modal
         document.addEventListener('DOMContentLoaded', () => {
-            function closeAllModals() {
-                (document.querySelectorAll('.modal') || []).forEach(($modal) => {
-                closeModal($modal);
-                });
+            function closeModal($el) {
+                $el.classList.remove('is-active');
             }
 
             (document.querySelectorAll('.modal-background, .modal-close, .modal-card-head .delete, .modal-card-foot .button') || []).forEach(($close) => {
                 const $target = $close.closest('.modal');
-
                 $close.addEventListener('click', () => {
                     closeModal($target);
                 });
@@ -72,8 +69,9 @@
             </section>
             <footer class="modal-card-foot has-text-centered"
                     style="justify-content:space-between">
-                <div>In stock : {{ product.stock }}</div>    
-                <div>Price : {{ product.price }} Kr/bottle</div>
+                <div style="text-align:left">
+                    In stock : {{ product.stock }} <br> Price : {{ product.price }} Kr/bottle
+                </div>    
                 {% if product.stock > 0 %}
                 <div class="field has-addons">
                     <div class="controll">
