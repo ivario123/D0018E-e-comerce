@@ -19,7 +19,7 @@
                 $el.classList.remove('is-active');
             }
 
-            (document.querySelectorAll('.modal-background, .modal-close, .modal-card-head .delete, .modal-card-foot .button') || []).forEach(($close) => {
+            (document.querySelectorAll('.modal-background, .modal-close, .modal-card-head .delete') || []).forEach(($close) => {
                 const $target = $close.closest('.modal');
                 $close.addEventListener('click', () => {
                     closeModal($target);
@@ -70,28 +70,18 @@
             <footer class="modal-card-foot has-text-centered"
                     style="justify-content:space-between">
                 <div style="text-align:left">
-                    In stock : {{ product.stock }} <br> Price : {{ product.price }} Kr/bottle
+                    In stock : {{ product.stock }} <br> Price : {{ product.price }} kr/bottle
                 </div>    
                 {% if product.stock > 0 %}
-                <div class="field has-addons">
-                    <div class="controll">
-                        <input type="number" min="1" class="input is-numerical">
-                    </div>
-                    <div class="controll">
-                        <button class="button is-success is-pulled-right">Add to cart</button>
-                    </div>
-                </div>
+                <button class="button is-primary is-medium">
+                    <a href="/product/info/{{ product.serial_number }}" style="color:black; padding-right: 5%;">
+                        Buy
+                    </a>
+                </button>
                 {% else %}
-                <fieldset disabled>
-                    <div class="field has-addons">
-                        <div class="controll">
-                            <input type="number" min="0" class="input is-numerical">
-                        </div>
-                        <div class="controll">
-                            <button class="button is-success is-pulled-right">Out of stock</button>
-                        </div>
-                    </div>
-                </fieldset>
+                <button class="button is-medium" title="Disabled button" style="padding-right: 5%;" disabled>
+                    Out of stock
+                </button>
                 {% endif %}
             </footer>
         </div>
