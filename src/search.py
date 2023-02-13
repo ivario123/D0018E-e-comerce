@@ -9,8 +9,6 @@ search_blueprint = Blueprint(
     "search", __name__, template_folder="../templates")
 
 def fetch_items(search_input):
-    print("inside fetch")
-    print(search_input)
     if not search_input:
         return redirect(url_for('index'))
     search_input = '%' + search_input + '%'
