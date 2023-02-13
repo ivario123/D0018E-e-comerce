@@ -36,6 +36,7 @@
     </div>
 {%- endmacro -%}
 <!-- We want to replace the sidebar -->
+{% block head %}<script src="../static/js/order.js"></script>{% endblock %}
 {% block sidebar %}
     <p class="menu-label">
         <b>Profile</b>
@@ -49,34 +50,7 @@
         </li>
     </ul>
 {% endblock %}
-<!-- The right column, we don't need to rebuild the entire thing -->
 {% block right_col %}
-    <script>
-    function add_to_cart(item_name){
-        let amount = document.getElementById("Amount").value;
-        console.log(amount);
-        let base = window.location.origin;
-            
-        fetch(base+"/order/basket/add",{
-            method:"POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body:JSON.stringify({
-                "ProductName":item_name,
-                "Amount":amount
-            })
-        }).then(response =>{
-            if (response.status == 200){
-                window.location.href = "/"
-            }
-            else{
-                alert("404 The sever might be down");
-            }
-        })
-
-    }
-    </script>
     <div class="column is-9"
          style="max-height:fit-content;
                 overflow-x:hidden;

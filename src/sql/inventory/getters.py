@@ -76,8 +76,6 @@ def get_reviews_for(sn, sql_query=None, connection=None, cursor=None):
 
 @ssql_builder.base(ssql)
 def get_cart_for_user(email: str, connection: MySQLConnection = None, cursor: MySQLCursor = None) -> List[Tuple[Item, int]]:
-    if not email:
-        return []
     query = f"""SELECT PRODUCT.ProductName,PRODUCT.ProductDescription,PRODUCT.Price,PRODUCT.Inventory,PRODUCT.Image,PRODUCT.SN,BASKET.Amount FROM PRODUCT INNER JOIN BASKET ON PRODUCT.SN = BASKET.SN WHERE BASKET.Email=%s ;"""
     cursor.execute(query, (email,))
     result = cursor.fetchall()
@@ -95,15 +93,14 @@ def get_all_items_with_category(categories: List[str], connection: MySQLConnecti
         query, categories)
     result = cursor.fetchall()
     if result:
-
         ret = [item_from_sql(item) for item in result]
+        return ret
     else:
         return []
 
 
 @ ssql_builder.base(ssql)
 def get_all_items(connection: MySQLConnection = None, cursor: MySQLCursor = None):
-    # Not using ssql_builder.select because we do not provide a where clause which is required by the select function
     cursor.execute(
         "SELECT ProductName,ProductDescription,Price,Inventory,Image,SN FROM PRODUCT;")
     result = cursor.fetchall()
@@ -159,7 +156,6 @@ def super_categories_and_sub(connection: MySQLConnection = None, cursor: MySQLCu
     ]
     if not result:
         return []
-    # Hashmap to the rescue
     super_cats = {
         x[0]: [] for x in super
     }

@@ -1,82 +1,7 @@
 {%- macro cart() -%}
-    <script>
-        function remove(id){
-            let element = document.getElementById(id+"_basket");
-            let product_price =  Number(document.getElementById(id+"_orderd_price").innerHTML);
-            let ordered_amount =  Number(document.getElementById(id+"_ordered_amount").innerHTML);
-            let old_amount = document.getElementById("total_price").innerHTML;
-
-            document.getElementById("total_price").innerHTML -= product_price*ordered_amount;
-            document.getElementById("basket_size").innerHTML -= 1;
-            let parent = element.parentElement;
-            
-            element.parentElement.removeChild(element);
-            let base = window.location.origin;
-            
-            fetch(base+"/order/basket/update",{
-                method:"POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body:JSON.stringify({
-                    "ProductName":id,
-                    "Amount":0
-                })
-            }).then(response =>{
-                if (response.status == 200){
-                }
-                else{
-                    document.getElementById("total_price").innerHTML = old_amount;
-                    document.getElementById("basket_size").innerHTML += 1;
-                    parent.appendChild(element);
-                    alert("404 The sever might be down");
-                }
-            })
-        }
-        function update_element(id,direction){
-            let product_price =  Number(document.getElementById(id+"_orderd_price").innerHTML);
-            let ordered_amount =  document.getElementById(id+"_ordered_amount");
-            let total_price =  document.getElementById("total_price");
-            let old_total_price = total_price.innerHTML;
-            let old_ordered_amount = ordered_amount.innerHTML;
-            if(direction){ 
-                // Added one
-                total_price.innerHTML = Number(total_price.innerHTML)+product_price;
-                ordered_amount.innerHTML = Number(ordered_amount.innerHTML)+1;
-            }
-            else{
-                // Removed one
-                total_price.innerHTML = Number(total_price.innerHTML)-product_price;
-                ordered_amount.innerHTML = Number(ordered_amount.innerHTML)-1;
-            }
-            // Now we post the new number of elements in the basket
-            let base = window.location.origin;
-            fetch(base+"/order/basket/update",{
-                method:"POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body:JSON.stringify({
-                    "ProductName":id,
-                    "Amount":ordered_amount.innerHTML
-                })
-            }).then(response =>{
-                if (response.status == 200){
-                }
-                else{
-                    ordered_amount.innerHTML = old_ordered_amount;
-                    total_price.innerHTML = old_total_price;
-                    alert("404 The sever might be down");
-                }
-            })
-
-            if (Number(ordered_amount) === 0){
-                remove(id)
-            }
-
-            
-        }
-    </script>
+{% block head %}
+<script src="../static/js/order.js"></script>
+{% endblock %}
     {% set ns = namespace() %}
     {% set ns.total_cost=0 %}
     {% set ns.items = get_cart_for_user(session["email"]) %}
@@ -114,7 +39,7 @@
                         <b id="total_price">{{ ns.total_cost }}</b>
                         Kr
                     </div>
-                    <a class="button is-success">Checkout</a>
+                    <a class="button is-success" href="/order/checkout">Checkout</a>
                 </div>
             </div>
         </div>

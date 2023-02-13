@@ -15,11 +15,30 @@ def create_review(SN, Text, Rating, Email, sql_query=None, connection=None, curs
 
 
 @ssql_builder.base(ssql)
+def checkout_basket(Address: str, Zip: int, Email: int, connection: MySQLConnection = None, cursor: MySQLCursor = None) -> bool:
+    """
+    Creates a new parcel, adds orders to it, removes all relevant lines from basket.
+    """
+    # Raise exceptions to force rollback if any errors
+    create_parcel_query = "INSERT INTO PARCEL (Address,Zip) VALUE (%s,%s);"
+    insert_query = 'INSERT INTO USERORDER (Email,SN,Amount,PARCEL) SELECT %s,BASKET.SN,BASKET.Amount, PARCEL.NR FROM PARCEL,BASKET  WHERE NR = LAST_INSERT_ID() AND BASKET.Email = %s;'
+    remove_query = "DELETE FROM BASKET WHERE BASKET.Email=%s;"
+    cursor.execute(create_parcel_query, (Address, Zip,))
+    if cursor.rowcount == 0:
+        raise Exception("Invalid parcel creation")
+    cursor.execute(insert_query, (Email, Email,))
+    if cursor.rowcount == 0:
+        raise Exception("Invalid order creation")
+    cursor.execute(remove_query, (Email,))
+    if cursor.rowcount == 0:
+        raise Exception("Invalid clear basket")
+    return True
+
+
+@ssql_builder.base(ssql)
 def add_to_basket(Email: str, ProductName: str, Amount: int, connection: MySQLConnection = None, cursor: MySQLCursor = None) -> bool:
     query = """INSERT INTO BASKET (SN,Email,Amount) VALUES ((SELECT SN FROM PRODUCT WHERE ProductName=%s),%s,%s);"""
-    print(query, (ProductName, Email, Amount))
     cursor.execute(query, (ProductName, Email, Amount))
-
     return cursor.rowcount != 0
 
 
