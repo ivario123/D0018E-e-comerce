@@ -8,9 +8,9 @@ from sql.inventory.getters import *
 search_blueprint = Blueprint(
     "search", __name__, template_folder="../templates")
 
-
-@require.fields(request)
 def fetch_items(search_input):
+    print("inside fetch")
+    print(search_input)
     if not search_input:
         return redirect(url_for('index'))
     search_input = '%' + search_input + '%'
@@ -22,16 +22,6 @@ def fetch_items(search_input):
     return render_template("index.html", user=current_user, items=items_searched)
 
 
-@search_blueprint.route("/search", methods=["GET", "POST"])
+@search_blueprint.route("/search", methods=["GET"])
 def search_database():
-    if request.method == "POST":
-        session["items"] = fetch_items()
-        session["search_check"] = True
-        return response(200)
-    if request.method == "GET":
-        # makes sure that the template returned matches searched, if the url was just typed then return all products
-        if session["search_check"]:
-            session["search_check"] = False
-            return session["items"]
-        else:
-            return redirect(url_for('index'))
+    return fetch_items(request.args.get('q'))

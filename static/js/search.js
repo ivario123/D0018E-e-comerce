@@ -14,11 +14,10 @@ function select_elements(elements) {
 function submit_search() {
     var search = get_el("search").value;
     console.log(search);
-    if (search == '') {
+    if (!search.replace(/\s/g, '').length) {
         window.location.href = "/"
     }
     else {
-        window.location.href = "/search/" + search
+        window.location.href = "/search?q=" + search
     }
-
 }
