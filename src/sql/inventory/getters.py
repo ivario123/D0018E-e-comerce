@@ -139,22 +139,8 @@ def super_categories_and_sub(connection=None, cursor=None):
     return category_groups
 
 
-@ssql_builder.select(ssql, table_name="PRODUCT", select_fields=["ProductName", "ProductDescription", "Price", "Inventory", "Image", "SN"])
-def get_item_by_search_SN(SN, sql_query=None, connection=None, cursor=None):
-    """
-    Get an item by SN
-    """
-    cursor.execute(
-        "SELECT ProductName,ProductDescription,Price,Inventory,Image,SN FROM PRODUCT WHERE SN=%s;", (SN,))
-    result = cursor.fetchall()
-    if result:
-        return [item_from_sql(item) for item in result]
-    else:
-        return None
-
-
-@ssql_builder.select(ssql, table_name="PRODUCT", select_fields=["ProductName", "ProductDescription", "Price", "Inventory", "Image", "SN"])
-def get_item_by_search_name(name, sql_query=None, connection=None, cursor=None):
+@ssql_builder.base(ssql)
+def get_item_by_search_name(name, connection=None, cursor=None):
     """
     Get an item by name
     """
