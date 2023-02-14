@@ -1,8 +1,14 @@
 {% extends "base.html" %}
 {% from "jinja_macros/product_listing.html" import list_container %}
+
+{%block head%}
+    <script src="../static/js/inventory.js"></script>
+{%endblock%}
+
 {% block sidebar %}
     {% include "jinja_macros/sidebar.html" %}
 {% endblock %}
+
 {% block listings %}
     <p class="title is-3">Items in category : {{ category }}</p>
     {{ list_container(items) }}
