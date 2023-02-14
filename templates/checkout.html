@@ -45,8 +45,7 @@ form_field_with_icon_and_event %}
             <div class="box">
                 <nav class="level is-mobile">
                     <p>
-                        Cart contains {{ ns.total_nr_items }} product
-                        {% if ns.total_nr_items > 1 %}s{% endif %}
+                        Cart contains {{ ns.total_nr_items }} product{% if ns.total_nr_items > 1 %}s{% endif %}
                     </p>
                     <p>Total cost : {{ ns.total_cost }} Kr</p>
                 </nav>

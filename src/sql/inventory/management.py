@@ -23,6 +23,7 @@ def checkout_basket(Address: str, Zip: int, Email: int, connection: MySQLConnect
     # Raise exceptions to force rollback if any errors
     create_parcel_query = "INSERT INTO PARCEL (Address,Zip) VALUE (%s,%s);"
     insert_query = 'INSERT INTO USERORDER (Email,SN,Amount,PARCEL,Price) SELECT %s,BASKET.SN,BASKET.Amount, PARCEL.NR,PRODUCT.Price FROM PARCEL,BASKET INNER JOIN PRODUCT ON PRODUCT.SN = BASKET.SN WHERE NR = LAST_INSERT_ID() AND BASKET.Email = %s;'
+    update_stock = 'UPDATE PRODUCT JOIN BASKET ON PRODUCT.SN = BASKET.SN SET PRODUCT.Inventory = PRODUCT.Inventory - BASKET.Amount WHERE BASKET.Email=%s;'
     remove_query = "DELETE FROM BASKET WHERE BASKET.Email=%s;"
     cursor.execute(create_parcel_query, (Address, Zip,))
     if cursor.rowcount == 0:
@@ -30,6 +31,9 @@ def checkout_basket(Address: str, Zip: int, Email: int, connection: MySQLConnect
     cursor.execute(insert_query, (Email, Email,))
     if cursor.rowcount == 0:
         raise Exception("Invalid order creation")
+    cursor.execute(update_stock, (Email,))
+    if cursor.rowcount == 0:
+        raise Exception("Invalid stock adjustment")
     cursor.execute(remove_query, (Email,))
     if cursor.rowcount == 0:
         raise Exception("Invalid clear basket")
