@@ -49,6 +49,33 @@ def get_reviews_for(sn, sql_query=None, connection=None, cursor=None):
 
 
 @ssql_builder.base(ssql)
+def get_average_review_for(SN, connection=None, cursor=None):
+    sql_query = "SELECT ROUND(AVG(Rating)) FROM REVIEW WHERE SN=%s;"
+    cursor.execute(sql_query, (SN,))
+    ret = cursor.fetchone()
+    if ret:
+        return ret[0]
+    return 0
+
+
+@ssql_builder.select(ssql, "REVIEW", ["Rating,Text,Email"])
+def get_reviews_for(sn, sql_query=None, connection=None, cursor=None):
+    # Gets all the reviews for a given product,
+    cursor.execute(sql_query, (sn,))
+
+    def get_uname(email):
+        sql_query = "SELECT UserName FROM USER WHERE Email=%s"
+        cursor.execute(sql_query, (email,))
+        return cursor.fetchone()[0]
+    ret = cursor.fetchall()
+    if not ret:
+        connection.rollback()
+        return []
+
+    return [Review.from_sql(x, get_uname(x[2])) for x in ret]
+
+
+@ssql_builder.base(ssql)
 def get_orders_for_user(Email: str, connection: MySQLConnection = None, cursor: MySQLCursor = None) -> Dict[int,List[Order]]:
     query = """SELECT PARCEL.NR AS parcelId,PARCEL.Address,PARCEL.Zip,PARCEL.Status,PRODUCT.ProductName,PRODUCT.Image,USERORDER.Amount,USERORDER.Price FROM PRODUCT 
 INNER JOIN USERORDER  ON PRODUCT.SN = USERORDER.SN INNER JOIN  PARCEL ON USERORDER.PARCEL = PARCEL.NR WHERE USERORDER.Email=%s ORDER BY PARCEL.NR;;"""
