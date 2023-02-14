@@ -48,9 +48,21 @@
                                 {% endfor %}
                             </tbody>
                             <tfoot>
-                                Order number <b>{{ order_nr }}</b> {{ ns.status }}
+                                Order number <b>{{ order_nr }}</b>
                             </tfoot>
                         </table>
+                        
+                        <nav class="level is-mobile">
+                            <div class="level-left">
+                                Status : <b>{{ns.status}}</b>
+                            </div>
+                            <div>
+                                Address : <b>{{ ns.items[order_nr][0].address}}</b>
+                            </div>
+                            <div class="level-right">
+                                Zip : <b>{{ ns.items[order_nr][0].zip}}</b>
+                            </div>
+                        </nav>
                     </div>
                 {% endfor %}
             </div>
