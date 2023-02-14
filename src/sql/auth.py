@@ -47,7 +47,7 @@ def add_new_user(user: User) -> Result:
         if curs.fetchone():
             return Error("User already exists")
         curs.execute(
-            "INSERT INTO IF NOT EXISTS USER (Email, Username, Name, Surname, Password,Role) VALUES (%s, %s, %s, %s, %s, %s);",
+            "INSERT INTO USER (Email, Username, Name, Surname, Password,Role) VALUES (%s, %s, %s, %s, %s, %s);",
             (
                 user.email,
                 user.username,
