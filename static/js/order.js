@@ -110,7 +110,6 @@ async function batch(id, ordered_amount, total_price, old_ordered_amount, old_to
             "Amount": old_order,
         })
     }).then(response => {
-        console.log("Completing attempt : " + counter + " For order " + id + " : " + old_order);
         if (response.status == 200) {
             release()
         }
@@ -163,27 +162,48 @@ function update_element(id, direction) {
 }
 
 
-function add_to_cart(item_name){
+function add_to_cart(item_name) {
     let amount = document.getElementById("Amount").value;
-    console.log(amount);
     let base = window.location.origin;
-        
-    fetch(base+"/order/basket/add",{
-        method:"POST",
+
+    fetch(base + "/order/basket/add", {
+        method: "POST",
         headers: {
             "Content-Type": "application/json"
         },
-        body:JSON.stringify({
-            "ProductName":item_name,
-            "Amount":amount
+        body: JSON.stringify({
+            "ProductName": item_name,
+            "Amount": amount
         })
-    }).then(response =>{
-        if (response.status == 200){
+    }).then(response => {
+        if (response.status == 200) {
             window.location.href = "/";
         }
-        else{
+        else {
             alert("Maybe you have already put that item in your cart?");
         }
     })
 
+}
+function submit(){
+    let address = document.getElementById("address").value;
+    let zip = document.getElementById("zip").value;
+    fetch("", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            "Address": address,
+            "Zip": zip,
+            
+        })
+    }).then(response => {
+        if (response.status == 200) {
+            window.location.href = "/"
+        }
+        else {
+            alert("Server returned : " + response.status + " error");
+        }
+    })
 }

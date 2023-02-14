@@ -1,9 +1,10 @@
 from models import Item
 from models.category import Category, CategoryGroup
 from models.review import Review
+from models.order import Order
 from .. import ssql
 from ssql_builder import SSqlBuilder as ssql_builder
-from typing import List, Tuple
+from typing import List, Tuple,Dict
 from mysql.connector.connection import MySQLConnection
 from mysql.connector.connection import MySQLCursor
 
@@ -48,7 +49,25 @@ def get_reviews_for(sn, sql_query=None, connection=None, cursor=None):
 
 
 @ssql_builder.base(ssql)
-def get_average_review_for(SN, connection=None, cursor=None):
+def get_orders_for_user(Email: str, connection: MySQLConnection = None, cursor: MySQLCursor = None) -> Dict[int,List[Order]]:
+    query = """SELECT PARCEL.NR AS parcelId,PARCEL.Address,PARCEL.Zip,PARCEL.Status,PRODUCT.ProductName,PRODUCT.Image,USERORDER.Amount,USERORDER.Price FROM PRODUCT 
+INNER JOIN USERORDER  ON PRODUCT.SN = USERORDER.SN INNER JOIN  PARCEL ON USERORDER.PARCEL = PARCEL.NR WHERE USERORDER.Email=%s ORDER BY PARCEL.NR;;"""
+    cursor.execute(query,(Email,))
+    ret = cursor.fetchall()
+    if not ret:
+        return {}
+    result:Dict[int,List[Order]] = {}
+    for row in ret:
+        (parcelId,_,_,_,_,_,_,_) = row
+        if parcelId not in result.keys():
+            result[parcelId] = []
+        result[parcelId].append(Order(*row))
+    return result
+
+
+
+@ssql_builder.base(ssql)
+def get_average_review_for(SN, connection: MySQLConnection = None, cursor: MySQLCursor = None):
     sql_query = "SELECT ROUND(AVG(Rating)) FROM REVIEW WHERE SN=%s;"
     cursor.execute(sql_query, (SN,))
     ret = cursor.fetchone()
@@ -57,8 +76,8 @@ def get_average_review_for(SN, connection=None, cursor=None):
     return 0
 
 
-@ssql_builder.select(ssql, "REVIEW", ["Rating,Text,Email"])
-def get_reviews_for(sn, sql_query=None, connection=None, cursor=None):
+@ssql_builder.select(ssql, "REVIEW", ["Rating","Text","Email"])
+def get_reviews_for(sn, sql_query: str = None, connection: MySQLConnection = None, cursor: MySQLCursor = None):
     # Gets all the reviews for a given product,
     cursor.execute(sql_query, (sn,))
 

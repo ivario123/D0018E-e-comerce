@@ -1,49 +1,49 @@
 {%- macro cart() -%}
-{% block head %}
-<script src="../static/js/order.js"></script>
-{% endblock %}
+    <script src="../static/js/order.js"></script>
     {% set ns = namespace() %}
     {% set ns.total_cost=0 %}
-    {% set ns.items = get_cart_for_user(session["email"]) %}
-    <script></script>
-    <div class="navbar-item has-dropdown is-hoverable">
-        <a class="navbar-link is-arrowless">
-            <span class="fa-layers fa-fw">
-                <i class="fa-solid fa-cart-shopping">
-                </i>
-                <span class="fa-layers-counter" id="basket_size">{{ ns.items|length }}</span>
-            </span>
-        </a>
-        <div class="navbar-dropdown is-right" style="padding: 1rem;">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>
-                            <abbr title="Position">Product</abbr>
-                        </th>
-                        <th>Qty</th>
-                        <th>Price</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for item in ns.items %}
-                        {% set ns.total_cost = ns.total_cost+item[0].price*item[1] %}
-                        {{ cart_element(item[0],item[1]) }}
-                    {% endfor %}
-                </tbody>
-            </table>
-            <div class="card-foot">
-                <div class="level is-mobile">
-                    <div>
-                        Total price :
-                        <b id="total_price">{{ ns.total_cost }}</b>
-                        Kr
+    {% if session.get("email",none) != none %}
+        {% set ns.items = get_cart_for_user(session["email"]) %}
+        <script></script>
+        <div class="navbar-item has-dropdown is-hoverable">
+            <a class="navbar-link is-arrowless">
+                <span class="fa-layers fa-fw">
+                    <i class="fa-solid fa-cart-shopping">
+                    </i>
+                    <span class="fa-layers-counter" id="basket_size">{{ ns.items|length }}</span>
+                </span>
+            </a>
+            <div class="navbar-dropdown is-right" style="padding: 1rem;">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>
+                                <abbr title="Position">Product</abbr>
+                            </th>
+                            <th>Qty</th>
+                            <th>Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in ns.items %}
+                            {% set ns.total_cost = ns.total_cost+item[0].price*item[1] %}
+                            {{ cart_element(item[0],item[1]) }}
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <div class="card-foot">
+                    <div class="level is-mobile">
+                        <div>
+                            Total price :
+                            <b id="total_price">{{ ns.total_cost }}</b>
+                            Kr
+                        </div>
+                        <a class="button is-success" href="/order/checkout">Checkout</a>
                     </div>
-                    <a class="button is-success" href="/order/checkout">Checkout</a>
                 </div>
             </div>
         </div>
-    </div>
+    {% endif %}
 {%- endmacro -%}
 {%- macro cart_element(product,amount) -%}
     <tr id="{{ product.name }}_basket">

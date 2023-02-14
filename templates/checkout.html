@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% from "jinja_macros/form.html" import form_field,form_button,form_title,form_field_with_icon,
 form_field_with_icon_and_event %}
-{% block head %}{% endblock %}
+{% block head %}<script src="../../static/js/order.js"></script>{% endblock %}
 {% block content %}
     {% set ns = namespace() %}
     {% set ns.total_cost=0 %}
@@ -27,7 +27,10 @@ form_field_with_icon_and_event %}
                             {% set ns.total_nr_items = ns.total_nr_items+item[1] %}
                             <tr>
                                 <th>
-                                    <img height="40" width="30" src="{{ item[0].image }}" alt="Image for : {{ item[0].name }}"/>
+                                    <img height="40"
+                                         width="30"
+                                         src="{{ item[0].image }}"
+                                         alt="Image for : {{ item[0].name }}"/>
                                 </th>
                                 <th>
                                     <div>{{ item[0].name }}</div>
@@ -42,44 +45,22 @@ form_field_with_icon_and_event %}
             <div class="box">
                 <nav class="level is-mobile">
                     <p>
-                        Cart contains {{ ns.total_nr_items }} product{% if ns.total_nr_items > 1 %}s{% endif %}
-                        </p>
-                        <p>Total cost : {{ ns.total_cost }} Kr</p>
-                    </nav>
-                </div>
-                <script>
-                function submit(){
-                    let address = document.getElementById("address").value;
-                    let zip = document.getElementById("zip").value;
-                    fetch("", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json"
-                        },
-                        body: JSON.stringify({
-                            "Address": address,
-                            "Zip": 0
-                        })
-                    }).then(response => {
-                        if (response.status == 200) {
-                            window.location.href = "/"
-                        }
-                        else {
-                            alert("Server returned : " + response.status + " error");
-                        }
-                    })
-                }
-                </script>
-                <div class="box">
-                    {{ form_title("Order details")}}
-                    <div class="has-text-centered is-vertical">
-                        {{ form_field("Street address","address","text")}}
-                        {{ form_field("Zip code","zip","text")}}
-                        {{ form_field("Card number","cnr","text")}}
-                        {{ form_field("cvc","cvc","text")}}
-                        {{ form_button("Place order","submit()") }}
-                    </div>
+                        Cart contains {{ ns.total_nr_items }} product
+                        {% if ns.total_nr_items > 1 %}s{% endif %}
+                    </p>
+                    <p>Total cost : {{ ns.total_cost }} Kr</p>
+                </nav>
+            </div>
+            <div class="box">
+                {{ form_title("Order details")}}
+                <div class="has-text-centered is-vertical">
+                    {{ form_field("Street address","address","text")}}
+                    {{ form_field("Zip code","zip","text")}}
+                    {{ form_field("Card number","cnr","text")}}
+                    {{ form_field("cvc","cvc","text")}}
+                    {{ form_button("Place order","submit()") }}
                 </div>
             </div>
         </div>
-    {% endblock %}
+    </div>
+{% endblock %}

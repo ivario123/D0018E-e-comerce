@@ -12,6 +12,7 @@ from ssql_builder import SSqlBuilder as ssql_builder
 @ssql_builder.insert(ssql, "REVIEW")
 def create_review(SN, Text, Rating, Email, sql_query=None, connection=None, cursor=None):
     cursor.execute(sql_query, (SN, Text, Rating, Email,))
+    return True
 
 
 @ssql_builder.base(ssql)
@@ -21,7 +22,7 @@ def checkout_basket(Address: str, Zip: int, Email: int, connection: MySQLConnect
     """
     # Raise exceptions to force rollback if any errors
     create_parcel_query = "INSERT INTO PARCEL (Address,Zip) VALUE (%s,%s);"
-    insert_query = 'INSERT INTO USERORDER (Email,SN,Amount,PARCEL) SELECT %s,BASKET.SN,BASKET.Amount, PARCEL.NR FROM PARCEL,BASKET  WHERE NR = LAST_INSERT_ID() AND BASKET.Email = %s;'
+    insert_query = 'INSERT INTO USERORDER (Email,SN,Amount,PARCEL,Price) SELECT %s,BASKET.SN,BASKET.Amount, PARCEL.NR,PRODUCT.Price FROM PARCEL,BASKET INNER JOIN PRODUCT ON PRODUCT.SN = BASKET.SN WHERE NR = LAST_INSERT_ID() AND BASKET.Email = %s;'
     remove_query = "DELETE FROM BASKET WHERE BASKET.Email=%s;"
     cursor.execute(create_parcel_query, (Address, Zip,))
     if cursor.rowcount == 0:

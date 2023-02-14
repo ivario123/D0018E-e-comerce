@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{% block head %}<script src="../../static/js/review.js"></script>{% endblock %}
 {% from "jinja_macros/product_listing.html" import list_container %}
 {% from "jinja_macros/product_listing.html" import listing %}
 {%- macro star() -%}
@@ -36,7 +35,9 @@
     </div>
 {%- endmacro -%}
 <!-- We want to replace the sidebar -->
-{% block head %}<script src="../static/js/order.js"></script>{% endblock %}
+{% block head %}
+    <script src="../../static/js/order.js"></script><script src="../../static/js/review.js"></script>
+{% endblock %}
 {% block sidebar %}
     <p class="menu-label">
         <b>Profile</b>
