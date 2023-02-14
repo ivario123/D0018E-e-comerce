@@ -123,13 +123,16 @@ async function batch(id, ordered_amount, total_price, old_ordered_amount, old_to
 
 }
 
-function update_element(id, direction) {
+function update_element(id, direction, stock) {
     let product_price = Number(document.getElementById(id + "_orderd_price").innerHTML);
     let ordered_amount = document.getElementById(id + "_ordered_amount");
     let total_price = document.getElementById("total_price");
     let old_total_price = total_price.innerHTML;
     let old_ordered_amount = ordered_amount.innerHTML;
     if (direction) {
+        if (Number(ordered_amount.innerHTML) == stock) {
+            return;
+        }
         // Added one
         total_price.innerHTML = Number(total_price.innerHTML) + product_price;
         ordered_amount.innerHTML = Number(ordered_amount.innerHTML) + 1;
@@ -185,7 +188,7 @@ function add_to_cart(item_name) {
     })
 
 }
-function submit(){
+function submit() {
     let address = document.getElementById("address").value;
     let zip = document.getElementById("zip").value;
     fetch("", {
@@ -196,7 +199,7 @@ function submit(){
         body: JSON.stringify({
             "Address": address,
             "Zip": zip,
-            
+
         })
     }).then(response => {
         if (response.status == 200) {

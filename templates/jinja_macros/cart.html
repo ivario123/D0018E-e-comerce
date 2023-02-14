@@ -56,14 +56,14 @@
         <th>
             <div class="level is-mobile">
                 <a style="color:black"
-                   onclick="update_element('{{ product.name }}',true)">
+                   onclick="update_element('{{ product.name }}',true,{{product.stock}})">
                     <i class="fa-solid fa-plus"></i>
                 </a>
                 <p style="padding-left:1rem;
                           padding-right:1rem"
                    id="{{ product.name }}_ordered_amount">{{ amount }}</p>
                 <a style="color:black"
-                   onclick="update_element('{{ product.name }}',false)">
+                   onclick="update_element('{{ product.name }}',false,{{product.stock}})">
                     <i class="fa-solid fa-minus"></i>
                 </a>
             </div>

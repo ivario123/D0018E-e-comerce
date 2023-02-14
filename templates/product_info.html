@@ -60,9 +60,9 @@
             <figure class="media-left">
                 <a href="/product/info/{{ item.serial_number }}" style="color:black;">
                     <img class="center"
-                            src="{{ item.image }}"
-                            alt="Image for : {{ item.name }}"
-                            style="max-height:50em;
+                         src="{{ item.image }}"
+                         alt="Image for : {{ item.name }}"
+                         style="max-height:50em;
                                 max-width:12em;
                                 height:auto;
                                 width:auto;
@@ -92,32 +92,34 @@
                             <p class="price">Price = {{ item.price }} kr/bottle</p>
                             <p class="stock">Stock = {{ item.stock }}</p>
                             {% if item.stock > 0 %}
-                            <div class="field has-addons" style="padding-top: 2%">
-                                <div class="control">
-                                    <input class="input" type="text" placeholder="Amount to buy">
-                                </div>
-                                <div class="control">
-                                    <a class="button is-info">Buy</a>
-                                </div>
-                            </div>
-                            {% else %}
-                            <fieldset disabled>
                                 <div class="field has-addons" style="padding-top: 2%">
                                     <div class="control">
-                                        <input class="input" type="text" placeholder="">
+                                        <input class="input"
+                                               type="number"
+                                               max="{{ item.stock }}"
+                                               min="0"
+                                               placeholder="Amount to buy" id="Amount">
                                     </div>
                                     <div class="control">
-                                        <a class="button is-info">Out of stock</a>
+                                        <a class="button is-info" onclick="add_to_cart('{{ item.name }}')">Buy</a>
                                     </div>
                                 </div>
-                            </fieldset>
+                            {% else %}
+                                <fieldset disabled>
+                                    <div class="field has-addons" style="padding-top: 2%">
+                                        <div class="control">
+                                            <input class="input" type="text" placeholder="">
+                                        </div>
+                                        <div class="control">
+                                            <a class="button is-info">Out of stock</a>
+                                        </div>
+                                    </div>
+                                </fieldset>
                             {% endif %}
                             <p style="padding-top: 2%;">{{ item.description }}</p>
                         </div>
                     </a>
-                    
                 </div>
-                
             </div>
         </article>
         <hr style="border:0;
