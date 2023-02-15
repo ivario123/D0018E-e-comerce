@@ -58,55 +58,51 @@
                 overflow-y:auto">
         <article class="media">
             <figure class="media-left">
-                <a href="/product/info/{{ item.serial_number }}" style="color:black;">
-                    <img class="center"
-                         src="{{ item.image }}"
-                         alt="Image for : {{ item.name }}"
-                         style="max-height:50em;
-                                max-width:12em;
-                                height:auto;
-                                width:auto;
-                                padding-right: 15%">
-                </a>
+                <img class="center"
+                     src="{{ item.image }}"
+                     alt="Image for : {{ item.name }}"
+                     style="max-height:50em;
+                            max-width:12em;
+                            height:auto;
+                            width:auto;
+                            padding-right: 15%">
             </figure>
             <div class="media-content">
                 <div class="content">
-                    <a href="/product/info/{{ item.serial_number }}" style="color:black;">
-                        <div class="content">
-                            <h3>
-                                <strong >{{ item.name }}</strong>
-                            </h3>
-                            <p class="price">Price = {{ item.price }} kr/bottle</p>
-                            <p class="stock">Stock = {{ item.stock }}</p>
-                            {% if item.stock > 0 %}
+                    <div class="content">
+                        <h3>
+                            <strong >{{ item.name }}</strong>
+                        </h3>
+                        <p class="price">Price = {{ item.price }} kr/bottle</p>
+                        <p class="stock">Stock = {{ item.stock }}</p>
+                        {% if item.stock > 0 %}
+                            <div class="field has-addons" style="padding-top: 2%">
+                                <div class="control">
+                                    <input class="input"
+                                           type="number"
+                                           max="{{ item.stock }}"
+                                           min="0"
+                                           placeholder="Amount to buy"
+                                           id="Amount">
+                                </div>
+                                <div class="control">
+                                    <a class="button is-info" onclick="add_to_cart('{{ item.name }}')">Buy</a>
+                                </div>
+                            </div>
+                        {% else %}
+                            <fieldset disabled>
                                 <div class="field has-addons" style="padding-top: 2%">
                                     <div class="control">
-                                        <input class="input"
-                                               type="number"
-                                               max="{{ item.stock }}"
-                                               min="0"
-                                               placeholder="Amount to buy"
-                                               id="Amount">
+                                        <input class="input" type="text" placeholder="">
                                     </div>
                                     <div class="control">
-                                        <a class="button is-info" onclick="add_to_cart('{{ item.name }}')">Buy</a>
+                                        <a class="button is-info">Out of stock</a>
                                     </div>
                                 </div>
-                            {% else %}
-                                <fieldset disabled>
-                                    <div class="field has-addons" style="padding-top: 2%">
-                                        <div class="control">
-                                            <input class="input" type="text" placeholder="">
-                                        </div>
-                                        <div class="control">
-                                            <a class="button is-info">Out of stock</a>
-                                        </div>
-                                    </div>
-                                </fieldset>
-                            {% endif %}
-                            <p style="padding-top: 2%;">{{ item.description }}</p>
-                        </div>
-                    </a>
+                            </fieldset>
+                        {% endif %}
+                        <p style="padding-top: 2%;">{{ item.description }}</p>
+                    </div>
                 </div>
             </div>
         </article>
