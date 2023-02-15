@@ -41,6 +41,13 @@ def checkout_basket(Address: str, Zip: int, Email: int, connection: MySQLConnect
 
 
 @ssql_builder.base(ssql)
+def update_stock(SN: int, Stock: int, connection: MySQLConnection = None, cursor: MySQLCursor = None) -> bool:
+    query = """UPDATE PRODUCT SET PRODUCT.Inventory=%s WHERE PRODUCT.SN = %s;"""
+    cursor.execute(query,(Stock,SN,))
+    return cursor.rowcount!=0
+
+
+@ssql_builder.base(ssql)
 def add_to_basket(Email: str, ProductName: str, Amount: int, connection: MySQLConnection = None, cursor: MySQLCursor = None) -> bool:
     query = """INSERT INTO BASKET (SN,Email,Amount) VALUES ((SELECT SN FROM PRODUCT WHERE ProductName=%s),%s,%s);"""
     cursor.execute(query, (ProductName, Email, Amount))

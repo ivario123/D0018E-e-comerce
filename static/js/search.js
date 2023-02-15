@@ -13,8 +13,8 @@ function select_elements(elements) {
 
 function submit_search(){
     var search = get_el("search").value;
-    console.log(search);
-
+    window.location.href = "/search?q="+search;
+    return
     fetch("/search", {
         method: "POST",
         headers: {
