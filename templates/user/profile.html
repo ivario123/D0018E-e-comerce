@@ -1,10 +1,78 @@
 {% extends "base.html" %}
 {% block head %}<script src="../../static/js/order.js"></script>{% endblock %}
 {% block content %}
+    <script>
+        function update_profile(){
+            let Name = document.getElementById("Name").value;
+            let Surname = document.getElementById("Surname").value;
+            let UserName = document.getElementById("UserName").value;
+
+            fetch("/user/update", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    "Name": Name,
+                    "Surname": Surname,
+                    "UserName": UserName
+                })
+            }).then(response => {
+                console.log(response)
+                if (response.status == 200) {
+                    alert("Updated successfully")
+                }
+                else {
+                    alert("Category creation failed")
+                }
+                window.location.href = ""
+            });
+        }
+    </script>
     <div class="columns is-centered">
-        <div class="column is-6 has-text-centered">
-            <div class="box is-center has-text-centered ">
-                Here the user can see their profile
+        <div class="column is-6">
+            <div class="box is-center has-text-centered has-background-grey-lighter">
+                Profile for user with email : <b>{{ user.email }}</b>
+            </div>
+            <div class="box is-center has-background-grey-light">
+                <p class="is-center">Username</p>
+                <div class="control has-background-grey-light search">
+                    <input class="input has-background-grey-light has-text-black"
+                           type="text"
+                           id="UserName"
+                           style="border: 0"
+                           value="{{ user.username }}"
+                           placeholder="{{ user.username }}">
+                    <p class="is-center">First name</p>
+                    <div class="control has-background-grey-light search">
+                        <input class="input has-background-grey-light"
+                               type="text"
+                               id="Name"
+                               style="border: 0"
+                               value="{{ user.name }}"
+                               placeholder="{{ user.name }}">
+                    </div>
+                    <p class="">Surname</p>
+                    <div class="control has-background-grey-light search">
+                        <input class="input has-background-grey-light has-text-black"
+                               type="text"
+                               id="Surname"
+                               style="border: 0"
+                               default
+                               value="{{ user.surname }}"
+                               placeholder="{{ user.surname }}">
+                    </div>
+                </div>
+                <nav class="level is-mobile">
+                    <div class="level-left"></div>
+                    <div class="level-right">
+                        <div class="control level-right" onclick="update_profile()">
+                            <input class="button has-background-success has-outline-success has-text-black"
+                                   type="submit"
+                                   value="Update">
+                        </div>
+                    </div>
+                </nav >
             </div>
         </div>
     </div>
