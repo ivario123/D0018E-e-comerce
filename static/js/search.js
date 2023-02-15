@@ -11,9 +11,9 @@ function select_elements(elements) {
     return ret
 }
 
-function submit_search(){
+function submit_search() {
     var search = get_el("search").value;
-    window.location.href = "/search?q="+search;
+    window.location.href = "/search?q=" + search;
     return
     fetch("/search", {
         method: "POST",
@@ -25,7 +25,7 @@ function submit_search(){
         })
     }).then(response => {
         console.log(response)
-        if(response.status == 200){
+        if (response.status == 200) {
             window.location.href = "/search"
         }
     })
