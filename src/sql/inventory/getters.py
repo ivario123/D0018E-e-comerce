@@ -151,3 +151,13 @@ def get_item_by_search_name(name, connection=None, cursor=None):
         return [item_from_sql(item) for item in result]
     else:
         return None
+
+# need to get super too
+@ ssql_builder.base(ssql)
+def search_get_categories(SN: List[int], connection=None, cursor=None):
+    list_SN = ",".join(['%s' for _ in SN])
+    query = f"""SELECT DISTINCT Category FROM 
+CATEGORY_ASSIGN WHERE SN in ({list_SN});"""
+    cursor.execute(query, SN)
+    return cursor.fetchall()  
+
