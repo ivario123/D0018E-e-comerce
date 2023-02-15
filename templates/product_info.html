@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{% block head %}<script src="../../static/js/review.js"></script>{% endblock %}
 {% from "jinja_macros/product_listing.html" import list_container %}
 {% from "jinja_macros/product_listing.html" import listing %}
 {%- macro star() -%}
@@ -36,6 +35,9 @@
     </div>
 {%- endmacro -%}
 <!-- We want to replace the sidebar -->
+{% block head %}
+    <script src="../../static/js/order.js"></script><script src="../../static/js/review.js"></script>
+{% endblock %}
 {% block sidebar %}
     <p class="menu-label">
         <b>Profile</b>
@@ -49,7 +51,6 @@
         </li>
     </ul>
 {% endblock %}
-<!-- The right column, we don't need to rebuild the entire thing -->
 {% block right_col %}
     <div class="column is-9"
          style="max-height:fit-content;
@@ -57,36 +58,38 @@
                 overflow-y:auto">
         <article class="media">
             <figure class="media-left">
-                <a href="/product/info/{{ item.serial_number }}" style="color:black;">
-                    <img class="center"
-                            src="{{ item.image }}"
-                            alt="Image for : {{ item.name }}"
-                            style="max-height:50em;
-                                max-width:12em;
-                                height:auto;
-                                width:auto;
-                                padding-right: 15%">
-                </a>
+                <img class="center"
+                     src="{{ item.image }}"
+                     alt="Image for : {{ item.name }}"
+                     style="max-height:50em;
+                            max-width:12em;
+                            height:auto;
+                            width:auto;
+                            padding-right: 15%">
             </figure>
             <div class="media-content">
                 <div class="content">
-                    <a href="/product/info/{{ item.serial_number }}" style="color:black;">
-                        <div class="content">
-                            <h3>
-                                <strong >{{ item.name }}</strong>
-                            </h3>
-                            <p class="price">Price = {{ item.price }} kr/bottle</p>
-                            <p class="stock">Stock = {{ item.stock }}</p>
-                            {% if item.stock > 0 %}
+                    <div class="content">
+                        <h3>
+                            <strong >{{ item.name }}</strong>
+                        </h3>
+                        <p class="price">Price = {{ item.price }} kr/bottle</p>
+                        <p class="stock">Stock = {{ item.stock }}</p>
+                        {% if item.stock > 0 %}
                             <div class="field has-addons" style="padding-top: 2%">
                                 <div class="control">
-                                    <input class="input" type="text" placeholder="Amount to buy">
+                                    <input class="input"
+                                           type="number"
+                                           max="{{ item.stock }}"
+                                           min="0"
+                                           placeholder="Amount to buy"
+                                           id="Amount">
                                 </div>
                                 <div class="control">
-                                    <a class="button is-info">Buy</a>
+                                    <a class="button is-info" onclick="add_to_cart('{{ item.name }}')">Buy</a>
                                 </div>
                             </div>
-                            {% else %}
+                        {% else %}
                             <fieldset disabled>
                                 <div class="field has-addons" style="padding-top: 2%">
                                     <div class="control">
@@ -97,13 +100,10 @@
                                     </div>
                                 </div>
                             </fieldset>
-                            {% endif %}
-                            <p style="padding-top: 2%;">{{ item.description }}</p>
-                        </div>
-                    </a>
-                    
+                        {% endif %}
+                        <p style="padding-top: 2%;">{{ item.description }}</p>
+                    </div>
                 </div>
-                
             </div>
         </article>
         <hr style="border:0;
@@ -138,4 +138,5 @@
                     class="has-background-grey-lighter"/>
             {% endfor %}
         </div>
-    {% endblock %}
+    </div>
+{% endblock %}

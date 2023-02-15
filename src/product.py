@@ -28,6 +28,7 @@ product_blueprint.register_blueprint(review_blueprint)
 @login_required
 @fields(request)
 def new_review(SerialNumber, Review, Rating):
+    print("IN review", SerialNumber, Review, Rating)
     ret = create_review(
         SerialNumber,
         Review,

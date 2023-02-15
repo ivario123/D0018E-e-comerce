@@ -1,6 +1,5 @@
-{% block head %}
-    <script src="../static/js/search.js"></script>
-{% endblock %}
+{% from "jinja_macros/cart.html" import cart %}
+{% block head %}<script src="../static/js/search.js"></script>{% endblock %}
 {% from "jinja_macros/form.html" import form_field,form_button %}
 {%- macro navbar_button(title,url,class="is-secondary") -%}
     <div class="navbar-item">
@@ -18,8 +17,7 @@
     <div class="navbar-brand">
         <a class="navbar-item" href="/">
             <img src="https://sb-web-ecommerce-cms.azureedge.net/4a51ce/globalassets/logo.svg?q=75&w=2000"
-                 width="112"
-                 height="28"
+                 height="300"
                  alt="Logo here"/>
         </a>
     </div>
@@ -47,6 +45,9 @@
             </div>
         {% endif %}
         <div class="navbar-end">
+            {% block has_cart %}
+                {{ cart()}}
+            {% endblock %}
             {% if session["admin"] %}{{ navbar_button("Admin","/admin") }}{% endif %}
             {% if session["logged_in"] %}
                 {{ navbar_button("Logout","/logout","is-primary") }}

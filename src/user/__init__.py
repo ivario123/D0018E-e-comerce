@@ -7,6 +7,17 @@ from sql.auth import get_full_user_by_email, update_user_by_email
 user_blueprint = Blueprint("user", __name__, url_prefix="/user")
 
 
+@user_blueprint.route("/profile", methods=["GET"])
+def index():
+    print("stuff")
+    return render_template("user/profile.html",user=get_full_user_by_email(session["email"]))
+
+
+@user_blueprint.route("/orders", methods=["GET"])
+def orders():
+    return render_template("user/orders.html")
+
+
 @user_blueprint.route("/update", methods=["POST"])
 @login_required
 @fields(request)

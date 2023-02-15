@@ -9,11 +9,10 @@ search_blueprint = Blueprint(
     "search", __name__, template_folder="../templates")
 
 
-@require.fields(request)
 def fetch_items(search_input):
     if not search_input:
         return redirect(url_for('index'))
-    search_input = '%' + search_input + '%'
+    search_input = f"%{search_input}%"
     items_searched = get_item_by_search_name(search_input)
     if items_searched is None:
         items_searched = []
@@ -22,8 +21,14 @@ def fetch_items(search_input):
     return render_template("index.html", user=current_user, items=items_searched)
 
 
-@search_blueprint.route("/search", methods=["GET", "POST"])
+@search_blueprint.route("/search", methods=["GET"])
 def search_database():
+
+    query = request.args.get("q","")
+    if query == "":
+        return redirect(url_for('index'))
+    return fetch_items(query)
+
     if request.method == "POST":
         session["items"] = fetch_items()
         session["search_check"] = True

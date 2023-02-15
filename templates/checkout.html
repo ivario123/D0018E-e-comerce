@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% from "jinja_macros/form.html" import form_field,form_button,form_title,form_field_with_icon,
+form_field_with_icon_and_event %}
+{% block head %}<script src="../../static/js/order.js"></script>{% endblock %}
+{% block content %}
+    {% set ns = namespace() %}
+    {% set ns.total_cost=0 %}
+    {% set ns.total_nr_items=0 %}
+    <div class="columns is-centered">
+        <div class="column is-6 has-text-centered">
+            <div class="box is-center has-text-centered">
+                {% set ns.items = get_cart_for_user(session["email"]) %}
+                <table class="table is-center" style="margin: auto;">
+                    <thead>
+                        <tr>
+                            <th>Image</th>
+                            <th>
+                                <abbr title="Position">Product</abbr>
+                            </th>
+                            <th>Qty</th>
+                            <th>Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in ns.items %}
+                            {% set ns.total_cost = ns.total_cost+item[0].price*item[1] %}
+                            {% set ns.total_nr_items = ns.total_nr_items+item[1] %}
+                            <tr>
+                                <th>
+                                    <img height="40"
+                                         width="30"
+                                         src="{{ item[0].image }}"
+                                         alt="Image for : {{ item[0].name }}"/>
+                                </th>
+                                <th>
+                                    <div>{{ item[0].name }}</div>
+                                </th>
+                                <th>{{ item[1] }}</th>
+                                <th>{{ item[0].price }}</th>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="box">
+                <nav class="level is-mobile">
+                    <p>
+                        Cart contains {{ ns.total_nr_items }} product{% if ns.total_nr_items > 1 %}s{% endif %}
+                    </p>
+                    <p>Total cost : {{ ns.total_cost }} Kr</p>
+                </nav>
+            </div>
+            <div class="box">
+                {{ form_title("Order details")}}
+                <div class="has-text-centered is-vertical">
+                    {{ form_field("Street address","address","text")}}
+                    {{ form_field("Zip code","zip","text")}}
+                    {{ form_field("Card number","cnr","text")}}
+                    {{ form_field("cvc","cvc","text")}}
+                    {{ form_button("Place order","submit()") }}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

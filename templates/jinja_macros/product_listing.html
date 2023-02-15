@@ -10,9 +10,9 @@
                     <br/>
                 </b>
             {% endfor %}
-{%- endmacro -%}
-{%- macro modal(product) -%}
-    <script>
+        {%- endmacro -%}
+        {%- macro modal(product) -%}
+            <script>
         // Script for closing the product information modal
         document.addEventListener('DOMContentLoaded', () => {
             function closeModal($el) {
@@ -26,105 +26,109 @@
                 });
             });
         });
-    </script>
-    <div class="modal" id="{{ product.name }}_modal">
-        <div class="modal-background"></div>
-        <div class="modal-card"style="border-radius: 1em;">
-            <header class="modal-card-head">
-                <p class="modal-card-title">Product information</p>
-                <button class="delete is-large" aria-label="close"></button>
-            </header>
-            <section class="modal-card-body">
-                <article class="media">
-                    <figure class="media-left">
+            </script>
+            <div class="modal" id="{{ product.name }}_modal">
+                <div class="modal-background"></div>
+                <div class="modal-card"style="border-radius: 1em;">
+                    <header class="modal-card-head">
+                        <p class="modal-card-title">Product information</p>
+                        <button class="delete is-large" aria-label="close"></button>
+                    </header>
+                    <section class="modal-card-body">
+                        <article class="media">
+                            <figure class="media-left">
+                                <img class="center"
+                                     src="{{ product.image }}"
+                                     alt="Image for : {{ product.name }}"
+                                     style="max-height:50em;
+                                            max-width:12em;
+                                            height:auto;
+                                            width:auto">
+                            </figure>
+                            <div class="media-content">
+                                <div class="content">
+                                    <div class="column">
+                                        <div class="content">
+                                            <article class="message is-dark is-large">
+                                                <div class="message-header">
+                                                    <p class="price">{{ product.name }}</p>
+                                                </div>
+                                                <div class="message-body">{{ product.description }}</div>
+                                            </article>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </article>
+                    </section>
+                    <footer class="modal-card-foot has-text-centered"
+                            style="justify-content:space-between">
+                        <div style="text-align:left">
+                            In stock : {{ product.stock }}
+                            <br>
+                            Price : {{ product.price }} kr/bottle
+                        </div>
+                        {% if product.stock > 0 %}
+                            <button class="button is-primary is-medium">
+                                <a href="/product/info/{{ product.serial_number }}"
+                                   style="color:black;
+                                          padding-right: 5%">Buy</a>
+                            </button>
+                        {% else %}
+                            <button class="button is-medium"
+                                    title="Disabled button"
+                                    style="padding-right: 5%"
+                                    disabled>Out of stock</button>
+                        {% endif %}
+                    </footer>
+                </div>
+            </div>
+        {%- endmacro -%}
+        {% macro listing(product) -%}
+            {{ modal(product)}}
+            <article class="media">
+                <figure class="media-left">
+                    <a onclick="toggle_modal('{{ product.name }}_modal')"
+                       style="color:black">
                         <img class="center"
                              src="{{ product.image }}"
                              alt="Image for : {{ product.name }}"
-                             style="max-height:50em;
-                                    max-width:12em;
-                                    height:auto;
-                                    width:auto">
-                    </figure>
-                    <div class="media-content">
+                             width="100em">
+                    </a>
+                </figure>
+                <div class="media-content">
+                    <a href="/product/info/{{ product.serial_number }}" style="color:black;">
                         <div class="content">
-                            <div class="column">
-                                <div class="content">
-                                    <article class="message is-dark is-large">
-                                        <div class="message-header">
-                                            <p class="price">{{ product.name }}</p>
-                                        </div>
-                                        <div class="message-body">{{ product.description }}</div>
-                                    </article>
+                            <h3>
+                                <b>{{ product.name }}</b>
+                            </h3>
+                            <p class="price">Price = {{ product.price }}</p>
+                        </div>
+                    </a>
+                </div>
+            </article>
+        {%- endmacro %}
+        {% macro list_container(products) -%}
+            {% set ns = namespace(counter=0) %}
+            <div class="tile has-background-grey-lighter is-ancestor is-centered center">
+                <div class="tile is-vertical is-fullwidth">
+                    {% for product in products %}
+                        {% if ns.counter % 4 == 0 %}
+                            <div class="tile center">
+                                <div class="tile  is-parent">
+                                {% endif %}
+                                <div class="tile is-child  is-vcentered">
+                                    {{ listing(product) }}
+                                    {% set ns.counter = ns.counter + 1 %}
+                                </div>
+                                {% if ns.counter % 4 == 0 %}
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                </article>
-            </section>
-            <footer class="modal-card-foot has-text-centered"
-                    style="justify-content:space-between">
-                <div style="text-align:left">
-                    In stock : {{ product.stock }} <br> Price : {{ product.price }} kr/bottle
-                </div>    
-                {% if product.stock > 0 %}
-                <button class="button is-primary is-medium">
-                    <a href="/product/info/{{ product.serial_number }}" style="color:black; padding-right: 5%;">
-                        Buy
-                    </a>
-                </button>
-                {% else %}
-                <button class="button is-medium" title="Disabled button" style="padding-right: 5%;" disabled>
-                    Out of stock
-                </button>
-                {% endif %}
-            </footer>
-        </div>
-    </div>
-{%- endmacro -%}
-{% macro listing(product) -%}
-    {{ modal(product)}}
-    <article class="media">
-        <figure class="media-left">
-            <a onclick="toggle_modal('{{ product.name }}_modal')" style="color:black;">
-                <img class="center"
-                     src="{{ product.image }}"
-                     alt="Image for : {{ product.name }}"
-                     width="100em">
-            </a>
-        </figure>
-        <div class="media-content">
-            <a href="/product/info/{{ product.serial_number }}" style="color:black;">
-                <div class="content">
-                    <h3>
-                        <b>{{ product.name }}</b>
-                    </h3>
-                    <p class="price">Price = {{ product.price }}</p>
-                </div>
-            </a>
-        </div>
-    </article>
-{%- endmacro %}
-{% macro list_container(products) -%}
-    {% set ns = namespace(counter=0) %}
-    <div class="tile has-background-grey-lighter is-ancestor is-centered center">
-        <div class="tile is-vertical is-fullwidth">
-            {% for product in products %}
-                {% if ns.counter % 4 == 0 %}
-                    <div class="tile center">
-                        <div class="tile  is-parent">
+                            <hr class="has-background-grey-lighter"
+                                style="outline:0;
+                                       border-top:1px solid gray">
                         {% endif %}
-                        <div class="tile is-child  is-vcentered">
-                            {{ listing(product) }}
-                            {% set ns.counter = ns.counter + 1 %}
-                        </div>
-                        {% if ns.counter % 4 == 0 %}
-                        </div>
-                    </div>
-                    <hr class="has-background-grey-lighter"
-                        style="outline:0;
-                               border-top:1px solid gray">
-                {% endif %}
-            {% endfor %}
-        </div>
-    </div>
-{%- endmacro %}
+                    {% endfor %}
+                </div>
+            </div>
+        {%- endmacro %}
