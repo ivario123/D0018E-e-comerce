@@ -7,6 +7,7 @@ from search import search_blueprint
 from admin import admin
 from category import category
 from product import product_blueprint
+from user import user_blueprint
 from flask import Flask, render_template, session
 from flask_login import current_user, login_required
 from sql.inventory.getters import *
@@ -26,6 +27,7 @@ app.register_blueprint(auth_blueprint)
 app.register_blueprint(admin)
 app.register_blueprint(category)
 app.register_blueprint(product_blueprint)
+app.register_blueprint(user_blueprint)
 app.login_manager = login_manager
 
 
