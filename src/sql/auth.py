@@ -12,6 +12,25 @@ def make_admin(email, connection=None, cursor=None):
 
 
 @ssql_builder.select(
+    ssql, table_name="USER", select_fields=["Username", "Email", "Name", "Surname"]
+)
+def get_full_user_by_email(Email, sql_query=None, connection=None, cursor=None):
+    cursor.execute(sql_query, (Email,))
+    result = cursor.fetchone()
+    if result:
+        return User(*result)
+    else:
+        return None
+
+
+@ssql_builder.base(ssql)
+def update_user_by_email(Email: str, UserName: str, Name: str, Surname: str, connection=None, cursor=None) -> bool:
+    query = """UPDATE USER SET USER.UserName=%s,USER.Name=%s,USER.Surname=%s WHERE USER.Email=%s;"""
+    cursor.execute(query, (UserName, Name, Surname, Email,))
+    return cursor.rowcount != 0
+
+
+@ssql_builder.select(
     ssql, table_name="USER", select_fields=["Email", "Username", "Role"]
 )
 def get_user_by_email(Email, sql_query=None, connection=None, cursor=None):
