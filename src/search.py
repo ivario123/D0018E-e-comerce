@@ -42,9 +42,23 @@ def sort(search_name, method):
     else:
         return sorted(search_name, key=lambda x: x.name, reverse = True) 
 
+def fetch_all(filter_input, method):
+    category_group = super_categories_and_sub()
+    search_name = get_all_items()
+
+    # if filtering for categories
+    if filter_input:
+        search_name = filter(search_name)
+
+    if method:
+        search_name = sort(search_name, method)
+    
+    for item in search_name:
+        item.add_rating(get_average_review_for(item.serial_number))
+
+    return render_template("search.html", user=current_user, items=search_name, category_groups = category_group)
+
 def fetch_items(search_input, filter_input, method):
-    if not search_input:
-        return redirect(url_for('index'))
     category_input = []
     category_input.append(search_input)
     search_category = get_all_items_with_category(category_input)
@@ -81,4 +95,8 @@ def fetch_items(search_input, filter_input, method):
 
 @search_blueprint.route("/search", methods=["GET"])
 def search_database():
-    return fetch_items(request.args.get('q'), request.args.get('categories'), request.args.get('sort'))
+    search_input = request.args.get('q')
+    if not search_input or "null":
+        return fetch_all(request.args.get('categories'), request.args.get('sort'))
+    else:
+        return fetch_items(request.args.get('q'), request.args.get('categories'), request.args.get('sort'))
