@@ -16,7 +16,33 @@ def selected_categories():
     categories = loads(categories)
     return categories
 
-def fetch_items(search_input, filter_input):
+def filter(search_name):
+    selected_cat = selected_categories()
+    search_filter = get_all_items_with_category(selected_cat)
+    search_name.extend(search_filter)
+
+    seen = set()
+    dupes = []
+
+    for item in search_name:
+        if item.serial_number in seen:
+            dupes.append(item)
+        else:
+            seen.add(item.serial_number)
+
+    return dupes
+
+def sort(search_name, method):
+    if method == "price_asc":
+        return sorted(search_name, key=lambda x: x.price)
+    elif method == "price_dsc":
+        return sorted(search_name, key=lambda x: x.price, reverse=True)
+    elif method == "name_asc":
+        return sorted(search_name, key=lambda x: x.name)
+    else:
+        return sorted(search_name, key=lambda x: x.name, reverse = True) 
+
+def fetch_items(search_input, filter_input, method):
     if not search_input:
         return redirect(url_for('index'))
     category_input = []
@@ -42,20 +68,10 @@ def fetch_items(search_input, filter_input):
 
     # if filtering for categories
     if filter_input:
-        selected_cat = selected_categories()
-        search_filter = get_all_items_with_category(selected_cat)
-        search_name.extend(search_filter)
+        search_name = filter(search_name)
 
-        seen = set()
-        dupes = []
-
-        for item in search_name:
-            if item.serial_number in seen:
-                dupes.append(item)
-            else:
-                seen.add(item.serial_number)
-
-        search_name = dupes
+    if method:
+        search_name = sort(search_name, method)
     
     for item in search_name:
         item.add_rating(get_average_review_for(item.serial_number))
@@ -65,4 +81,4 @@ def fetch_items(search_input, filter_input):
 
 @search_blueprint.route("/search", methods=["GET"])
 def search_database():
-    return fetch_items(request.args.get('q'), request.args.get('categories'))
+    return fetch_items(request.args.get('q'), request.args.get('categories'), request.args.get('sort'))
