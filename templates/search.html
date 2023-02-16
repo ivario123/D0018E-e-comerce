@@ -1,3 +1,7 @@
+{%block head%}
+<script src="../static/js/search.js"></script>
+{%endblock%}
+
 {% extends "base.html" %}
 {% from "jinja_macros/product_listing.html" import list_container %}
 {% block sidebar %}
@@ -12,43 +16,41 @@
         <a href="/user/orders">Orders</a>
     </li>
 </ul>
+
+
+
 <div class="menu-label">
     <b>Categories</b>
     <b class="control" id="filter" style="display: none;">
-        <a class="button is-primary is-small is-outlined is-pulled-right"
-           onclick="filter_categories()">
+        <a class="button is-primary is-small is-outlined is-pulled-right" onclick="filter_categories()">
             <span>Filter</span>
         </a>
     </b>
 </div>
 {% for group in category_groups %}
-    <div style="padding-bottom:.5rem;">
-        <div class="control" id="{{ group.name }}">
-            <p class="menu-label has-icon-left"
-               onclick="fold_away('{{ group.name }}')"
-               id="header">
-                <span class="icon is-small is-left" id="{{ group.name }}_icon">
-                    <i class="fa fa-caret-right"></i>
-                </span>
-                {{ group.name }}
-            </p>
-        </div>
-        <div id="category_group_{{ group.name }}" style="display: none;">
-            <ul class="menu-list">
-                {% for category in group.categories %}
-                    <li class="has-icon-left has-text-primary has-text-centered">
-                        <span class="icon is-small is-left" style="padding: 1.5rem;">
-                            <i class="fa fa-circle"
-                               id="{{ category.name }}_icon"
-                               style="display: none"></i>
-                            <a id="{{ category.name }}_link"
-                               onclick="update_category('{{ category.name }}')">{{ category.name }}</a>
-                        </span>
-                    </li>
-                {% endfor %}
-            </ul>
-        </div>
+<div style="padding-bottom:.5rem;">
+    <div class="control" id="{{ group.name }}">
+        <p class="menu-label has-icon-left" onclick="fold_away('{{ group.name }}')" id="header">
+            <span class="icon is-small is-left" id="{{ group.name }}_icon">
+                <i class="fa fa-caret-right"></i>
+            </span>
+            {{ group.name }}
+        </p>
     </div>
+    <div id="category_group_{{ group.name }}" style="display: none;">
+        <ul class="menu-list">
+            {% for category in group.categories %}
+            <li class="has-icon-left has-text-primary has-text-centered">
+                <span class="icon is-small is-left" style="padding: 1.5rem;">
+                    <i class="fa fa-circle" id="{{ category.name }}_icon" style="display: none"></i>
+                    <a id="{{ category.name }}_link" onclick="update_category('{{ category.name }}')">{{ category.name
+                        }}</a>
+                </span>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
 {% endfor %}
 <!--TODO save selected filters -->
 <script>
@@ -65,7 +67,7 @@
             icon.innerHTML = "<i class='fa fa-caret-right'></i>";
         }
     }
-    let categories = [{% for category in selected_categories %}"{{category}}"{% if not loop.last %},{% endif %} {% endfor %}];
+    let categories = [{% for category in selected_categories %}"{{category}}"{% if not loop.last %}, {% endif %} {% endfor %}];
     onload = function () {
         categories.forEach(function (category) {
             if (categories.length > 0)
@@ -102,4 +104,43 @@
     }
 </script>
 {% endblock %}
+
+<!--TODO sort on click and add some css to make it prettier. change in href -->
+<div class="dropdown">
+    <div class="dropdown-trigger">
+        <button class="button" aria-haspopup="true" aria-controls="dropdown-menu">
+            <span>Sort after</span>
+            <span class="icon is-small">
+                <i class="fa fa-angle-down" aria-hidden="true"></i>
+            </span>
+        </button>
+    </div>
+    <div class="dropdown-menu" id="dropdown-menu" role="menu">
+        <div class="dropdown-content">
+            <a href="#" class="dropdown-item">
+                Lowest price
+            </a>
+            <a href="#" class="dropdown-item">
+                Highest Price
+            </a>
+            <a href="#" class="dropdown-item">
+                Name (A-Ö)
+            </a>
+            <a href="#" class="dropdown-item">
+                Name (Ö-A)
+            </a>
+        </div>
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var dropdown = document.querySelector('.dropdown');
+        dropdown.addEventListener('click', function (event) {
+            event.stopPropagation();
+            dropdown.classList.toggle('is-active');
+        });
+    });       
+</script>
+
+
 {% block listings %}{{ list_container(items) }}{% endblock %}

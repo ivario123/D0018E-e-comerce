@@ -34,6 +34,12 @@ def fetch_items(search_input, filter_input):
     # need to check categories before filtering after categories to not lose categories from pure search. 
     category_group = super_categories_and_sub()
 
+    serial_numbers = []
+    for item in search_name:
+        serial_numbers.append(item.serial_number)
+    exact_category = search_get_categories(serial_numbers)
+    print(exact_category)
+
     # if filtering for categories
     if filter_input:
         selected_cat = selected_categories()
