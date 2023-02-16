@@ -226,11 +226,8 @@ def get_item_by_search_SN(SN, sql_query=None, connection: MySQLConnection = None
     else:
         return None
 
-
-@ssql_builder.select(ssql, table_name="PRODUCT", select_fields=["ProductName", "ProductDescription", "Price", "Inventory", "Image", "SN"])
-def get_item_by_search_name(name, sql_query=None, connection: MySQLConnection = None, cursor: MySQLCursor = None):
 @ssql_builder.base(ssql)
-def get_item_by_search_name(name, connection=None, cursor=None):
+def get_item_by_search_name(name, connection: MySQLConnection = None, cursor: MySQLCursor = None):
     """
     Get an item by name
     """
@@ -251,3 +248,4 @@ CATEGORY_ASSIGN WHERE SN in ({list_SN});"""
     cursor.execute(query, SN)
     return cursor.fetchall()  
 
+#TODO get sorted from sql or sort after?
