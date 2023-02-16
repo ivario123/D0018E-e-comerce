@@ -12,7 +12,9 @@
 {% block listings %}
     {{ pagination.info }}
     {{ pagination.bulma_style }}
-    {{ list_container(items) }}
+    {{ list_container(items[(pagination.page-1):(pagination.page*pagination.per_page)]) }}
+    <br>
+    {% print("pagination.page: ", pagination.page, "pagination.per_page: ", pagination.per_page, "multiplication: ", pagination.page*pagination.per_page) %}
 {% endblock %}
 
 {% block pages %}
