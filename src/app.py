@@ -44,8 +44,10 @@ def index():
 
     if items is None:
         items = []
+
+    pagination = Pagination(page=page, items=items, total=len(items), record_name='items', per_page=2)
     
-    pagination = Pagination(page=page, items=items)
+    print("<app.py: index()> page: ", page,"\nitems: ", items,"\npagination: ", pagination)
     
     return render_template(
         "index.html", user=current_user, items=items, category_groups=category_groups, pagination=pagination

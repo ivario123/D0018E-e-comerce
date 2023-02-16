@@ -10,6 +10,8 @@
 {% endblock %}
 
 {% block listings %}
+    {{ pagination.info }}
+    {{ pagination.bulma_style }}
     {{ list_container(items) }}
 {% endblock %}
 
