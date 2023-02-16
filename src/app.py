@@ -7,6 +7,8 @@ from search import search_blueprint
 from admin import admin
 from category import category
 from product import product_blueprint
+from order import order_blueprint
+from user import user_blueprint
 from flask import Flask, render_template, session
 from flask_login import current_user, login_required
 from sql.inventory.getters import *
@@ -21,11 +23,10 @@ app.template_folder = "../templates"
 app.static_folder = "../static"
 # ---
 
-app.register_blueprint(search_blueprint)
-app.register_blueprint(auth_blueprint)
-app.register_blueprint(admin)
-app.register_blueprint(category)
-app.register_blueprint(product_blueprint)
+blueprints = [search_blueprint, auth_blueprint, admin,
+              category, product_blueprint, order_blueprint,user_blueprint]
+for blueprint in blueprints:
+    app.register_blueprint(blueprint)
 app.login_manager = login_manager
 
 
@@ -47,4 +48,7 @@ def index():
 
 if __name__ == "__main__":
     app.debug = True
+    app.jinja_env.globals.update(session=session)
+    app.jinja_env.globals.update(get_cart_for_user=get_cart_for_user)
+    app.jinja_env.globals.update(get_orders_for_user=get_orders_for_user)
     app.run(host="0.0.0.0", port=5000)

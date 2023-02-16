@@ -103,3 +103,21 @@ function submit_category() {
         }
     });
 }
+
+
+function close_all_modals() {
+    let modals = document.querySelectorAll(".modal");
+    for (let i = 0; i < modals.length; i++) {
+        modals[i].classList.remove("is-active");
+    }
+}
+function toggle_modal(id) {
+    console.log("toogle :" + id)
+    let modal = document.getElementById(id);
+    let bkgr = modal.querySelector(".modal-background");
+    bkgr.addEventListener("click", function (e) {
+        close_all_modals()
+    });
+    modal.classList.add("is-active");
+
+}

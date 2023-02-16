@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{% block head %}<script src="../../static/js/review.js"></script>{% endblock %}
 {% from "jinja_macros/product_listing.html" import list_container %}
 {% from "jinja_macros/product_listing.html" import listing %}
 {%- macro star() -%}
@@ -36,6 +35,9 @@
     </div>
 {%- endmacro -%}
 <!-- We want to replace the sidebar -->
+{% block head %}
+    <script src="../../static/js/order.js"></script><script src="../../static/js/review.js"></script>
+{% endblock %}
 {% block sidebar %}
     <p class="menu-label">
         <b>Profile</b>
@@ -49,37 +51,61 @@
         </li>
     </ul>
 {% endblock %}
-<!-- The right column, we don't need to rebuild the entire thing -->
 {% block right_col %}
     <div class="column is-9"
          style="max-height:fit-content;
                 overflow-x:hidden;
                 overflow-y:auto">
-        <p style="font-size:30px; text-align:center;">
-            <strong >Product information about {{ item.name }}</strong>
-        </p>
-        <div style="display: flex;">
-            <div class="image" style="flex: 1;">
+        <article class="media">
+            <figure class="media-left">
                 <img class="center"
                      src="{{ item.image }}"
-                     alt="Image for : {{ item.name }}">
-            </div>
-            <div class="info" style="flex: 4; padding-left: 5%;">
-                <ul>
-                    <li>Price: {{ item.price }} kr</li>
-                    <li>Stock: {{ item.stock }}</li>
-                </ul>
-                <div class="field has-addons" style="padding-top: 2%">
-                    <div class="control">
-                        <input class="input" type="text" placeholder="Amount to buy">
-                    </div>
-                    <div class="control">
-                        <a class="button is-info">Buy</a>
+                     alt="Image for : {{ item.name }}"
+                     style="max-height:50em;
+                            max-width:12em;
+                            height:auto;
+                            width:auto;
+                            padding-right: 15%">
+            </figure>
+            <div class="media-content">
+                <div class="content">
+                    <div class="content">
+                        <h3>
+                            <strong >{{ item.name }}</strong>
+                        </h3>
+                        <p class="price">Price = {{ item.price }} kr/bottle</p>
+                        <p class="stock">Stock = {{ item.stock }}</p>
+                        {% if item.stock > 0 %}
+                            <div class="field has-addons" style="padding-top: 2%">
+                                <div class="control">
+                                    <input class="input"
+                                           type="number"
+                                           max="{{ item.stock }}"
+                                           min="0"
+                                           placeholder="Amount to buy"
+                                           id="Amount">
+                                </div>
+                                <div class="control">
+                                    <a class="button is-info" onclick="add_to_cart('{{ item.name }}')">Buy</a>
+                                </div>
+                            </div>
+                        {% else %}
+                            <fieldset disabled>
+                                <div class="field has-addons" style="padding-top: 2%">
+                                    <div class="control">
+                                        <input class="input" type="text" placeholder="">
+                                    </div>
+                                    <div class="control">
+                                        <a class="button is-info">Out of stock</a>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        {% endif %}
+                        <p style="padding-top: 2%;">{{ item.description }}</p>
                     </div>
                 </div>
-                <p style="padding-top: 2%;">{{ item.description }}</p>
             </div>
-        </div>
+        </article>
         <hr style="border:0;
                    border-top: 1px dotted black"
             class="has-background-grey-lighter"/>
@@ -112,4 +138,5 @@
                     class="has-background-grey-lighter"/>
             {% endfor %}
         </div>
-    {% endblock %}
+    </div>
+{% endblock %}

@@ -31,7 +31,7 @@ function validate_email() {
     }
 }
 
-function submit() {
+function login() {
     var email = get_el("email").value;
     var pass = get_el("pass").value;
 

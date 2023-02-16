@@ -22,7 +22,7 @@ def fetch_items(search_input, filter_input):
     category_input = []
     category_input.append(search_input)
     search_category = get_all_items_with_category(category_input)
-    search_input = '%' + search_input + '%'
+    search_input = f"%{search_input}%"
     search_name = get_item_by_search_name(search_input)
     if search_name is None:
         search_name = []
