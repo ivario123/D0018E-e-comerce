@@ -96,7 +96,8 @@ def fetch_items(search_input, filter_input, method):
 @search_blueprint.route("/search", methods=["GET"])
 def search_database():
     search_input = request.args.get('q')
-    if not search_input or "null":
+    print(search_input)
+    if search_input == "null":
         return fetch_all(request.args.get('categories'), request.args.get('sort'))
     else:
         return fetch_items(request.args.get('q'), request.args.get('categories'), request.args.get('sort'))
