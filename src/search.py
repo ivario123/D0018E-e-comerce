@@ -72,13 +72,10 @@ def fetch_items(search_input, filter_input, method):
 
     # TODO only show categories of items in search result
     # need to check categories before filtering after categories to not lose categories from pure search. 
-    category_group = super_categories_and_sub()
-
     serial_numbers = []
     for item in search_name:
         serial_numbers.append(item.serial_number)
     exact_category = search_get_categories(serial_numbers)
-    print(exact_category)
 
     # if filtering for categories
     if filter_input:
@@ -90,7 +87,7 @@ def fetch_items(search_input, filter_input, method):
     for item in search_name:
         item.add_rating(get_average_review_for(item.serial_number))
     
-    return render_template("search.html", user=current_user, items=search_name, category_groups = category_group)
+    return render_template("search.html", user=current_user, items=search_name, category_groups = exact_category)
 
 
 @search_blueprint.route("/search", methods=["GET"])

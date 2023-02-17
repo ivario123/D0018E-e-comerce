@@ -243,9 +243,27 @@ def get_item_by_search_name(name, connection: MySQLConnection = None, cursor: My
 @ ssql_builder.base(ssql)
 def search_get_categories(SN: List[int], connection=None, cursor=None):
     list_SN = ",".join(['%s' for _ in SN])
-    query = f"""SELECT DISTINCT Category FROM 
-CATEGORY_ASSIGN WHERE SN in ({list_SN});"""
-    cursor.execute(query, SN)
-    return cursor.fetchall()  
 
-#TODO get sorted from sql or sort after?
+    query = f"""SELECT DISTINCT CATEGORY.Super FROM CATEGORY INNER JOIN CATEGORY_ASSIGN ON CATEGORY.Name = CATEGORY_ASSIGN.Category WHERE SN in ({list_SN});"""
+    cursor.execute(query, SN)
+    super = cursor.fetchall()
+
+    query = f"""SELECT DISTINCT CATEGORY.name, CATEGORY.Super FROM CATEGORY INNER JOIN CATEGORY_ASSIGN ON CATEGORY.Name = CATEGORY_ASSIGN.Category WHERE SN in ({list_SN});"""
+    cursor.execute(query, SN)
+    result = cursor.fetchall()  
+
+    category_groups = [
+        CategoryGroup(x[0], []) for x in super
+    ]
+    if not result:
+        return []
+    super_cats = {
+        x[0]: [] for x in super
+    }
+    for category in result:
+        super_cats[category[1]].append(
+            Category(category[0], supercategory=category[1]))
+    for group in category_groups:
+        group.categories = super_cats[group.name]
+    return category_groups
+
