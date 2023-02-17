@@ -10,27 +10,6 @@
 {% endblock %}
 
 {% block listings %}
-    {{ pagination.info }}
-    {{ pagination.bulma_style }}
-    {{ list_container(items[(pagination.page-1):(pagination.page*pagination.per_page)]) }}
-    <br>
-    {% print("pagination.page: ", pagination.page, "pagination.per_page: ", pagination.per_page, "multiplication: ", pagination.page*pagination.per_page) %}
-{% endblock %}
-
-{% block pages %}
-<nav class="pagination is-centered" role="navigation" aria-label="pagination">
-    <a class="pagination-previous" title = "First page" disabled>Previous</a>
-    <a class="pagination-next">Next page</a>
-    <ul class="pagination-list">
-      <li><a class="pagination-link is-current" aria-label="Goto page 1">1</a></li>
-      <li><a class="pagination-link" aria-label="Goto page 2">2</a></li>
-      <li><a class="pagination-link" aria-label="Goto page 3">3</a></li>
-      <li><span class="pagination-ellipsis">&hellip;</span></li>
-      <li><a class="pagination-link" aria-label="Page 5" aria-current="page">5</a></li>
-      <li><span class="pagination-ellipsis">&hellip;</span></li>
-      <li><a class="pagination-link" aria-label="Goto page 10">10</a></li>
-    </ul>
-</nav>
-{{ pagination.info }}
-{{ pagination.links }}
+    {{ list_container(items[(pagination.page-1)+((pagination.per_page-1)*(pagination.page-1)) : (pagination.page-1)+((pagination.per_page-1)*(pagination.page-1))+pagination.per_page]) }}
+    {{ pagination.links }}
 {% endblock %}

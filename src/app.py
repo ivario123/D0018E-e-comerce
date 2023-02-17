@@ -34,8 +34,6 @@ app.login_manager = login_manager
 @app.route("/")
 @login_required
 def index():
-    page = request.args.get(get_page_parameter(), type=int, default=1)
-
     session["title"] = "D0018E - Wine Shop"
     category_groups = super_categories_and_sub()
     items = get_all_items()
@@ -45,9 +43,8 @@ def index():
     if items is None:
         items = []
 
-    pagination = Pagination(page=page, items=items, total=len(items), record_name='items', per_page=2)
-    
-    print("<app.py: index()> page: ", page,"\nitems: ", items,"\npagination: ", pagination)
+    page = request.args.get(get_page_parameter(), type=int, default=1)
+    pagination = Pagination(page=page, items=items, total=len(items), record_name='items', per_page=20, css_framework='bulma')
     
     return render_template(
         "index.html", user=current_user, items=items, category_groups=category_groups, pagination=pagination
