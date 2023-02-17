@@ -45,9 +45,11 @@ def index():
 
     page = request.args.get(get_page_parameter(), type=int, default=1)
     pagination = Pagination(page=page, items=items, total=len(items), record_name='items', per_page=20, css_framework='bulma')
+    first_index = (pagination.page-1)+((pagination.per_page-1)*(pagination.page-1))
+    last_index  = (pagination.page-1)+((pagination.per_page-1)*(pagination.page-1))+pagination.per_page
     
     return render_template(
-        "index.html", user=current_user, items=items, category_groups=category_groups, pagination=pagination
+        "index.html", user=current_user, items=items, category_groups=category_groups, pagination=pagination, first_index=first_index, last_index=last_index
     )
 
 
