@@ -1,3 +1,16 @@
+// Crude form of globals with mutex
+// Mutex is needed since failover is handled asynchronously 
+let target = {};
+let retry = false;
+let lock = false;
+// 2 decorators to make source easier to read
+function acquire() {
+    lock = true;
+}
+function release() {
+    lock = false;
+}
+
 function remove_all_tasks() {
     // From https://stackoverflow.com/questions/8860188/javascript-clear-all-timeouts
     var id = window.setTimeout(function () { }, 0);
@@ -19,7 +32,9 @@ async function remove(id) {
         return
     }
     acquire();
-    target[id].amount = -1;
+    if (target.hasOwnProperty(id)) {
+        target[id].amount = -1;
+    }
     let element = document.getElementById(id + "_basket");
     let product_price = Number(document.getElementById(id + "_orderd_price").innerHTML);
     let ordered_amount = Number(document.getElementById(id + "_ordered_amount").innerHTML);
@@ -54,18 +69,7 @@ async function remove(id) {
         release();
     })
 }
-// Crude form of globals with mutex
-// Mutex is needed since failover is handled asynchronously 
-let target = {};
-let retry = false;
-let lock = false;
-// 2 decorators to make source easier to read
-function acquire() {
-    lock = true;
-}
-function release() {
-    lock = false;
-}
+
 /// This scheduling should be deadlock free, I cannot be bothered to prove it though.
 async function batch(id, ordered_amount, total_price, old_ordered_amount, old_total_price, counter = 0) {
     // Batch writes a bunch of stock modifications
