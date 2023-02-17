@@ -237,9 +237,18 @@ def get_item_by_search_name(name, connection: MySQLConnection = None, cursor: My
     if result:
         return [item_from_sql(item) for item in result]
     else:
-        return None
+        return []
 
-# need to get super too
+@ssql_builder.base(ssql)
+def get_all_items_with_super(super, connection: MySQLConnection = None, cursor: MySQLCursor = None):
+    cursor.execute("SELECT DISTINCT ProductName,ProductDescription,Price,Inventory,Image,SN FROM PRODUCT WHERE SN IN (SELECT SN FROM CATEGORY_ASSIGN INNER JOIN CATEGORY ON CATEGORY_ASSIGN.Category = CATEGORY.Name WHERE CATEGORY.Super LIKE %s);",(super,))
+    result = cursor.fetchall()
+    if result:
+        ret = [item_from_sql(item) for item in result]
+        return ret
+    else:
+        return []
+
 @ ssql_builder.base(ssql)
 def search_get_categories(SN: List[int], connection=None, cursor=None):
     list_SN = ",".join(['%s' for _ in SN])
