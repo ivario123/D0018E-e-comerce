@@ -13,5 +13,6 @@
 {% block listings %}
     {{dropdown()}}
     <p class="title is-3">Items in category : {{ category }}</p>
-    {{ list_container(items) }}
+    {{ list_container(items[first_index : last_index]) }}
+    {{ pagination.links }}
 {% endblock %}
