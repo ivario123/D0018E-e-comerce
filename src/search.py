@@ -5,6 +5,7 @@ from flask_login import current_user
 from sql.auth import *
 from sql.inventory.getters import *
 from json import loads
+import category
 
 
 
@@ -95,6 +96,8 @@ def fetch_items(search_input, filter_input, method):
     # if filtering for categories
     if filter_input:
         search_result = filter(search_result)
+        categories = selected_categories()
+        session["selected_categories"] = categories 
 
     # if sorting
     if method:
@@ -103,9 +106,13 @@ def fetch_items(search_input, filter_input, method):
     # get reviews
     for item in search_result:
         item.add_rating(get_average_review_for(item.serial_number))
+
+    
+    if filter_input:
+        return render_template("search.html", user=current_user, items=search_result, category_groups = exact_category, category = categories, selected_categories = categories)
     
     return render_template("search.html", user=current_user, items=search_result, category_groups = exact_category)
-
+     
 
 @search_blueprint.route("/search", methods=["GET"])
 def search_database():
