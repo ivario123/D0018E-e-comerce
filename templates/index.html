@@ -1,15 +1,26 @@
 {% extends "base.html" %}
 {% from "jinja_macros/product_listing.html" import list_container %}
-
-{%block head%}
-    <script src="../static/js/inventory.js"></script>
-{%endblock%}
-
+{% block head %}<script src="../static/js/inventory.js"></script>{% endblock %}
 {% block sidebar %}
     {% include "jinja_macros/sidebar.html" %}
 {% endblock %}
-
 {% block listings %}
-    {{ list_container(items[first_index : last_index]) }}
-    {{ pagination.links }}
+    {% set ns = namespace(recommendations=get_recommendations_for_user(session["email"])) %}
+    {% if ns.recommendations|length == 0 %}
+        {% set ns.recommendations = top5_products() %}
+    {% endif %}
+    <div class="box has-background-grey-lighter" style="padding: -2em;">
+        <div class="">
+            <p class="title">Recommended products</p>
+            {{ list_container(ns.recommendations) }}
+        </div>
+    </div>
+    {% if ns.recommendations|length < 4 %}
+    </div>
+</div>
+<hr class="{{ bkgr }}" style="outline:0; border-top:1px solid gray">
+{% endif %}
+<p class="title">Product listings</p>
+{{ list_container(items[first_index : last_index]) }}
+{{ pagination.links }}
 {% endblock %}

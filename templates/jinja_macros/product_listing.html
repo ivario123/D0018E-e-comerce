@@ -108,9 +108,9 @@
                 </div>
             </article>
         {%- endmacro %}
-        {% macro list_container(products) -%}
+        {% macro list_container(products, bkgr = "has-background-grey-lighter") -%}
             {% set ns = namespace(counter=0) %}
-            <div class="tile has-background-grey-lighter is-ancestor is-centered center">
+            <div class="tile {{bkgr}} is-ancestor is-centered center">
                 <div class="tile is-vertical is-fullwidth">
                     {% for product in products %}
                         {% if ns.counter % 4 == 0 %}
@@ -124,7 +124,7 @@
                                 {% if ns.counter % 4 == 0 %}
                                 </div>
                             </div>
-                            <hr class="has-background-grey-lighter"
+                            <hr class="{{bkgr}}"
                                 style="outline:0;
                                        border-top:1px solid gray">
                         {% endif %}

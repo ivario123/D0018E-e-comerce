@@ -77,9 +77,6 @@
                                     <div class="select is-half-width is-multiple">
                                         <p class="control">
                                             <select class="control" id="category" multiple>
-                                                <option>
-                                                    Select Category
-                                                </option>
                                                 {% for group in super_categories %}
                                                     <optgroup label="{{ group.name }}">
                                                         {% for category in group.categories %}
