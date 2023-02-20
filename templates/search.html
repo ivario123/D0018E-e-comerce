@@ -1,9 +1,10 @@
-{%block head%}
-<script src="../static/js/search.js"></script>
-{%endblock%}
-
 {% extends "base.html" %}
-{% from "jinja_macros/product_listing.html" import list_container, dropdown%}
+{% from "jinja_macros/product_listing.html" import list_container, dropdown %}
+
+{%block head%}
+    <script src="../static/js/inventory.js"></script>
+    <script src="../static/js/sort.js"></script>
+{%endblock%}
 {% block sidebar %}
 <p class="menu-label">
     <b>Profile</b>
