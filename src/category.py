@@ -2,7 +2,11 @@ from flask.blueprints import Blueprint
 from flask import redirect, render_template, request, session
 from flask_login import login_required
 from flask_paginate import Pagination, get_page_parameter
-from sql.inventory.getters import get_all_items_with_category, super_categories_and_sub
+from sql.inventory.getters import (
+    get_all_items_with_category,
+    super_categories_and_sub,
+    get_all_super_categories_for_categories,
+)
 from json import loads
 
 category = Blueprint(
@@ -51,7 +55,9 @@ def category_page():
         + pagination.per_page
     )
     # Save the selected categories
-    session["selected_categories"] = categories
+
+    session["selected_categories"] = get_all_super_categories_for_categories(categories)
+    print(get_all_super_categories_for_categories(categories))
     # Set the title
     session["title"] = "Category search"
     # Render the page
@@ -59,7 +65,7 @@ def category_page():
     return render_template(
         "category.html",
         items=items,
-        category=categories,
+        category=get_all_super_categories_for_categories(categories),
         category_groups=all_categories,
         selected_categories=categories,
         pagination=pagination,
