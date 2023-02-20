@@ -9,8 +9,9 @@ from category import category
 from product import product_blueprint
 from order import order_blueprint
 from user import user_blueprint
-from flask import Flask, render_template, session
+from flask import Flask, render_template, session, request
 from flask_login import current_user, login_required
+from flask_paginate import Pagination, get_page_parameter
 from sql.inventory.getters import *
 
 # Create app
@@ -41,8 +42,14 @@ def index():
 
     if items is None:
         items = []
+
+    page = request.args.get(get_page_parameter(), type=int, default=1)
+    pagination = Pagination(page=page, items=items, total=len(items), record_name='items', per_page=20, css_framework='bulma')
+    first_index = (pagination.page-1)+((pagination.per_page-1)*(pagination.page-1))
+    last_index  = (pagination.page-1)+((pagination.per_page-1)*(pagination.page-1))+pagination.per_page
+    
     return render_template(
-        "index.html", user=current_user, items=items, category_groups=category_groups
+        "index.html", user=current_user, items=items, category_groups=category_groups, pagination=pagination, first_index=first_index, last_index=last_index
     )
 
 
