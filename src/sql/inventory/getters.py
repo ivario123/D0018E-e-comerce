@@ -9,7 +9,7 @@ from mysql.connector.connection import MySQLConnection
 from mysql.connector.connection import MySQLCursor
 
 
-def item_from_sql(item,*args):
+def item_from_sql(item, *args):
     """
     Assumes that the item is in the following order:
     (
@@ -54,9 +54,12 @@ LIMIT 4 ;
         return []
     return [item_from_sql(item) for item in ret]
 
+
 """
 SELECT PRODUCT.ProductName,PRODUCT.ProductDescription,PRODUCT.Price,PRODUCT.Inventory,PRODUCT.Image,PRODUCT.SN FROM PRODUCT INNER JOIN REVIEW ON REVIEW.SN=PRODUCT.SN ORDER BY REVIEW.Rating DESC LIMIT 4;
 """
+
+
 @ssql_builder.base(ssql)
 def top5_products(connection: MySQLConnection = None, cursor: MySQLCursor = None) -> List[Item]:
     query = """SELECT DISTINCT PRODUCT.ProductName,PRODUCT.ProductDescription,PRODUCT.Price,PRODUCT.Inventory,PRODUCT.Image,PRODUCT.SN,REVIEW.Rating FROM PRODUCT JOIN REVIEW ON REVIEW.SN=PRODUCT.SN  ORDER BY REVIEW.Rating DESC LIMIT 4;"""

@@ -10,18 +10,18 @@
         {% set ns.recommendations = top5_products() %}
     {% endif %}
     <div class="box has-background-grey-lighter" style="padding: -2em;">
-        <div class="has-background-white">
+        <div class="">
             <p class="title">Recommended products</p>
-            {{ list_container(ns.recommendations,bkgr="") }}
+            {{ list_container(ns.recommendations) }}
         </div>
     </div>
     {% if ns.recommendations|length < 4 %}
-        <br/>
-        <hr class="has-background-grey-lighter"
-            style="outline:0;
-                   border-top:1px solid gray"/>
-    {% endif %}
-    {{ list_container(items) }}
+    </div>
+</div>
+<hr class="{{ bkgr }}" style="outline:0; border-top:1px solid gray">
+{% endif %}
+<p class="title">Product listings</p>
+{{ list_container(items) }}
 {% endblock %}
 {% block pages %}
     <nav class="pagination is-centered"
