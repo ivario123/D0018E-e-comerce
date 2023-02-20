@@ -4,12 +4,12 @@ from models.review import Review
 from models.order import Order
 from .. import ssql
 from ssql_builder import SSqlBuilder as ssql_builder
-from typing import List, Tuple,Dict
+from typing import List, Tuple, Dict
 from mysql.connector.connection import MySQLConnection
 from mysql.connector.connection import MySQLCursor
 
 
-def item_from_sql(item):
+def item_from_sql(item, *args):
     """
     Assumes that the item is in the following order:
     (
@@ -31,8 +31,47 @@ def item_from_sql(item):
     )
 
 
+@ssql_builder.base(ssql)
+def get_recommendations_for_user(Email: str, connection: MySQLConnection = None, cursor: MySQLCursor = None) -> bool:
+    query = """
+WITH FREQ AS (SELECT USERORDER.PARCEL,COUNT(USERORDER.PARCEL) as similarity FROM USERORDER INNER JOIN PRODUCT ON USERORDER.SN = PRODUCT.SN 
+	WHERE PRODUCT.SN IN (
+		SELECT BASKET.SN FROM BASKET WHERE BASKET.Email = %s
+	)
+GROUP BY USERORDER.PARCEL ORDER BY similarity DESC)
+
+-- Assuming we know the most similar order ids, we can find the most similar largest order
+
+SELECT DISTINCT PRODUCT.ProductName,PRODUCT.ProductDescription,PRODUCT.Price,PRODUCT.Inventory,PRODUCT.Image,PRODUCT.SN FROM PRODUCT INNER JOIN USERORDER ON USERORDER.SN = PRODUCT.SN INNER JOIN REVIEW ON REVIEW.SN=PRODUCT.SN  WHERE PRODUCT.SN IN (
+    SELECT USERORDER.SN FROM USERORDER JOIN FREQ ON FREQ.PARCEL = USERORDER.PARCEL WHERE USERORDER.SN NOT IN (SELECT BASKET.SN FROM BASKET WHERE BASKET.Email = %s) GROUP BY USERORDER.PARCEL
+) 
+LIMIT 4 ;
+
+"""
+    cursor.execute(query, (Email, Email))
+    ret = cursor.fetchall()
+    if not ret:
+        return []
+    return [item_from_sql(item) for item in ret]
+
+
+"""
+SELECT PRODUCT.ProductName,PRODUCT.ProductDescription,PRODUCT.Price,PRODUCT.Inventory,PRODUCT.Image,PRODUCT.SN FROM PRODUCT INNER JOIN REVIEW ON REVIEW.SN=PRODUCT.SN ORDER BY REVIEW.Rating DESC LIMIT 4;
+"""
+
+
+@ssql_builder.base(ssql)
+def top5_products(connection: MySQLConnection = None, cursor: MySQLCursor = None) -> List[Item]:
+    query = """SELECT DISTINCT PRODUCT.ProductName,PRODUCT.ProductDescription,PRODUCT.Price,PRODUCT.Inventory,PRODUCT.Image,PRODUCT.SN,REVIEW.Rating FROM PRODUCT JOIN REVIEW ON REVIEW.SN=PRODUCT.SN  ORDER BY REVIEW.Rating DESC LIMIT 4;"""
+    cursor.execute(query)
+    ret = cursor.fetchall()
+    if not ret:
+        return []
+    return [item_from_sql(item) for item in ret]
+
+
 @ssql_builder.select(ssql, "REVIEW", ["Rating,Text,Email"])
-def get_reviews_for(sn, sql_query=None, connection=None, cursor=None):
+def get_reviews_for(sn, sql_query=None, connection: MySQLConnection = None, cursor: MySQLCursor = None):
     # Gets all the reviews for a given product,
     cursor.execute(sql_query, (sn,))
 
@@ -46,51 +85,6 @@ def get_reviews_for(sn, sql_query=None, connection=None, cursor=None):
         return []
 
     return [Review.from_sql(x, get_uname(x[2])) for x in ret]
-
-
-@ssql_builder.base(ssql)
-def get_average_review_for(SN, connection=None, cursor=None):
-    sql_query = "SELECT ROUND(AVG(Rating)) FROM REVIEW WHERE SN=%s;"
-    cursor.execute(sql_query, (SN,))
-    ret = cursor.fetchone()
-    if ret:
-        return ret[0]
-    return 0
-
-
-@ssql_builder.select(ssql, "REVIEW", ["Rating,Text,Email"])
-def get_reviews_for(sn, sql_query=None, connection=None, cursor=None):
-    # Gets all the reviews for a given product,
-    cursor.execute(sql_query, (sn,))
-
-    def get_uname(email):
-        sql_query = "SELECT UserName FROM USER WHERE Email=%s"
-        cursor.execute(sql_query, (email,))
-        return cursor.fetchone()[0]
-    ret = cursor.fetchall()
-    if not ret:
-        connection.rollback()
-        return []
-
-    return [Review.from_sql(x, get_uname(x[2])) for x in ret]
-
-
-@ssql_builder.base(ssql)
-def get_orders_for_user(Email: str, connection: MySQLConnection = None, cursor: MySQLCursor = None) -> Dict[int,List[Order]]:
-    query = """SELECT PARCEL.NR AS parcelId,PARCEL.Address,PARCEL.Zip,PARCEL.Status,PRODUCT.ProductName,PRODUCT.Image,USERORDER.Amount,USERORDER.Price FROM PRODUCT 
-INNER JOIN USERORDER  ON PRODUCT.SN = USERORDER.SN INNER JOIN  PARCEL ON USERORDER.PARCEL = PARCEL.NR WHERE USERORDER.Email=%s ORDER BY PARCEL.NR;;"""
-    cursor.execute(query,(Email,))
-    ret = cursor.fetchall()
-    if not ret:
-        return {}
-    result:Dict[int,List[Order]] = {}
-    for row in ret:
-        (parcelId,_,_,_,_,_,_,_) = row
-        if parcelId not in result.keys():
-            result[parcelId] = []
-        result[parcelId].append(Order(*row))
-    return result
-
 
 
 @ssql_builder.base(ssql)
@@ -103,7 +97,51 @@ def get_average_review_for(SN, connection: MySQLConnection = None, cursor: MySQL
     return 0
 
 
-@ssql_builder.select(ssql, "REVIEW", ["Rating","Text","Email"])
+@ssql_builder.select(ssql, "REVIEW", ["Rating,Text,Email"])
+def get_reviews_for(sn, sql_query=None, connection: MySQLConnection = None, cursor: MySQLCursor = None):
+    # Gets all the reviews for a given product,
+    cursor.execute(sql_query, (sn,))
+
+    def get_uname(email):
+        sql_query = "SELECT UserName FROM USER WHERE Email=%s"
+        cursor.execute(sql_query, (email,))
+        return cursor.fetchone()[0]
+    ret = cursor.fetchall()
+    if not ret:
+        connection.rollback()
+        return []
+
+    return [Review.from_sql(x, get_uname(x[2])) for x in ret]
+
+
+@ssql_builder.base(ssql)
+def get_orders_for_user(Email: str, connection: MySQLConnection = None, cursor: MySQLCursor = None) -> Dict[int, List[Order]]:
+    query = """SELECT PARCEL.NR AS parcelId,PARCEL.Address,PARCEL.Zip,PARCEL.Status,PRODUCT.ProductName,PRODUCT.Image,USERORDER.Amount,USERORDER.Price FROM PRODUCT 
+INNER JOIN USERORDER  ON PRODUCT.SN = USERORDER.SN INNER JOIN  PARCEL ON USERORDER.PARCEL = PARCEL.NR WHERE USERORDER.Email=%s ORDER BY PARCEL.NR;;"""
+    cursor.execute(query, (Email,))
+    ret = cursor.fetchall()
+    if not ret:
+        return {}
+    result: Dict[int, List[Order]] = {}
+    for row in ret:
+        (parcelId, _, _, _, _, _, _, _) = row
+        if parcelId not in result.keys():
+            result[parcelId] = []
+        result[parcelId].append(Order(*row))
+    return result
+
+
+@ssql_builder.base(ssql)
+def get_average_review_for(SN, connection: MySQLConnection = None, cursor: MySQLCursor = None):
+    sql_query = "SELECT ROUND(AVG(Rating)) FROM REVIEW WHERE SN=%s;"
+    cursor.execute(sql_query, (SN,))
+    ret = cursor.fetchone()
+    if ret:
+        return ret[0]
+    return 0
+
+
+@ssql_builder.select(ssql, "REVIEW", ["Rating", "Text", "Email"])
 def get_reviews_for(sn, sql_query: str = None, connection: MySQLConnection = None, cursor: MySQLCursor = None):
     # Gets all the reviews for a given product,
     cursor.execute(sql_query, (sn,))

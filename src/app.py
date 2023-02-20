@@ -25,7 +25,7 @@ app.static_folder = "../static"
 # ---
 
 blueprints = [search_blueprint, auth_blueprint, admin,
-              category, product_blueprint, order_blueprint,user_blueprint]
+              category, product_blueprint, order_blueprint, user_blueprint]
 for blueprint in blueprints:
     app.register_blueprint(blueprint)
 app.login_manager = login_manager
@@ -58,4 +58,8 @@ if __name__ == "__main__":
     app.jinja_env.globals.update(session=session)
     app.jinja_env.globals.update(get_cart_for_user=get_cart_for_user)
     app.jinja_env.globals.update(get_orders_for_user=get_orders_for_user)
+    app.jinja_env.globals.update(
+        get_recommendations_for_user=get_recommendations_for_user)
+    app.jinja_env.globals.update(
+        top5_products=top5_products)
     app.run(host="0.0.0.0", port=5000)
