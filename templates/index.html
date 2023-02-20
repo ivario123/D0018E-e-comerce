@@ -25,6 +25,7 @@
 <hr class="{{ bkgr }}" style="outline:0; border-top:1px solid gray">
 {% endif %}
 <p class="title">Product listings</p>
+{{dropdown()}}
 {{ list_container(items[first_index : last_index]) }}
 {{ pagination.links }}
 {% endblock %}
