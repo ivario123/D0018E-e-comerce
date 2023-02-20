@@ -1,5 +1,10 @@
 {% extends "base.html" %}
-{% from "jinja_macros/product_listing.html" import list_container %}
+{% from "jinja_macros/product_listing.html" import list_container, dropdown %}
+
+{%block head%}
+    <script src="../static/js/inventory.js"></script>
+    <script src="../static/js/sort.js"></script>
+{%endblock%}
 {% block sidebar %}
 <p class="menu-label">
     <b>Profile</b>
@@ -12,94 +17,51 @@
         <a href="/user/orders">Orders</a>
     </li>
 </ul>
+
+
+
 <div class="menu-label">
     <b>Categories</b>
     <b class="control" id="filter" style="display: none;">
-        <a class="button is-primary is-small is-outlined is-pulled-right"
-           onclick="filter_categories()">
+        <a class="button is-primary is-small is-outlined is-pulled-right" onclick="filter_categories()">
             <span>Filter</span>
         </a>
     </b>
 </div>
 {% for group in category_groups %}
-    <div style="padding-bottom:.5rem;">
-        <div class="control" id="{{ group.name }}">
-            <p class="menu-label has-icon-left"
-               onclick="fold_away('{{ group.name }}')"
-               id="header">
-                <span class="icon is-small is-left" id="{{ group.name }}_icon">
-                    <i class="fa fa-caret-right"></i>
-                </span>
-                {{ group.name }}
-            </p>
-        </div>
-        <div id="category_group_{{ group.name }}" style="display: none;">
-            <ul class="menu-list">
-                {% for category in group.categories %}
-                    <li class="has-icon-left has-text-primary has-text-centered">
-                        <span class="icon is-small is-left" style="padding: 1.5rem;">
-                            <i class="fa fa-circle"
-                               id="{{ category.name }}_icon"
-                               style="display: none"></i>
-                            <a id="{{ category.name }}_link"
-                               onclick="update_category('{{ category.name }}')">{{ category.name }}</a>
-                        </span>
-                    </li>
-                {% endfor %}
-            </ul>
-        </div>
+<div style="padding-bottom:.5rem;">
+    <div class="control" id="{{ group.name }}">
+        <p class="menu-label has-icon-left" onclick="fold_away('{{ group.name }}')" id="header">
+            <span class="icon is-small is-left" id="{{ group.name }}_icon">
+                <i class="fa fa-caret-right"></i>
+            </span>
+            {{ group.name }}
+        </p>
     </div>
+    <div id="category_group_{{ group.name }}" style="display: none;">
+        <ul class="menu-list">
+            {% for category in group.categories %}
+            <li class="has-icon-left has-text-primary has-text-centered">
+                <span class="icon is-small is-left" style="padding: 1.5rem;">
+                    <i class="fa fa-circle" id="{{ category.name }}_icon" style="display: none"></i>
+                    <a id="{{ category.name }}_link" onclick="update_category('{{ category.name }}')">{{ category.name
+                        }}</a>
+                </span>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
 {% endfor %}
-<!--TODO save selected filters -->
 <script>
-    function fold_away(id) {
-        var x = document.getElementById("category_group_" + id);
-        var icon = document.getElementById(id + "_icon");
-        console.log(icon);
-        if (x.style.display === "none") {
-            x.style.display = "block";
-            icon.innerHTML = "<i class='fa fa-caret-down'></i>";
-
-        } else {
-            x.style.display = "none";
-            icon.innerHTML = "<i class='fa fa-caret-right'></i>";
-        }
-    }
-    let categories = [{% for category in selected_categories %}"{{category}}"{% if not loop.last %},{% endif %} {% endfor %}];
-    onload = function () {
-        categories.forEach(function (category) {
-            if (categories.length > 0)
-                document.getElementById("filter").style.display = "inline";
-            else
-                document.getElementById("filter").style.display = "none";
-            let el = document.getElementById(category + "_link").parentElement;
-            let container = el.parentElement.parentElement.parentElement;
-            let header = container.parentElement.children[0].children[0];
-            let icon = header.children[0];
-            icon.innerHTML = "<i class='fa fa-caret-down'></i>";
-            container.style.display = "block";
-            el.children[0].style.display = "inline";
-        });
-    };
-    function update_category(category) {
-        if (!categories.includes(category)) {
-            document.getElementById(category + "_icon").style.display = "inline";
-            categories.push(category);
-        }
-        else {
-            categories.splice(categories.indexOf(category), 1);
-            document.getElementById(category + "_icon").style.display = "none";
-        }
-        if (categories.length > 0)
-            document.getElementById("filter").style.display = "inline";
-        else
-            document.getElementById("filter").style.display = "none";
-    }
-    function filter_categories() {
-        var url = document.URL;
-        url = url.split("&categories=");
-        window.location.href = url[0] + "&categories=" + JSON.stringify(categories);
-    }
+    let categories = [{% for category in selected_categories %}"{{category}}"{% if not loop.last %}, {% endif %} {% endfor %}];
 </script>
 {% endblock %}
-{% block listings %}{{ list_container(items) }}{% endblock %}
+
+{% block listings %}
+
+{{dropdown()}}
+
+{{ list_container(items[first_index : last_index]) }}
+{{ pagination.links }}
+{% endblock %}

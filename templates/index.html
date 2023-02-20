@@ -1,6 +1,10 @@
 {% extends "base.html" %}
-{% from "jinja_macros/product_listing.html" import list_container %}
-{% block head %}<script src="../static/js/inventory.js"></script>{% endblock %}
+{% from "jinja_macros/product_listing.html" import list_container, dropdown %}
+
+{%block head%}
+    <script src="../static/js/inventory.js"></script>
+    <script src="../static/js/sort.js"></script>
+{%endblock%}
 {% block sidebar %}
     {% include "jinja_macros/sidebar.html" %}
 {% endblock %}
@@ -21,6 +25,7 @@
 <hr class="{{ bkgr }}" style="outline:0; border-top:1px solid gray">
 {% endif %}
 <p class="title">Product listings</p>
+{{dropdown()}}
 {{ list_container(items[first_index : last_index]) }}
 {{ pagination.links }}
 {% endblock %}

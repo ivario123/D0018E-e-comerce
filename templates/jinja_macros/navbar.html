@@ -26,23 +26,18 @@
             <a href="/" class="navbar-item">Home</a>
             {% block navbar %}{% endblock %}
         </div>
-        <!--TODO move search bar down a little-->
+
         {% if session["logged_in"] %}
-            <div class="navbar-search has-background-grey-lighter">
-                <div class="field has-addons has-background-grey-lighter">
-                    <div class="control has-background-grey-lighter search">
-                        <input class="input has-background-grey-lighter has-text-black"
-                               id="search"
-                               placeholder="Search">
-                    </div>
-                    <div class="control" onclick="submit_search()">
-                        <input id="search"
-                               class="button has-background-grey-lighter has-text-black has-border-bottom-right-radius search_button"
-                               type="submit"
-                               value="Search">
-                    </div>
+        <div class="navbar-search has-background-grey-lighter">
+            <div class="field has-addons has-background-grey-lighter">
+                <div class="control has-background-grey-lighter search"> <input
+                        class="input has-background-grey-lighter has-text-black" id="search" placeholder="Search">
                 </div>
+                <div class="control" onclick="submit_search()"> <input id="search"
+                        class="button has-background-grey-lighter has-text-black has-border-bottom-right-radius search_button"
+                        type="submit" value="Search"> </div>
             </div>
+        </div>
         {% endif %}
         <div class="navbar-end">
             {% block has_cart %}

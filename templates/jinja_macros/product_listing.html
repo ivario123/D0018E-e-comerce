@@ -132,3 +132,33 @@
                 </div>
             </div>
         {%- endmacro %}
+
+
+{% macro dropdown() -%}
+<div class="dropdown" style = "float:right;">
+    <div class="dropdown-trigger">
+        <button class="button" aria-haspopup="true" aria-controls="dropdown-menu">
+            <span>Sort by</span>
+            <span class="icon is-small">
+                <i class="fa fa-angle-down" aria-hidden="true"></i>
+            </span>
+        </button>
+    </div>
+    <div class="dropdown-menu" id="dropdown-menu" role="menu">
+        <div class="dropdown-content">
+            <a href="javascript:sort('price_asc');" class="dropdown-item">
+                Lowest price
+            </a>
+            <a href="javascript:sort('price_dsc');" class="dropdown-item">
+                Highest Price
+            </a>
+            <a href="javascript:sort('name_asc');" class="dropdown-item">
+                Name (A-Ö)
+            </a>
+            <a href="javascript:sort('name_dsc');" class="dropdown-item">
+                Name (Ö-A)
+            </a>
+        </div>
+    </div>
+</div>
+{%- endmacro %}

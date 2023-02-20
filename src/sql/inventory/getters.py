@@ -264,9 +264,8 @@ def get_item_by_search_SN(SN, sql_query=None, connection: MySQLConnection = None
     else:
         return None
 
-
-@ssql_builder.select(ssql, table_name="PRODUCT", select_fields=["ProductName", "ProductDescription", "Price", "Inventory", "Image", "SN"])
-def get_item_by_search_name(name, sql_query=None, connection: MySQLConnection = None, cursor: MySQLCursor = None):
+@ssql_builder.base(ssql)
+def get_item_by_search_name(name, connection: MySQLConnection = None, cursor: MySQLCursor = None):
     """
     Get an item by name
     """
@@ -276,4 +275,44 @@ def get_item_by_search_name(name, sql_query=None, connection: MySQLConnection = 
     if result:
         return [item_from_sql(item) for item in result]
     else:
-        return None
+        return []
+
+@ssql_builder.base(ssql)
+def get_all_items_with_super(super, connection: MySQLConnection = None, cursor: MySQLCursor = None):
+    cursor.execute("SELECT DISTINCT ProductName,ProductDescription,Price,Inventory,Image,SN FROM PRODUCT WHERE SN IN (SELECT SN FROM CATEGORY_ASSIGN INNER JOIN CATEGORY ON CATEGORY_ASSIGN.Category = CATEGORY.Name WHERE CATEGORY.Super LIKE %s);",(super,))
+    result = cursor.fetchall()
+    if result:
+        ret = [item_from_sql(item) for item in result]
+        return ret
+    else:
+        return []
+
+@ ssql_builder.base(ssql)
+def search_get_categories(SN: List[int], connection=None, cursor=None):
+    list_SN = ",".join(['%s' for _ in SN])
+
+    query = f"""SELECT DISTINCT CATEGORY.Super FROM CATEGORY INNER JOIN CATEGORY_ASSIGN ON CATEGORY.Name = CATEGORY_ASSIGN.Category WHERE SN in ({list_SN});"""
+    cursor.execute(query, SN)
+    super = cursor.fetchall()
+    if not super:
+        return []
+
+    query = f"""SELECT DISTINCT CATEGORY.name, CATEGORY.Super FROM CATEGORY INNER JOIN CATEGORY_ASSIGN ON CATEGORY.Name = CATEGORY_ASSIGN.Category WHERE SN in ({list_SN});"""
+    cursor.execute(query, SN)
+    result = cursor.fetchall()  
+
+    category_groups = [
+        CategoryGroup(x[0], []) for x in super
+    ]
+    if not result:
+        return []
+    super_cats = {
+        x[0]: [] for x in super
+    }
+    for category in result:
+        super_cats[category[1]].append(
+            Category(category[0], supercategory=category[1]))
+    for group in category_groups:
+        group.categories = super_cats[group.name]
+    return category_groups
+

@@ -1,8 +1,9 @@
 {% extends "base.html" %}
-{% from "jinja_macros/product_listing.html" import list_container %}
+{% from "jinja_macros/product_listing.html" import list_container, dropdown %}
 
 {%block head%}
     <script src="../static/js/inventory.js"></script>
+    <script src="../static/js/sort.js"></script>
 {%endblock%}
 
 {% block sidebar %}
@@ -10,6 +11,7 @@
 {% endblock %}
 
 {% block listings %}
+    {{dropdown()}}
     <p class="title is-3">Items in category : {{ category }}</p>
     {{ list_container(items[first_index : last_index]) }}
     {{ pagination.links }}

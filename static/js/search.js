@@ -13,20 +13,12 @@ function select_elements(elements) {
 
 function submit_search() {
     var search = get_el("search").value;
-    window.location.href = "/search?q=" + search;
-    return
-    fetch("/search", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            "search_input": search
-        })
-    }).then(response => {
-        console.log(response)
-        if (response.status == 200) {
-            window.location.href = "/search"
-        }
-    })
+    console.log(search);
+    if (!search.replace(/\s/g, '').length) {
+        window.location.href = "/"
+    }
+    else {
+        window.location.href = "/search?q=" + search
+
+    }
 }
