@@ -256,6 +256,8 @@ def search_get_categories(SN: List[int], connection=None, cursor=None):
     query = f"""SELECT DISTINCT CATEGORY.Super FROM CATEGORY INNER JOIN CATEGORY_ASSIGN ON CATEGORY.Name = CATEGORY_ASSIGN.Category WHERE SN in ({list_SN});"""
     cursor.execute(query, SN)
     super = cursor.fetchall()
+    if not super:
+        return []
 
     query = f"""SELECT DISTINCT CATEGORY.name, CATEGORY.Super FROM CATEGORY INNER JOIN CATEGORY_ASSIGN ON CATEGORY.Name = CATEGORY_ASSIGN.Category WHERE SN in ({list_SN});"""
     cursor.execute(query, SN)
