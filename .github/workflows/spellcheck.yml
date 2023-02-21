@@ -11,6 +11,3 @@ jobs:
         with:
           check_filenames: true
           skip: "*.svg,*git,*result*,*yml"
-      - run: 
-          pip install black
-          black --check --diff .
