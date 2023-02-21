@@ -8,8 +8,7 @@ from sql.auth import *
 from admin.internal import *
 
 
-admin = Blueprint("admin", "admin",
-                  template_folder="../templates", url_prefix="/admin")
+admin = Blueprint("admin", "admin", template_folder="../templates", url_prefix="/admin")
 
 
 def non_admin_callback():
@@ -26,8 +25,7 @@ def test_database(template):
 
     # Load the file
     with open(
-        os.path.join(os.path.dirname(__file__),
-                     f"examples/{template}.json"), "r"
+        os.path.join(os.path.dirname(__file__), f"examples/{template}.json"), "r"
     ) as f:
         data = loads(f.read())
     for super_category in data["supercategories"]:

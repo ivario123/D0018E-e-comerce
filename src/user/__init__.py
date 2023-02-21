@@ -10,7 +10,9 @@ user_blueprint = Blueprint("user", __name__, url_prefix="/user")
 @user_blueprint.route("/profile", methods=["GET"])
 def index():
     print("stuff")
-    return render_template("user/profile.html", user=get_full_user_by_email(session["email"]))
+    return render_template(
+        "user/profile.html", user=get_full_user_by_email(session["email"])
+    )
 
 
 @user_blueprint.route("/orders", methods=["GET"])
@@ -31,4 +33,6 @@ def update_profile(UserName: str, Name: str, Surname: str):
 @login_required
 def profile():
     print("stuff")
-    return render_template("user/profile.html", user=get_full_user_by_email(session["email"]))
+    return render_template(
+        "user/profile.html", user=get_full_user_by_email(session["email"])
+    )

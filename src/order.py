@@ -2,11 +2,15 @@ from flask.blueprints import Blueprint
 from flask_login import login_required
 from flask import session, request, render_template
 from require import fields
-from sql.inventory.management import update_basket, remove_element_from_basket, add_to_basket, checkout_basket
+from sql.inventory.management import (
+    update_basket,
+    remove_element_from_basket,
+    add_to_basket,
+    checkout_basket,
+)
 
 order_blueprint = Blueprint("oder_blueprint", __name__, url_prefix="/order")
-basket_blueprint = Blueprint(
-    "basket_blueprint", __name__, url_prefix="/basket")
+basket_blueprint = Blueprint("basket_blueprint", __name__, url_prefix="/basket")
 order_blueprint.register_blueprint(basket_blueprint)
 
 

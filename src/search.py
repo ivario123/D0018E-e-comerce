@@ -7,8 +7,7 @@ from sql.inventory.getters import *
 from json import loads
 
 
-search_blueprint = Blueprint(
-    "search", __name__, template_folder="../templates")
+search_blueprint = Blueprint("search", __name__, template_folder="../templates")
 
 
 def selected_categories():
@@ -124,10 +123,8 @@ def fetch_items(search_input, filter_input, method):
     super_result = get_all_items_with_super(search_input)
 
     # group items from category search with name search
-    search_result.extend(
-        item for item in search_category if item not in search_result)
-    search_result.extend(
-        item for item in super_result if item not in search_result)
+    search_result.extend(item for item in search_category if item not in search_result)
+    search_result.extend(item for item in super_result if item not in search_result)
 
     # remove duplicates, seems like i get duplicates after extend even when im telling it not to include duplictaes?
     search_result = remove_dupes(search_result)

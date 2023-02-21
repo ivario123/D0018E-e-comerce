@@ -24,9 +24,19 @@ def get_full_user_by_email(Email, sql_query=None, connection=None, cursor=None):
 
 
 @ssql_builder.base(ssql)
-def update_user_by_email(Email: str, UserName: str, Name: str, Surname: str, connection=None, cursor=None) -> bool:
+def update_user_by_email(
+    Email: str, UserName: str, Name: str, Surname: str, connection=None, cursor=None
+) -> bool:
     query = """UPDATE USER SET USER.UserName=%s,USER.Name=%s,USER.Surname=%s WHERE USER.Email=%s;"""
-    cursor.execute(query, (UserName, Name, Surname, Email,))
+    cursor.execute(
+        query,
+        (
+            UserName,
+            Name,
+            Surname,
+            Email,
+        ),
+    )
     return cursor.rowcount != 0
 
 

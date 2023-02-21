@@ -24,8 +24,15 @@ app.template_folder = "../templates"
 app.static_folder = "../static"
 # ---
 
-blueprints = [search_blueprint, auth_blueprint, admin,
-              category, product_blueprint, order_blueprint, user_blueprint]
+blueprints = [
+    search_blueprint,
+    auth_blueprint,
+    admin,
+    category,
+    product_blueprint,
+    order_blueprint,
+    user_blueprint,
+]
 for blueprint in blueprints:
     app.register_blueprint(blueprint)
 app.login_manager = login_manager
@@ -44,15 +51,31 @@ def index():
         items = []
 
     page = request.args.get(get_page_parameter(), type=int, default=1)
-    pagination = Pagination(page=page, items=items, total=len(
-        items), record_name='items', per_page=20, css_framework='bulma')
-    first_index = (pagination.page-1) + \
-        ((pagination.per_page-1)*(pagination.page-1))
-    last_index = (pagination.page-1)+((pagination.per_page-1)
-                                      * (pagination.page-1))+pagination.per_page
+    pagination = Pagination(
+        page=page,
+        items=items,
+        total=len(items),
+        record_name="items",
+        per_page=20,
+        css_framework="bulma",
+    )
+    first_index = (pagination.page - 1) + (
+        (pagination.per_page - 1) * (pagination.page - 1)
+    )
+    last_index = (
+        (pagination.page - 1)
+        + ((pagination.per_page - 1) * (pagination.page - 1))
+        + pagination.per_page
+    )
 
     return render_template(
-        "index.html", user=current_user, items=items, category_groups=category_groups, pagination=pagination, first_index=first_index, last_index=last_index
+        "index.html",
+        user=current_user,
+        items=items,
+        category_groups=category_groups,
+        pagination=pagination,
+        first_index=first_index,
+        last_index=last_index,
     )
 
 
@@ -62,7 +85,7 @@ if __name__ == "__main__":
     app.jinja_env.globals.update(get_cart_for_user=get_cart_for_user)
     app.jinja_env.globals.update(get_orders_for_user=get_orders_for_user)
     app.jinja_env.globals.update(
-        get_recommendations_for_user=get_recommendations_for_user)
-    app.jinja_env.globals.update(
-        top5_products=top5_products)
+        get_recommendations_for_user=get_recommendations_for_user
+    )
+    app.jinja_env.globals.update(top5_products=top5_products)
     app.run(host="0.0.0.0", port=5000)

@@ -34,12 +34,22 @@ def category_page():
     items = get_all_items_with_category(categories)
     # Pagination
     page = request.args.get(get_page_parameter(), type=int, default=1)
-    pagination = Pagination(page=page, items=items, total=len(
-        items), record_name='items', per_page=20, css_framework='bulma')
-    first_index = (pagination.page-1) + \
-        ((pagination.per_page-1)*(pagination.page-1))
-    last_index = (pagination.page-1)+((pagination.per_page-1)
-                                      * (pagination.page-1))+pagination.per_page
+    pagination = Pagination(
+        page=page,
+        items=items,
+        total=len(items),
+        record_name="items",
+        per_page=20,
+        css_framework="bulma",
+    )
+    first_index = (pagination.page - 1) + (
+        (pagination.per_page - 1) * (pagination.page - 1)
+    )
+    last_index = (
+        (pagination.page - 1)
+        + ((pagination.per_page - 1) * (pagination.page - 1))
+        + pagination.per_page
+    )
     # Save the selected categories
     session["selected_categories"] = categories
     # Set the title
@@ -54,5 +64,5 @@ def category_page():
         selected_categories=categories,
         pagination=pagination,
         first_index=first_index,
-        last_index=last_index
+        last_index=last_index,
     )
