@@ -27,12 +27,14 @@ def item_from_sql(item, *args):
         price=item[2],
         stock=item[3],
         image=item[4],
-        serial_number=item[5]
+        serial_number=item[5],
     )
 
 
 @ssql_builder.base(ssql)
-def get_recommendations_for_user(Email: str, connection: MySQLConnection = None, cursor: MySQLCursor = None) -> bool:
+def get_recommendations_for_user(
+    Email: str, connection: MySQLConnection = None, cursor: MySQLCursor = None
+) -> bool:
     query = """
 WITH FREQ AS (SELECT USERORDER.PARCEL,COUNT(USERORDER.PARCEL) as similarity FROM USERORDER INNER JOIN PRODUCT ON USERORDER.SN = PRODUCT.SN 
 	WHERE PRODUCT.SN IN (
@@ -44,7 +46,7 @@ GROUP BY USERORDER.PARCEL ORDER BY similarity DESC)
 
 SELECT DISTINCT PRODUCT.ProductName,PRODUCT.ProductDescription,PRODUCT.Price,PRODUCT.Inventory,PRODUCT.Image,PRODUCT.SN FROM PRODUCT INNER JOIN USERORDER ON USERORDER.SN = PRODUCT.SN INNER JOIN REVIEW ON REVIEW.SN=PRODUCT.SN  WHERE PRODUCT.SN IN (
     SELECT USERORDER.SN FROM USERORDER JOIN FREQ ON FREQ.PARCEL = USERORDER.PARCEL WHERE USERORDER.SN NOT IN (SELECT BASKET.SN FROM BASKET WHERE BASKET.Email = %s) GROUP BY USERORDER.PARCEL
-) 
+) AND PRODUCT.Inventory > 0
 LIMIT 4 ;
 
 """
@@ -61,8 +63,10 @@ SELECT PRODUCT.ProductName,PRODUCT.ProductDescription,PRODUCT.Price,PRODUCT.Inve
 
 
 @ssql_builder.base(ssql)
-def top5_products(connection: MySQLConnection = None, cursor: MySQLCursor = None) -> List[Item]:
-    query = """SELECT DISTINCT PRODUCT.ProductName,PRODUCT.ProductDescription,PRODUCT.Price,PRODUCT.Inventory,PRODUCT.Image,PRODUCT.SN,REVIEW.Rating FROM PRODUCT JOIN REVIEW ON REVIEW.SN=PRODUCT.SN  ORDER BY REVIEW.Rating DESC LIMIT 4;"""
+def top5_products(
+    connection: MySQLConnection = None, cursor: MySQLCursor = None
+) -> List[Item]:
+    query = """SELECT DISTINCT PRODUCT.ProductName,PRODUCT.ProductDescription,PRODUCT.Price,PRODUCT.Inventory,PRODUCT.Image,PRODUCT.SN,REVIEW.Rating FROM PRODUCT JOIN REVIEW ON REVIEW.SN=PRODUCT.SN WHERE PRODUCT.Inventory > 0  ORDER BY REVIEW.Rating DESC LIMIT 4;"""
     cursor.execute(query)
     ret = cursor.fetchall()
     if not ret:
@@ -71,7 +75,9 @@ def top5_products(connection: MySQLConnection = None, cursor: MySQLCursor = None
 
 
 @ssql_builder.select(ssql, "REVIEW", ["Rating,Text,Email"])
-def get_reviews_for(sn, sql_query=None, connection: MySQLConnection = None, cursor: MySQLCursor = None):
+def get_reviews_for(
+    sn, sql_query=None, connection: MySQLConnection = None, cursor: MySQLCursor = None
+):
     # Gets all the reviews for a given product,
     cursor.execute(sql_query, (sn,))
 
@@ -79,6 +85,7 @@ def get_reviews_for(sn, sql_query=None, connection: MySQLConnection = None, curs
         sql_query = "SELECT UserName FROM USER WHERE Email=%s"
         cursor.execute(sql_query, (email,))
         return cursor.fetchone()[0]
+
     ret = cursor.fetchall()
     if not ret:
         connection.rollback()
@@ -88,7 +95,9 @@ def get_reviews_for(sn, sql_query=None, connection: MySQLConnection = None, curs
 
 
 @ssql_builder.base(ssql)
-def get_average_review_for(SN, connection: MySQLConnection = None, cursor: MySQLCursor = None):
+def get_average_review_for(
+    SN, connection: MySQLConnection = None, cursor: MySQLCursor = None
+):
     sql_query = "SELECT ROUND(AVG(Rating)) FROM REVIEW WHERE SN=%s;"
     cursor.execute(sql_query, (SN,))
     ret = cursor.fetchone()
@@ -98,7 +107,9 @@ def get_average_review_for(SN, connection: MySQLConnection = None, cursor: MySQL
 
 
 @ssql_builder.select(ssql, "REVIEW", ["Rating,Text,Email"])
-def get_reviews_for(sn, sql_query=None, connection: MySQLConnection = None, cursor: MySQLCursor = None):
+def get_reviews_for(
+    sn, sql_query=None, connection: MySQLConnection = None, cursor: MySQLCursor = None
+):
     # Gets all the reviews for a given product,
     cursor.execute(sql_query, (sn,))
 
@@ -106,6 +117,7 @@ def get_reviews_for(sn, sql_query=None, connection: MySQLConnection = None, curs
         sql_query = "SELECT UserName FROM USER WHERE Email=%s"
         cursor.execute(sql_query, (email,))
         return cursor.fetchone()[0]
+
     ret = cursor.fetchall()
     if not ret:
         connection.rollback()
@@ -115,7 +127,9 @@ def get_reviews_for(sn, sql_query=None, connection: MySQLConnection = None, curs
 
 
 @ssql_builder.base(ssql)
-def get_orders_for_user(Email: str, connection: MySQLConnection = None, cursor: MySQLCursor = None) -> Dict[int, List[Order]]:
+def get_orders_for_user(
+    Email: str, connection: MySQLConnection = None, cursor: MySQLCursor = None
+) -> Dict[int, List[Order]]:
     query = """SELECT PARCEL.NR AS parcelId,PARCEL.Address,PARCEL.Zip,PARCEL.Status,PRODUCT.ProductName,PRODUCT.Image,USERORDER.Amount,USERORDER.Price FROM PRODUCT 
 INNER JOIN USERORDER  ON PRODUCT.SN = USERORDER.SN INNER JOIN  PARCEL ON USERORDER.PARCEL = PARCEL.NR WHERE USERORDER.Email=%s ORDER BY PARCEL.NR;;"""
     cursor.execute(query, (Email,))
@@ -132,7 +146,9 @@ INNER JOIN USERORDER  ON PRODUCT.SN = USERORDER.SN INNER JOIN  PARCEL ON USERORD
 
 
 @ssql_builder.base(ssql)
-def get_average_review_for(SN, connection: MySQLConnection = None, cursor: MySQLCursor = None):
+def get_average_review_for(
+    SN, connection: MySQLConnection = None, cursor: MySQLCursor = None
+):
     sql_query = "SELECT ROUND(AVG(Rating)) FROM REVIEW WHERE SN=%s;"
     cursor.execute(sql_query, (SN,))
     ret = cursor.fetchone()
@@ -142,7 +158,12 @@ def get_average_review_for(SN, connection: MySQLConnection = None, cursor: MySQL
 
 
 @ssql_builder.select(ssql, "REVIEW", ["Rating", "Text", "Email"])
-def get_reviews_for(sn, sql_query: str = None, connection: MySQLConnection = None, cursor: MySQLCursor = None):
+def get_reviews_for(
+    sn,
+    sql_query: str = None,
+    connection: MySQLConnection = None,
+    cursor: MySQLCursor = None,
+):
     # Gets all the reviews for a given product,
     cursor.execute(sql_query, (sn,))
 
@@ -150,6 +171,7 @@ def get_reviews_for(sn, sql_query: str = None, connection: MySQLConnection = Non
         sql_query = "SELECT UserName FROM USER WHERE Email=%s"
         cursor.execute(sql_query, (email,))
         return cursor.fetchone()[0]
+
     ret = cursor.fetchall()
     if not ret:
         connection.rollback()
@@ -159,7 +181,9 @@ def get_reviews_for(sn, sql_query: str = None, connection: MySQLConnection = Non
 
 
 @ssql_builder.base(ssql)
-def get_cart_for_user(email: str, connection: MySQLConnection = None, cursor: MySQLCursor = None) -> List[Tuple[Item, int]]:
+def get_cart_for_user(
+    email: str, connection: MySQLConnection = None, cursor: MySQLCursor = None
+) -> List[Tuple[Item, int]]:
     query = f"""SELECT PRODUCT.ProductName,PRODUCT.ProductDescription,PRODUCT.Price,PRODUCT.Inventory,PRODUCT.Image,PRODUCT.SN,BASKET.Amount FROM PRODUCT INNER JOIN BASKET ON PRODUCT.SN = BASKET.SN WHERE BASKET.Email=%s ;"""
     cursor.execute(query, (email,))
     result = cursor.fetchall()
@@ -169,12 +193,15 @@ def get_cart_for_user(email: str, connection: MySQLConnection = None, cursor: My
 
 
 @ssql_builder.base(ssql)
-def get_all_items_with_category(categories: List[str], connection: MySQLConnection = None, cursor: MySQLCursor = None):
-    fmt = ",".join(['%s' for _ in categories])
+def get_all_items_with_category(
+    categories: List[str],
+    connection: MySQLConnection = None,
+    cursor: MySQLCursor = None,
+):
+    fmt = ",".join(["%s" for _ in categories])
     query = f"""SELECT ProductName,ProductDescription,Price,Inventory,Image,SN FROM PRODUCT WHERE SN IN
         (SELECT SN FROM CATEGORY_ASSIGN WHERE Category IN ({fmt}) GROUP BY SN HAVING COUNT(*)={len(categories)}) ORDER BY ProductName;"""
-    cursor.execute(
-        query, categories)
+    cursor.execute(query, categories)
     result = cursor.fetchall()
     if result:
         ret = [item_from_sql(item) for item in result]
@@ -183,10 +210,11 @@ def get_all_items_with_category(categories: List[str], connection: MySQLConnecti
         return []
 
 
-@ ssql_builder.base(ssql)
+@ssql_builder.base(ssql)
 def get_all_items(connection: MySQLConnection = None, cursor: MySQLCursor = None):
     cursor.execute(
-        "SELECT ProductName,ProductDescription,Price,Inventory,Image,SN FROM PRODUCT;")
+        "SELECT ProductName,ProductDescription,Price,Inventory,Image,SN FROM PRODUCT;"
+    )
     result = cursor.fetchall()
     if result:
         return [item_from_sql(item) for item in result]
@@ -194,10 +222,25 @@ def get_all_items(connection: MySQLConnection = None, cursor: MySQLCursor = None
         return []
 
 
-@ ssql_builder.select(ssql, table_name="PRODUCT", select_fields=["ProductName", "ProductDescription", "Price", "Inventory", "Image", "SN"])
-def get_item_by_name(ProductName, sql_query=None, connection: MySQLConnection = None, cursor: MySQLCursor = None):
-    cursor.execute(
-        sql_query, (ProductName,))
+@ssql_builder.select(
+    ssql,
+    table_name="PRODUCT",
+    select_fields=[
+        "ProductName",
+        "ProductDescription",
+        "Price",
+        "Inventory",
+        "Image",
+        "SN",
+    ],
+)
+def get_item_by_name(
+    ProductName,
+    sql_query=None,
+    connection: MySQLConnection = None,
+    cursor: MySQLCursor = None,
+):
+    cursor.execute(sql_query, (ProductName,))
     result = cursor.fetchall()
     if result:
         return [item_from_sql(item) for item in result]
@@ -205,10 +248,22 @@ def get_item_by_name(ProductName, sql_query=None, connection: MySQLConnection = 
         return None
 
 
-@ ssql_builder.select(ssql, table_name="PRODUCT", select_fields=["ProductName", "ProductDescription", "Price", "Inventory", "Image", "SN"])
-def get_item_by_serial_number(SN, sql_query=None, connection: MySQLConnection = None, cursor: MySQLCursor = None):
-    cursor.execute(
-        sql_query, (SN,))
+@ssql_builder.select(
+    ssql,
+    table_name="PRODUCT",
+    select_fields=[
+        "ProductName",
+        "ProductDescription",
+        "Price",
+        "Inventory",
+        "Image",
+        "SN",
+    ],
+)
+def get_item_by_serial_number(
+    SN, sql_query=None, connection: MySQLConnection = None, cursor: MySQLCursor = None
+):
+    cursor.execute(sql_query, (SN,))
     result = cursor.fetchall()
     if result:
         return [item_from_sql(item) for item in result]
@@ -216,10 +271,11 @@ def get_item_by_serial_number(SN, sql_query=None, connection: MySQLConnection = 
         return None
 
 
-@ ssql_builder.base(ssql)
-def get_all_super_categories(connection: MySQLConnection = None, cursor: MySQLCursor = None):
-    cursor.execute(
-        "SELECT Name FROM SUPERCATEGORY;")
+@ssql_builder.base(ssql)
+def get_all_super_categories(
+    connection: MySQLConnection = None, cursor: MySQLCursor = None
+):
+    cursor.execute("SELECT Name FROM SUPERCATEGORY;")
     result = cursor.fetchall()
     if result:
         return [item[0] for item in result]
@@ -227,59 +283,80 @@ def get_all_super_categories(connection: MySQLConnection = None, cursor: MySQLCu
         return []
 
 
-@ ssql_builder.base(ssql)
-def super_categories_and_sub(connection: MySQLConnection = None, cursor: MySQLCursor = None):
-    cursor.execute(
-        "SELECT Name FROM SUPERCATEGORY;")
+@ssql_builder.base(ssql)
+def super_categories_and_sub(
+    connection: MySQLConnection = None, cursor: MySQLCursor = None
+):
+    cursor.execute("SELECT Name FROM SUPERCATEGORY;")
     super = cursor.fetchall()
-    cursor.execute(
-        f"SELECT Name,Super FROM CATEGORY;")
+    cursor.execute(f"SELECT Name,Super FROM CATEGORY;")
     result = cursor.fetchall()
-    category_groups = [
-        CategoryGroup(x[0], []) for x in super
-    ]
+    category_groups = [CategoryGroup(x[0], []) for x in super]
     if not result:
         return []
-    super_cats = {
-        x[0]: [] for x in super
-    }
+    super_cats = {x[0]: [] for x in super}
     for category in result:
-        super_cats[category[1]].append(
-            Category(category[0], supercategory=category[1]))
+        super_cats[category[1]].append(Category(category[0], supercategory=category[1]))
     for group in category_groups:
         group.categories = super_cats[group.name]
     return category_groups
 
 
-@ssql_builder.select(ssql, table_name="PRODUCT", select_fields=["ProductName", "ProductDescription", "Price", "Inventory", "Image", "SN"])
-def get_item_by_search_SN(SN, sql_query=None, connection: MySQLConnection = None, cursor: MySQLCursor = None):
+@ssql_builder.select(
+    ssql,
+    table_name="PRODUCT",
+    select_fields=[
+        "ProductName",
+        "ProductDescription",
+        "Price",
+        "Inventory",
+        "Image",
+        "SN",
+    ],
+)
+def get_item_by_search_SN(
+    SN, sql_query=None, connection: MySQLConnection = None, cursor: MySQLCursor = None
+):
     """
     Get an item by SN
     """
     cursor.execute(
-        "SELECT ProductName,ProductDescription,Price,Inventory,Image,SN FROM PRODUCT WHERE SN=%s;", (SN,))
+        "SELECT ProductName,ProductDescription,Price,Inventory,Image,SN FROM PRODUCT WHERE SN=%s;",
+        (SN,),
+    )
     result = cursor.fetchall()
     if result:
         return [item_from_sql(item) for item in result]
     else:
         return None
 
+
 @ssql_builder.base(ssql)
-def get_item_by_search_name(name, connection: MySQLConnection = None, cursor: MySQLCursor = None):
+def get_item_by_search_name(
+    name, connection: MySQLConnection = None, cursor: MySQLCursor = None
+):
     """
     Get an item by name
     """
     cursor.execute(
-        "SELECT ProductName,ProductDescription,Price,Inventory,Image,SN FROM PRODUCT WHERE ProductName LIKE %s;", (name,))
+        "SELECT ProductName,ProductDescription,Price,Inventory,Image,SN FROM PRODUCT WHERE ProductName LIKE %s;",
+        (name,),
+    )
     result = cursor.fetchall()
     if result:
         return [item_from_sql(item) for item in result]
     else:
         return []
 
+
 @ssql_builder.base(ssql)
-def get_all_items_with_super(super, connection: MySQLConnection = None, cursor: MySQLCursor = None):
-    cursor.execute("SELECT DISTINCT ProductName,ProductDescription,Price,Inventory,Image,SN FROM PRODUCT WHERE SN IN (SELECT SN FROM CATEGORY_ASSIGN INNER JOIN CATEGORY ON CATEGORY_ASSIGN.Category = CATEGORY.Name WHERE CATEGORY.Super LIKE %s);",(super,))
+def get_all_items_with_super(
+    super, connection: MySQLConnection = None, cursor: MySQLCursor = None
+):
+    cursor.execute(
+        "SELECT DISTINCT ProductName,ProductDescription,Price,Inventory,Image,SN FROM PRODUCT WHERE SN IN (SELECT SN FROM CATEGORY_ASSIGN INNER JOIN CATEGORY ON CATEGORY_ASSIGN.Category = CATEGORY.Name WHERE CATEGORY.Super LIKE %s);",
+        (super,),
+    )
     result = cursor.fetchall()
     if result:
         ret = [item_from_sql(item) for item in result]
@@ -287,9 +364,10 @@ def get_all_items_with_super(super, connection: MySQLConnection = None, cursor: 
     else:
         return []
 
-@ ssql_builder.base(ssql)
+
+@ssql_builder.base(ssql)
 def search_get_categories(SN: List[int], connection=None, cursor=None):
-    list_SN = ",".join(['%s' for _ in SN])
+    list_SN = ",".join(["%s" for _ in SN])
 
     query = f"""SELECT DISTINCT CATEGORY.Super FROM CATEGORY INNER JOIN CATEGORY_ASSIGN ON CATEGORY.Name = CATEGORY_ASSIGN.Category WHERE SN in ({list_SN});"""
     cursor.execute(query, SN)
@@ -299,20 +377,14 @@ def search_get_categories(SN: List[int], connection=None, cursor=None):
 
     query = f"""SELECT DISTINCT CATEGORY.name, CATEGORY.Super FROM CATEGORY INNER JOIN CATEGORY_ASSIGN ON CATEGORY.Name = CATEGORY_ASSIGN.Category WHERE SN in ({list_SN});"""
     cursor.execute(query, SN)
-    result = cursor.fetchall()  
+    result = cursor.fetchall()
 
-    category_groups = [
-        CategoryGroup(x[0], []) for x in super
-    ]
+    category_groups = [CategoryGroup(x[0], []) for x in super]
     if not result:
         return []
-    super_cats = {
-        x[0]: [] for x in super
-    }
+    super_cats = {x[0]: [] for x in super}
     for category in result:
-        super_cats[category[1]].append(
-            Category(category[0], supercategory=category[1]))
+        super_cats[category[1]].append(Category(category[0], supercategory=category[1]))
     for group in category_groups:
         group.categories = super_cats[group.name]
     return category_groups
-

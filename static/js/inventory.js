@@ -112,7 +112,7 @@ function close_all_modals() {
     }
 }
 function toggle_modal(id) {
-    console.log("toogle :" + id)
+    console.log("toggle :" + id)
     let modal = document.getElementById(id);
     let bkgr = modal.querySelector(".modal-background");
     bkgr.addEventListener("click", function (e) {

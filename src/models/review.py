@@ -1,4 +1,3 @@
-
 class Review:
     def __init__(self, username, rating, text):
         self.username = username

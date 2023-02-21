@@ -24,9 +24,19 @@ def get_full_user_by_email(Email, sql_query=None, connection=None, cursor=None):
 
 
 @ssql_builder.base(ssql)
-def update_user_by_email(Email: str, UserName: str, Name: str, Surname: str, connection=None, cursor=None) -> bool:
+def update_user_by_email(
+    Email: str, UserName: str, Name: str, Surname: str, connection=None, cursor=None
+) -> bool:
     query = """UPDATE USER SET USER.UserName=%s,USER.Name=%s,USER.Surname=%s WHERE USER.Email=%s;"""
-    cursor.execute(query, (UserName, Name, Surname, Email,))
+    cursor.execute(
+        query,
+        (
+            UserName,
+            Name,
+            Surname,
+            Email,
+        ),
+    )
     return cursor.rowcount != 0
 
 
@@ -43,7 +53,7 @@ def get_user_by_email(Email, sql_query=None, connection=None, cursor=None):
 
 
 def auth_user(email, sugested_pass) -> Result:
-    # Not using ssql_builder.select because we do might need a lot of time to hash the password, and retrive the user
+    # Not using ssql_builder.select because we do might need a lot of time to hash the password, and retrieve the user
     # from the database.
     with ssql as (conn, curs):
         curs.execute("SELECT Password FROM USER WHERE Email=%s;", (email,))

@@ -1,12 +1,10 @@
-from flask import Blueprint, request, render_template, session, redirect, url_for
+from flask import Blueprint, request, render_template, session
 from flask_paginate import Pagination, get_page_parameter
 import require as require
-from require import response
 from flask_login import current_user
 from sql.auth import *
 from sql.inventory.getters import *
 from json import loads
-import category
 
 
 search_blueprint = Blueprint("search", __name__, template_folder="../templates")
@@ -93,7 +91,7 @@ def fetch_all(filter_input, method):
         + pagination.per_page
     )
 
-    # if filtered by category 
+    # if filtered by category
     if filter_input:
         return render_template(
             "search.html",
@@ -176,7 +174,7 @@ def fetch_items(search_input, filter_input, method):
         + pagination.per_page
     )
 
-    # if filtered by category 
+    # if filtered by category
     if filter_input:
         return render_template(
             "search.html",
