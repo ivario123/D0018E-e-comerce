@@ -43,7 +43,7 @@ def get_user_by_email(Email, sql_query=None, connection=None, cursor=None):
 
 
 def auth_user(email, sugested_pass) -> Result:
-    # Not using ssql_builder.select because we do might need a lot of time to hash the password, and retrive the user
+    # Not using ssql_builder.select because we do might need a lot of time to hash the password, and retrieve the user
     # from the database.
     with ssql as (conn, curs):
         curs.execute("SELECT Password FROM USER WHERE Email=%s;", (email,))
