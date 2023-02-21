@@ -1,8 +1,6 @@
 """
 This file will need to be updated when the sql schemas are done.
 """
-from models import Item
-from models.category import CategoryGroup
 from .. import ssql
 from mysql.connector.connection import MySQLConnection
 from mysql.connector.connection import MySQLCursor
@@ -43,8 +41,8 @@ def checkout_basket(Address: str, Zip: int, Email: int, connection: MySQLConnect
 @ssql_builder.base(ssql)
 def update_stock(SN: int, Stock: int, connection: MySQLConnection = None, cursor: MySQLCursor = None) -> bool:
     query = """UPDATE PRODUCT SET PRODUCT.Inventory=%s WHERE PRODUCT.SN = %s;"""
-    cursor.execute(query,(Stock,SN,))
-    return cursor.rowcount!=0
+    cursor.execute(query, (Stock, SN,))
+    return cursor.rowcount != 0
 
 
 @ssql_builder.base(ssql)

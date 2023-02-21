@@ -1,15 +1,14 @@
-from flask import Blueprint, request, render_template, session, redirect, url_for
+from flask import Blueprint, request, render_template, session
 from flask_paginate import Pagination, get_page_parameter
 import require as require
-from require import response
 from flask_login import current_user
 from sql.auth import *
 from sql.inventory.getters import *
 from json import loads
-import category
 
 
-search_blueprint = Blueprint("search", __name__, template_folder="../templates")
+search_blueprint = Blueprint(
+    "search", __name__, template_folder="../templates")
 
 
 def selected_categories():
@@ -93,7 +92,7 @@ def fetch_all(filter_input, method):
         + pagination.per_page
     )
 
-    # if filtered by category 
+    # if filtered by category
     if filter_input:
         return render_template(
             "search.html",
@@ -125,8 +124,10 @@ def fetch_items(search_input, filter_input, method):
     super_result = get_all_items_with_super(search_input)
 
     # group items from category search with name search
-    search_result.extend(item for item in search_category if item not in search_result)
-    search_result.extend(item for item in super_result if item not in search_result)
+    search_result.extend(
+        item for item in search_category if item not in search_result)
+    search_result.extend(
+        item for item in super_result if item not in search_result)
 
     # remove duplicates, seems like i get duplicates after extend even when im telling it not to include duplictaes?
     search_result = remove_dupes(search_result)
@@ -176,7 +177,7 @@ def fetch_items(search_input, filter_input, method):
         + pagination.per_page
     )
 
-    # if filtered by category 
+    # if filtered by category
     if filter_input:
         return render_template(
             "search.html",

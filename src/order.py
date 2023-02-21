@@ -2,7 +2,7 @@ from flask.blueprints import Blueprint
 from flask_login import login_required
 from flask import session, request, render_template
 from require import fields
-from sql.inventory.management import update_basket, remove_element_from_basket, add_to_basket,checkout_basket
+from sql.inventory.management import update_basket, remove_element_from_basket, add_to_basket, checkout_basket
 
 order_blueprint = Blueprint("oder_blueprint", __name__, url_prefix="/order")
 basket_blueprint = Blueprint(
@@ -32,9 +32,9 @@ def add_bakset(ProductName, Amount):
 
 @fields(request)
 def handle_checkout(Address, Zip):
-    if checkout_basket(Address=Address,Zip=Zip,Email=session["email"]):
+    if checkout_basket(Address=Address, Zip=Zip, Email=session["email"]):
         return "Checkout complete"
-    return "Error in checkout",400
+    return "Error in checkout", 400
 
 
 @order_blueprint.route("/checkout", methods=["GET", "POST"])
