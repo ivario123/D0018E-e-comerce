@@ -18,9 +18,7 @@ def create_product_internal(name, price, description, image, category):
         category = [category]
     for cat in category:
         assign_category_to_item(
-            SN=get_item_by_name(name)[0].serial_number, Category=cat
-        )
-
+            SN=get_item_by_name(name)[0].serial_number, Category=cat)
 
 @fields(request)
 def create_category_internal(name, super_category):
