@@ -1,9 +1,7 @@
 {% extends "base.html" %}
 {% from "jinja_macros/form.html" import
 form_field,form_button,form_title,form_field_with_icon,form_field_with_icon_and_event %}
-{% block head %}
-    <script src="../../static/js/inventory.js"></script>
-{% endblock %}
+{% block head %}<script src="../../static/js/inventory.js"></script>{% endblock %}
 {% block content %}
     <div class="columns is-centered">
         <div class="column is-4">
@@ -11,6 +9,16 @@ form_field,form_button,form_title,form_field_with_icon,form_field_with_icon_and_
                 {{ form_title("Create Category Group")}}
                 <div class="has-text-centered is-vertical">
                     {{ form_field("Name","name","text")}}
+                    <div class="nav is-mobile" style="padding-bottom: 1em;">
+                        {% for color in valid_colors %}
+                            <a class="tag is-{{ color }}"
+                               id="{{ color }}"
+                               onclick="select_color('{{ color }}')"
+                               style="padding:1em">
+                                {{ color }}
+                            </a>
+                        {% endfor %}
+                    </div>
                     {{ form_button("Create","submit_super_category()")}}
                 </div>
             </div>

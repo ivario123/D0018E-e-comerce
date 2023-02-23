@@ -59,6 +59,15 @@ function update_preview() {
     preview_price.innerHTML = "Price: " + price
 }
 
+let group_color = "";
+function select_color(color) {
+    if (group_color) {
+        document.getElementById(group_color).style.textDecoration = "";
+    }
+    document.getElementById(color).style.textDecoration = "underline";
+    group_color = color;
+}
+
 function submit_super_category() {
     let name = get_el("name").value;
     fetch("/admin/create_super_category", {
@@ -67,7 +76,8 @@ function submit_super_category() {
             "Content-Type": "application/json"
         },
         body: JSON.stringify({
-            "name": name
+            "name": name,
+            "color": group_color
         })
     }).then(response => {
         if (response.status == 200) {

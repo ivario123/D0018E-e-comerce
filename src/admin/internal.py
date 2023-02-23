@@ -28,8 +28,8 @@ def create_category_internal(name, super_category):
 
 
 @fields(request)
-def create_super_category_internal(name):
-    return create_super_category(Name=name)
+def create_super_category_internal(name, color):
+    return create_super_category(Name=name, Color=color)
 
 
 @fields(request)
