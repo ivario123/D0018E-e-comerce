@@ -14,8 +14,9 @@ class Category:
 
 
 class CategoryGroup:
-    def __init__(self, name, categories):
+    def __init__(self, name, color, categories):
         self.name = name
+        self.color = color
         self.categories = categories
         if isinstance(categories, list):
             self.categories = [Category(cat, name) for cat in categories]

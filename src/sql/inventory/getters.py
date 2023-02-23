@@ -303,11 +303,11 @@ def get_all_super_categories(
 def super_categories_and_sub(
     connection: MySQLConnection = None, cursor: MySQLCursor = None
 ):
-    cursor.execute("SELECT Name FROM SUPERCATEGORY;")
+    cursor.execute("SELECT Name,Color FROM SUPERCATEGORY;")
     super = cursor.fetchall()
     cursor.execute(f"SELECT Name,Super FROM CATEGORY;")
     result = cursor.fetchall()
-    category_groups = [CategoryGroup(x[0], []) for x in super]
+    category_groups = [CategoryGroup(x[0], x[1], []) for x in super]
     if not result:
         return []
     super_cats = {x[0]: [] for x in super}
@@ -395,7 +395,7 @@ def search_get_categories(SN: List[int], connection=None, cursor=None):
     cursor.execute(query, SN)
     result = cursor.fetchall()
 
-    category_groups = [CategoryGroup(x[0], []) for x in super]
+    category_groups = [CategoryGroup(x[0], "", []) for x in super]
     if not result:
         return []
     super_cats = {x[0]: [] for x in super}

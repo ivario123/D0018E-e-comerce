@@ -104,6 +104,7 @@ def create_super_category_endpoint():
             valid_colors=["primary", "link", "info", "success", "warning", "danger"],
         )
 
+
 @admin.route("/manage_categories", methods=["GET", "POST"])
 @login_required
 @admin_required(non_admin_callback)
@@ -112,13 +113,44 @@ def manage_categories():
         ret = create_super_category_internal()
         return response(ret, code=200 if ret else 400)
     else:
-        session["title"] = "Create super_category"
+        session["title"] = "Manage categories"
         return render_template(
-            "admin/create_category_group.html",
+            "admin/manage_categories.html",
+            category_groups=super_categories_and_sub(),
             valid_colors=["primary", "link", "info", "success", "warning", "danger"],
         )
 
 
+@admin.route("/delete/category", methods=["POST"])
+@login_required
+@admin_required(non_admin_callback)
+@fields(request)
+def delete_category(Name: str,Type:str):
+    return ("Success", 200) if delete_category_by_name(Name,Type) else ("Error", 400)
+
+
+@admin.route("/update_super_category/color", methods=["POST"])
+@login_required
+@admin_required(non_admin_callback)
+@fields(request)
+def update_super_category_color(Name: str, Color: str):
+    return (
+        ("Success", 200)
+        if update_super_category_color_by_name(Name, Color)
+        else ("Error", 400)
+    )
+
+
+@admin.route("/category/name_change", methods=["POST"])
+@login_required
+@admin_required(non_admin_callback)
+@fields(request)
+def name_change(Type: str, OldName: str, NewName: str):
+    return (
+        ("Success", 200)
+        if category_name_change(Type, NewName, OldName)
+        else ("Error", 400)
+    )
 
 
 @admin.route("/", methods=["GET"])
