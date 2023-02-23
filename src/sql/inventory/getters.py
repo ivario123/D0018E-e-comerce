@@ -272,6 +272,22 @@ def get_item_by_serial_number(
 
 
 @ssql_builder.base(ssql)
+def get_all_super_categories_for_categories(
+    categories: list[str],
+    connection: MySQLConnection = None,
+    cursor: MySQLCursor = None,
+):
+    fmt = ",".join(["%s" for _ in categories])
+    query = f"""SELECT SUPERCATEGORY.Name,CATEGORY.Name,SUPERCATEGORY.Color FROM SUPERCATEGORY JOIN CATEGORY ON SUPERCATEGORY.Name=CATEGORY.Super WHERE CATEGORY.Name IN ({fmt});"""
+    cursor.execute(query, categories)
+
+    ret = cursor.fetchall()
+    if not ret:
+        return []
+    return ret
+
+
+@ssql_builder.base(ssql)
 def get_all_super_categories(
     connection: MySQLConnection = None, cursor: MySQLCursor = None
 ):
