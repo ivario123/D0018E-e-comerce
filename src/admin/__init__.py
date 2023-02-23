@@ -104,6 +104,22 @@ def create_super_category_endpoint():
             valid_colors=["primary", "link", "info", "success", "warning", "danger"],
         )
 
+@admin.route("/manage_categories", methods=["GET", "POST"])
+@login_required
+@admin_required(non_admin_callback)
+def manage_categories():
+    if request.method == "POST":
+        ret = create_super_category_internal()
+        return response(ret, code=200 if ret else 400)
+    else:
+        session["title"] = "Create super_category"
+        return render_template(
+            "admin/create_category_group.html",
+            valid_colors=["primary", "link", "info", "success", "warning", "danger"],
+        )
+
+
+
 
 @admin.route("/", methods=["GET"])
 @login_required
