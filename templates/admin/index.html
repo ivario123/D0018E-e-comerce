@@ -1,41 +1,42 @@
 {% extends "base.html" %}
 {% from "jinja_macros/product_listing.html" import list_container %}
-{% block head %}<link rel="stylesheet" href="../static/css/center_of_page.css">{% endblock %}
+{% block head %}
+<link rel="stylesheet" href="../static/css/center_of_page.css">{% endblock %}
 {% block sidebar %}
-    <p class="menu-label">Admin pages</p>
-    <p class="menu-label">Users</p>
-    <ul class="menu-list">
-        <li>
-            <a href="/admin/users">Users</a>
-        </li>
-        <li>
-            <a href="/admin/users/create">Create user</a>
-        </li>
-        <li>
-            <a href="/admin/make_admin">Make user admin</a>
-        </li>
-    </ul>
-    <p class="menu-label">Products</p>
-    <ul class="menu-list">
-        <li>
-            <a href="/admin/create_super_category">Create a new category group</a>
-        </li>
-        <li>
-            <a href="/admin/create_category">Create a new category</a>
-        </li>
-        <li>
-            <a href="/admin/create_product">Create new product</a>
-        </li>
-    </ul>
-    {% for group in category_groups %}
-        <p class="menu-label">{{ group.name }}</p>
-        <ul class="menu-list">
-            {% for category in group.categories %}
-                <li>
-                    <a href="/category/{{ category }}">{{ category }}</a>
-                </li>
-            {% endfor %}
-        </ul>
+<p class="menu-label">Admin pages</p>
+<p class="menu-label">Users</p>
+<ul class="menu-list">
+    <li>
+        <a href="/admin/users">Users</a>
+    </li>
+    <li>
+        <a href="/admin/users/create">Create user</a>
+    </li>
+    <li>
+        <a href="/admin/make_admin">Make user admin</a>
+    </li>
+</ul>
+<p class="menu-label">Products</p>
+<ul class="menu-list">
+    <li>
+        <a href="/admin/create_super_category">Create a new category group</a>
+    </li>
+    <li>
+        <a href="/admin/create_category">Create a new category</a>
+    </li>
+    <li>
+        <a href="/admin/create_product">Create new product</a>
+    </li>
+</ul>
+{% for group in category_groups %}
+<p class="menu-label">{{ group.name }}</p>
+<ul class="menu-list">
+    {% for category in group.categories %}
+    <li>
+        <a href="/category/{{ category }}">{{ category }}</a>
+    </li>
     {% endfor %}
+</ul>
+{% endfor %}
 {% endblock %}
 {% block listings %}{{ list_container(items) }}{% endblock %}
