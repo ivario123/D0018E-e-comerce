@@ -114,6 +114,13 @@ function submit_category() {
     });
 }
 
+function stock_update() {
+    alert("Stock updated!")
+}
+
+function price_update() {
+    alert("Price updated!")
+}
 
 function close_all_modals() {
     let modals = document.querySelectorAll(".modal");

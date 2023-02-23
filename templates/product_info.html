@@ -37,6 +37,7 @@
 {% block head %}
 <script src="../../static/js/order.js"></script>
 <script src="../../static/js/review.js"></script>
+<script src="../../static/js/inventory.js"></script>
 {% endblock %}
 {% block sidebar %}
 <p class="menu-label">
@@ -125,7 +126,7 @@
         {{ review(r) }}
         {% if session["admin"] %}
         <div class="buttons">
-            <button class="button is-danger">Delete</button>
+            <button class="button is-danger" onclick="">Delete</button>
         </div>
         {% endif %}
         <hr style="border: 0;
@@ -145,18 +146,22 @@
     </h4>
     <div class="field has-addons" style="padding-top: 2%">
         <div class="control">
-            <input class="input" type="number" max="{{ item.stock }}" min="0" placeholder="Modify stock" id="Amount">
+            <input class="input" type="number" min="0" placeholder="Modify stock" id="stock_amount">
         </div>
         <div class="control">
-            <a class="button is-info" onclick="">Modify stock</a>
+            <a class="button is-info" onclick="stock_update()">
+                Modify stock
+            </a>
         </div>
     </div>
     <div class="field has-addons" style="padding-top: 2%">
         <div class="control">
-            <input class="input" type="number" max="{{ item.price }}" min="0" placeholder="Modify price" id="Amount">
+            <input class="input" type="number" min="0" placeholder="Modify price" id="price_amount">
         </div>
         <div class="control">
-            <a class="button is-info" onclick="">Modify price</a>
+            <a class="button is-info" onclick="price_update()">
+                Modify price
+            </a>
         </div>
     </div>
 </div>
