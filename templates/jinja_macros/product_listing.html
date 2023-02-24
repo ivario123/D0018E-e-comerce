@@ -1,3 +1,25 @@
+<!--
+    Macro to display small tags with the selected categories.
+-->
+{%- macro category_tags(category_groups) -%}
+    <p class="title is-3">
+        <div class="level is-mobile">
+            <div class="level-left">
+                {% for cat in category_groups %}
+                    <p class="level-item">
+                        <div class="tags has-addons">
+                            <div class="tag is-{{ cat.color }}">{{ cat.name }}</div>
+                            <div class="tag">{{ cat.categories[0].name.name }}</div>
+                        </div>
+                    </p>
+                {% endfor %}
+            </div>
+        </div>
+    </p>
+{%- endmacro -%}
+<!--
+    Macro to display a 0-5 star rating.
+-->
 {%- macro rating(ProductRating) -%}
     <div class="control" style="padding-bottom:2em;">
         {% for i in range(0,5) %}
@@ -10,9 +32,15 @@
                     <br/>
                 </b>
             {% endfor %}
-        {%- endmacro -%}
-        {%- macro modal(product) -%}
-            <script>
+        </div>
+    {%- endmacro -%}
+    <!--
+        A modal that displays a bit more information about a product,
+        expects a product of type:
+                        src/models/item.py::Item
+    -->
+    {%- macro modal(product) -%}
+        <script>
         // Script for closing the product information modal
         document.addEventListener('DOMContentLoaded', () => {
             function closeModal($el) {
@@ -26,129 +54,139 @@
                 });
             });
         });
-            </script>
-            <div class="modal" id="{{ product.name }}_modal">
-                <div class="modal-background"></div>
-                <div class="modal-card"style="border-radius: 1em;">
-                    <header class="modal-card-head">
-                        <p class="modal-card-title">Product information</p>
-                        <button class="delete is-large" aria-label="close"></button>
-                    </header>
-                    <section class="modal-card-body">
-                        <article class="media">
-                            <figure class="media-left">
-                                <img class="center"
-                                     src="{{ product.image }}"
-                                     alt="Image for : {{ product.name }}"
-                                     style="max-height:50em;
-                                            max-width:12em;
-                                            height:auto;
-                                            width:auto">
-                            </figure>
-                            <div class="media-content">
-                                <div class="content">
-                                    <div class="column">
-                                        <div class="content">
-                                            <article class="message is-dark is-large">
-                                                <div class="message-header">
-                                                    <p class="price">{{ product.name }}</p>
-                                                </div>
-                                                <div class="message-body">{{ product.description }}</div>
-                                            </article>
-                                        </div>
+        </script>
+        <div class="modal" id="{{ product.name }}_modal">
+            <div class="modal-background"></div>
+            <div class="modal-card"style="border-radius: 1em;">
+                <header class="modal-card-head">
+                    <p class="modal-card-title">Product information</p>
+                    <button class="delete is-large" aria-label="close"></button>
+                </header>
+                <section class="modal-card-body">
+                    {% if product.categories %}
+                        {{ category_tags(product.categories)}}
+                    {% endif %}
+                    <article class="media">
+                        <figure class="media-left">
+                            <img class="center"
+                                 src="{{ product.image }}"
+                                 alt="Image for : {{ product.name }}"
+                                 style="max-height:50em;
+                                        max-width:12em;
+                                        height:auto;
+                                        width:auto"/>
+                        </figure>
+                        <div class="media-content">
+                            <div class="content">
+                                <div class="column">
+                                    <div class="content">
+                                        <article class="message is-dark is-large">
+                                            <div class="message-header">
+                                                <p class="price">{{ product.name }}</p>
+                                            </div>
+                                            <div class="message-body">{{ product.description }}</div>
+                                        </article>
                                     </div>
                                 </div>
                             </div>
-                        </article>
-                    </section>
-                    <footer class="modal-card-foot has-text-centered"
-                            style="justify-content:space-between">
-                        <div style="text-align:left">
-                            In stock : {{ product.stock }}
-                            <br>
-                            Price : {{ product.price }} kr/bottle
                         </div>
-                        {% if product.stock > 0 %}
-                            <button class="button is-primary is-medium">
-                                <a href="/product/info/{{ product.serial_number }}"
-                                   style="color:black;
-                                          padding-right: 5%">Buy</a>
-                            </button>
-                        {% else %}
-                            <button class="button is-medium"
-                                    title="Disabled button"
-                                    style="padding-right: 5%"
-                                    disabled>Out of stock</button>
-                        {% endif %}
-                    </footer>
-                </div>
-            </div>
-        {%- endmacro -%}
-        {% macro listing(product) -%}
-            {{ modal(product)}}
-            <article class="media">
-                <figure class="media-left">
-                    <a onclick="toggle_modal('{{ product.name }}_modal')"
-                       style="color:black">
-                        <img class="center"
-                             src="{{ product.image }}"
-                             alt="Image for : {{ product.name }}"
-                             width="100em">
-                    </a>
-                </figure>
-                <div class="media-content">
-                    <a href="/product/info/{{ product.serial_number }}" style="color:black;">
-                        <div class="content">
-                            <h3>
-                                <b>{{ product.name }}</b>
-                            </h3>
-                            <p class="price">Price = {{ product.price }}</p>
-                        </div>
-                    </a>
-                </div>
-            </article>
-        {%- endmacro %}
-        {% macro list_container(products, bkgr = "has-background-grey-lighter") -%}
-            {% set ns = namespace(counter=0) %}
-            <div class="tile {{ bkgr }} is-ancestor is-centered center">
-                <div class="tile is-vertical is-fullwidth">
-                    {% for product in products %}
-                        {% if product.stock > 0 or session["admin"] %}
-                            {% if ns.counter % 4 == 0 %}
-                                <div class="tile center">
-                                    <div class="tile  is-parent">
-                                    {% endif %}
-                                    <div class="tile is-child  is-vcentered">
-                                        {{ listing(product) }}
-                                        {% set ns.counter = ns.counter + 1 %}
-                                    </div>
-                                    {% if ns.counter % 4 == 0 %}
-                                    </div>
-                                </div>
-                                <hr class="{{ bkgr }}" style="outline:0; border-top:1px solid gray">
-                            {% endif %}
-                        {% endif %}
-                    {% endfor %}
-                </div>
-            </div>
-        {%- endmacro %}
-        {% macro dropdown() -%}
-            <div class="dropdown" style = "float:right;">
-                <div class="dropdown-trigger">
-                    <button class="button" aria-haspopup="true" aria-controls="dropdown-menu">
-                        <span>Sort by</span>
-                        <span class="icon is-small">
-                            <i class="fa fa-angle-down" aria-hidden="true"></i>
-                        </span>
-                    </button>
-                </div>
-                <div class="dropdown-menu" id="dropdown-menu" role="menu">
-                    <div class="dropdown-content">
-                        <a href="javascript:sort('price_asc');" class="dropdown-item">Lowest price</a>
-                        <a href="javascript:sort('price_dsc');" class="dropdown-item">Highest Price</a>
-                        <a href="javascript:sort('name_asc');" class="dropdown-item">Name (A-Ö)</a>
-                        <a href="javascript:sort('name_dsc');" class="dropdown-item">Name (Ö-A)</a>
+                    </article>
+                </section>
+                <footer class="modal-card-foot has-text-centered"
+                        style="justify-content:space-between">
+                    <div style="text-align:left">
+                        In stock : {{ product.stock }}
+                        <br/>
+                        Price : {{ product.price }} kr/bottle
                     </div>
+                    {% if product.stock > 0 %}
+                        <button class="button is-primary is-medium">
+                            <a href="/product/info/{{ product.serial_number }}"
+                               style="color:black;
+                                      padding-right: 5%">Buy</a>
+                        </button>
+                    {% else %}
+                        <button class="button is-medium"
+                                title="Disabled button"
+                                style="padding-right: 5%"
+                                disabled>Out of stock</button>
+                    {% endif %}
+                </footer>
+            </div>
+        </div>
+    {%- endmacro -%}
+    <!--
+        A product listing, this creates a simple box that does things when you click it.
+        Expects a product of type: 
+            src/models/item.py::Item
+    -->
+    {% macro listing(product) -%}
+        {{ modal(product)}}
+        <article class="media">
+            <figure class="media-left">
+                <a onclick="toggle_modal('{{ product.name }}_modal')"
+                   style="color:black">
+                    <img class="center"
+                         src="{{ product.image }}"
+                         alt="Image for : {{ product.name }}"
+                         width="100em"/>
+                </a>
+            </figure>
+            <div class="media-content">
+                <a href="/product/info/{{ product.serial_number }}" style="color:black;">
+                    <div class="content">
+                        <h3>
+                            <b>{{ product.name }}</b>
+                        </h3>
+                        <p class="price">Price = {{ product.price }}</p>
+                    </div>
+                </a>
+            </div>
+        </article>
+    {%- endmacro %}
+    <!-- Wrapper for listing products, makes it easier to modify the product listings them selves  -->
+    {% macro list_container(products, bkgr = "has-background-grey-lighter") -%}
+        {% set ns = namespace(counter=0) %}
+        <div class="tile {{ bkgr }} is-ancestor is-centered center">
+            <div class="tile is-vertical is-fullwidth">
+                {% for product in products %}
+                    {% if product.stock > 0 or session["admin"] %}
+                        {% if ns.counter % 4 == 0 %}
+                            <div class="tile center">
+                                <div class="tile  is-parent">
+                                {% endif %}
+                                <div class="tile is-child  is-vcentered">
+                                    {{ listing(product) }}
+                                    {% set ns.counter = ns.counter + 1 %}
+                                </div>
+                                {% if ns.counter % 4 == 0 %}
+                                </div>
+                            </div>
+                            <hr class="{{ bkgr }}" style="outline:0; border-top:1px solid gray"/>
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    {%- endmacro %}
+    <!-- A dropdown to filter products  -->
+    {% macro dropdown() -%}
+        <div class="dropdown" style="float:right;">
+            <div class="dropdown-trigger">
+                <button class="button" aria-haspopup="true" aria-controls="dropdown-menu">
+                    <span>Sort by</span>
+                    <span class="icon is-small">
+                        <i class="fa fa-angle-down" aria-hidden="true"></i>
+                    </span>
+                </button>
+            </div>
+            <div class="dropdown-menu" id="dropdown-menu" role="menu">
+                <div class="dropdown-content">
+                    <a href="javascript:sort('price_asc');" class="dropdown-item">Lowest price</a>
+                    <a href="javascript:sort('price_dsc');" class="dropdown-item">Highest Price</a>
+                    <a href="javascript:sort('name_asc');" class="dropdown-item">Name (A-Ö)</a>
+                    <a href="javascript:sort('name_dsc');" class="dropdown-item">Name (Ö-A)</a>
                 </div>
             </div>
-        {%- endmacro %}
+        </div>
+    {%- endmacro %}

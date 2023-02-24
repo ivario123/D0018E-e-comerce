@@ -2,6 +2,7 @@ from flask.blueprints import Blueprint
 from flask import redirect, render_template, request, session
 from flask_login import login_required
 from flask_paginate import Pagination, get_page_parameter
+from models.category import CategoryGroup
 from sql.inventory.getters import (
     get_all_items_with_category,
     super_categories_and_sub,
@@ -20,11 +21,22 @@ def selected_categories():
     return categories
 
 
-def select_categories():
+def select_categories(super: list[CategoryGroup]):
     categories = super_categories_and_sub()
+    temp_sub = [grp.categories for grp in super]
+
+    def cats():
+        ret = []
+        for grp in temp_sub:
+            for cat in grp:
+                ret.append(cat.name)
+        return ret
+
+    sub = cats()
+    print(sub)
     for group in categories:
         for category in group.categories:
-            if category.name in session["selected_categories"]:
+            if category.name in sub:
                 category.selected = True
     return categories
 
@@ -54,18 +66,15 @@ def category_page():
         + ((pagination.per_page - 1) * (pagination.page - 1))
         + pagination.per_page
     )
-    # Save the selected categories
-
-    session["selected_categories"] = get_all_super_categories_for_categories(categories)
-    print(get_all_super_categories_for_categories(categories))
     # Set the title
     session["title"] = "Category search"
+    groups = get_all_super_categories_for_categories(categories)
     # Render the page
-    all_categories = select_categories()
+    all_categories = select_categories(groups)
     return render_template(
         "category.html",
         items=items,
-        category=get_all_super_categories_for_categories(categories),
+        category=groups,
         category_groups=all_categories,
         selected_categories=categories,
         pagination=pagination,
