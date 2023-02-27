@@ -114,12 +114,50 @@ function submit_category() {
     });
 }
 
-function stock_update() {
-    alert("Stock updated!")
+function stock_update(SN) {
+    let stock = document.getElementById("stock_amount").value;
+
+    fetch("/product/change_stock", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            "SN": SN,
+            "stock": stock
+        })
+    }).then(response => {
+        if (response.status == 200) {
+            window.location.href = "/";
+            alert("Stock updated!")
+        }
+        else {
+            alert("The stock did not update.");
+        }
+    })
 }
 
-function price_update() {
-    alert("Price updated!")
+function price_update(SN) {
+    let price = document.getElementById("price_amount").value;
+
+    fetch("/product/change_price", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            "SN": SN,
+            "price": price
+        })
+    }).then(response => {
+        if (response.status == 200) {
+            window.location.href = "/";
+            alert("Price updated!")
+        }
+        else {
+            alert("The price did not update.");
+        }
+    })
 }
 
 function close_all_modals() {

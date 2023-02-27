@@ -126,11 +126,12 @@
         {{ review(r) }}
         {% if session["admin"] %}
         <div class="buttons">
-            <button class="button is-danger" onclick="">Delete</button>
+            <button class="button is-danger" onclick="">
+                Delete
+            </button>
         </div>
         {% endif %}
-        <hr style="border: 0;
-                           border-top:1px dotted black" class="has-background-grey-lighter" />
+        <hr style="border: 0; border-top:1px dotted black" class="has-background-grey-lighter" />
         {% endfor %}
     </div>
 </div>
@@ -149,7 +150,7 @@
             <input class="input" type="number" min="0" placeholder="Modify stock" id="stock_amount">
         </div>
         <div class="control">
-            <a class="button is-info" onclick="stock_update()">
+            <a class="button is-info" onclick="stock_update('{{item.serial_number}}')">
                 Modify stock
             </a>
         </div>
@@ -159,7 +160,7 @@
             <input class="input" type="number" min="0" placeholder="Modify price" id="price_amount">
         </div>
         <div class="control">
-            <a class="button is-info" onclick="price_update()">
+            <a class="button is-info" onclick="price_update('{{item.serial_number}}')">
                 Modify price
             </a>
         </div>

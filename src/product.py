@@ -8,7 +8,12 @@ from sql.inventory.getters import (
     get_item_by_serial_number,
     get_reviews_for,
 )
-from sql.inventory.management import create_review
+from sql.inventory.management import (
+    create_review,
+    update_stock,
+    update_price,
+    delete_review,
+)
 
 
 product_blueprint = Blueprint("product", __name__, url_prefix="/product")
@@ -32,6 +37,26 @@ def product_info(serial_number):
     )
 
 
+@product_blueprint.route("/change_stock", methods=["POST", "GET"])
+@login_required
+@fields(request)
+def change_stock(SN, stock):
+    ret = update_stock(SN, stock)
+    if ret:
+        return response("Stock updated")
+    return response("Error when updating stock", code=400)
+
+
+@product_blueprint.route("/change_price", methods=["POST", "GET"])
+@login_required
+@fields(request)
+def change_price(SN, price):
+    ret = update_price(SN, price)
+    if ret:
+        return response("Price updated")
+    return response("Error when updating price", code=400)
+
+
 review_blueprint = Blueprint("review", __name__, url_prefix="/review")
 product_blueprint.register_blueprint(review_blueprint)
 
@@ -45,3 +70,13 @@ def new_review(SerialNumber, Review, Rating):
     if ret:
         return response("Review created")
     return response("Error when creating review", code=400)
+
+
+@review_blueprint.route("/delete_review", methods=["POST", "GET"])
+@login_required
+@fields(request)
+def review_delete(SN):
+    ret = delete_review(SN)
+    if ret:
+        return response("Review deleted")
+    return response("Error when deleting review", code=400)

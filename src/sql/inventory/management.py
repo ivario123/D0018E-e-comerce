@@ -24,6 +24,18 @@ def create_review(
 
 
 @ssql_builder.base(ssql)
+def delete_review(
+    SN: int, connection: MySQLConnection = None, cursor: MySQLCursor = None
+) -> bool:
+    query = """DELETE FROM REVIEW WHERE REVIEW.SN=%%;"""
+    cursor.execute(
+        query,
+        (SN,),
+    )
+    return cursor.rowcount != 0
+
+
+@ssql_builder.base(ssql)
 def checkout_basket(
     Address: str,
     Zip: int,
@@ -75,6 +87,21 @@ def update_stock(
         query,
         (
             Stock,
+            SN,
+        ),
+    )
+    return cursor.rowcount != 0
+
+
+@ssql_builder.base(ssql)
+def update_price(
+    SN: int, Price: int, connection: MySQLConnection = None, cursor: MySQLCursor = None
+) -> bool:
+    query = """UPDATE PRODUCT SET PRODUCT.Price=%s WHERE PRODUCT.SN = %s;"""
+    cursor.execute(
+        query,
+        (
+            Price,
             SN,
         ),
     )

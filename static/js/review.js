@@ -32,6 +32,7 @@ function submit_review(id) {
         }
     })
 }
+
 function stars(num) {
     number_of_stars = num;
     for (var i = 1; i <= 5; i++) {
@@ -41,4 +42,24 @@ function stars(num) {
             document.getElementById("star" + i).style.color = "black";
         }
     }
+}
+
+function delete_review(SN) {
+    fetch("/product/review/delete_review", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            "SN": SN,
+        })
+    }).then(response => {
+        if (response.status == 200) {
+            window.location.reload()
+            alert("Review deleted!")
+        }
+        else {
+            alert("The review wasn't deleted.");
+        }
+    })
 }
