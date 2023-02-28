@@ -27,7 +27,7 @@ def create_review(
 def delete_review(
     SN: int, email: str, connection: MySQLConnection = None, cursor: MySQLCursor = None
 ) -> bool:
-    query = """DELETE FROM REVIEW WHERE REVIEW.SN=%%, REVIEW.Email=%%;"""
+    query = """DELETE FROM REVIEW WHERE REVIEW.SN=%% AND REVIEW.Email=%%;"""
     cursor.execute(
         query,
         (
