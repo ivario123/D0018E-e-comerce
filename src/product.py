@@ -75,8 +75,8 @@ def new_review(SerialNumber, Review, Rating):
 @review_blueprint.route("/delete_review", methods=["POST", "GET"])
 @login_required
 @fields(request)
-def review_delete(SN):
-    ret = delete_review(SN)
+def review_delete(SN, email):
+    ret = delete_review(SN, email)
     if ret:
         return response("Review deleted")
     return response("Error when deleting review", code=400)

@@ -44,7 +44,7 @@ function stars(num) {
     }
 }
 
-function delete_review(SN) {
+function delete_review(SN, email) {
     fetch("/product/review/delete_review", {
         method: "POST",
         headers: {
@@ -52,6 +52,7 @@ function delete_review(SN) {
         },
         body: JSON.stringify({
             "SN": SN,
+            "email": email
         })
     }).then(response => {
         if (response.status == 200) {

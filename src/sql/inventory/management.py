@@ -25,12 +25,15 @@ def create_review(
 
 @ssql_builder.base(ssql)
 def delete_review(
-    SN: int, connection: MySQLConnection = None, cursor: MySQLCursor = None
+    SN: int, email: str, connection: MySQLConnection = None, cursor: MySQLCursor = None
 ) -> bool:
-    query = """DELETE FROM REVIEW WHERE REVIEW.SN=%%;"""
+    query = """DELETE FROM REVIEW WHERE REVIEW.SN=%%, REVIEW.Email=%%;"""
     cursor.execute(
         query,
-        (SN,),
+        (
+            SN,
+            email,
+        ),
     )
     return cursor.rowcount != 0
 
