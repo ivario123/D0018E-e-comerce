@@ -93,7 +93,7 @@ def top5_products(
 def get_reviews_for(
     sn, sql_query=None, connection: MySQLConnection = None, cursor: MySQLCursor = None
 ):
-    # Gets all the reviews for a given product,
+    # Gets all the reviews for a given product
     cursor.execute(sql_query, (sn,))
 
     def get_uname(email):

@@ -16,7 +16,7 @@ function show(id) {
     }
 }
 
-function input(event, type, id) {
+function input_name(event, type, id) {
     if (event.key != "Enter") {
         return
     }
