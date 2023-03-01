@@ -25,6 +25,10 @@
                     {{ data.username }}
                 {% endif %}
             </p>
+            <<<<<<< HEAD
+            =======
+            {% if session["admin"] or session["username"] == data.username %}</a>{% endif %}
+            >>>>>>> 096ff53 (Initial administartion of users done)
             <div class="level is-mobile">
                 <div class="level-item">
                     <div style="padding: 1em; padding-bottom:2em;">
@@ -130,7 +134,7 @@
                                            min="0"
                                            placeholder="Amount to buy"
                                            id="Amount"
-                                           style="min-width:max-content;">
+                                           style="min-width:max-content">
                                 </div>
                                 <div class="control">
                                     <a class="button is-info" onclick="add_to_cart('{{ item.name }}')">Buy</a>
