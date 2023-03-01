@@ -227,12 +227,22 @@ def assign_category_to_item(
 
 @ssql_builder.insert(ssql, "SUPERCATEGORY")
 def create_super_category(
-    Name, sql_query=None, connection: MySQLConnection = None, cursor: MySQLCursor = None
+    Name: str,
+    Color: str,
+    sql_query=None,
+    connection: MySQLConnection = None,
+    cursor: MySQLCursor = None,
 ):
     """
     Create a super_category
     """
-    cursor.execute(sql_query, (Name,))
+    cursor.execute(
+        sql_query,
+        (
+            Name,
+            Color,
+        ),
+    )
     return cursor.rowcount != 0
 
 
