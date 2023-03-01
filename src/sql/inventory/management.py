@@ -24,6 +24,43 @@ def create_review(
 
 
 @ssql_builder.base(ssql)
+def update_review(
+    SerialNumber: str,
+    Review: str,
+    Email: str,
+    connection: MySQLConnection = None,
+    cursor: MySQLCursor = None,
+):
+    print(f"UPDATE REVIEW SET REVIEW.Text = {Review} WHERE REVIEW.SN = {SerialNumber} AND REVIEW.Email = {Email};")
+    cursor.execute(
+        "UPDATE REVIEW SET REVIEW.Text = %s WHERE REVIEW.SN = %s AND REVIEW.Email = %s;",
+        (
+            Review,
+            SerialNumber,
+            Email,
+        ),
+    )
+    return cursor.rowcount != 0
+
+
+@ssql_builder.base(ssql)
+def delete_review(
+    SerialNumber: str,
+    Email: str,
+    connection: MySQLConnection = None,
+    cursor: MySQLCursor = None,
+):
+    cursor.execute(
+        "DELETE FROM REVIEW WHERE SN = %s AND Email = %s;",
+        (
+            SerialNumber,
+            Email,
+        ),
+    )
+    return cursor.rowcount != 0
+
+
+@ssql_builder.base(ssql)
 def checkout_basket(
     Address: str,
     Zip: int,

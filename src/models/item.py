@@ -5,7 +5,7 @@ class Item:
         self.name = name
         self.description = description
         self.price = price
-        self.stock = stock
+        self.stock = int(stock)
         self.image = image
         self.serial_number = serial_number
         self.categories = None

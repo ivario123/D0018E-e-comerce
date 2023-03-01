@@ -24,11 +24,59 @@ function submit_review(id) {
         })
     }).then(response => {
         if (response.status == 200) {
-            review_field.textContent = "";
+            review_field.value = "";
             window.location.reload()
         }
         else {
             alert("Review creation failed, maybe you already reviewed this product?")
+        }
+    })
+}
+
+function update_review(id, sn) {
+    let review = document.getElementById(id).value;
+    // Reviews need to be valid
+    if (review === "") {
+        alert("A review needs to have text");
+        return;
+    }
+    // Send data to the server
+    fetch("/product/review/update", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            "SerialNumber": sn,
+            "Review": review
+        })
+    }).then(response => {
+        if (response.status == 200) {
+            alert("Review updated")
+            window.location.reload()
+        }
+        else {
+            alert("Failed to update review")
+        }
+    })
+}
+
+function delete_review(sn) {
+    fetch("/product/review/delete", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            "SerialNumber": sn,
+        })
+    }).then(response => {
+        if (response.status == 200) {
+            alert("Review removed")
+            window.location.reload()
+        }
+        else {
+            alert("Failed to delete review")
         }
     })
 }

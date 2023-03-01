@@ -153,6 +153,18 @@ def name_change(Type: str, OldName: str, NewName: str):
     )
 
 
+@admin.route("/manage_user/<email>", methods=["GET"])
+@login_required
+@admin_required(non_admin_callback)
+def manage_user(email):
+    session["title"] = "Manage user"
+    user = get_full_user_by_email(Email=email)
+    return render_template(
+        "user/profile.html",
+        user=user,
+    )
+
+
 @admin.route("/", methods=["GET"])
 @login_required
 @admin_required(non_admin_callback)

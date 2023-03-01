@@ -2,162 +2,215 @@
 {% from "jinja_macros/product_listing.html" import list_container %}
 {% from "jinja_macros/product_listing.html" import listing %}
 {%- macro star() -%}
-<span class="fa fa-star fa-2xl star"></span>
+    <span class="fa fa-star fa-2xl star"></span>
 {%- endmacro -%}
 {%- macro rating() -%}
-<div class="control" style="padding: 1em; padding-bottom:2em;">
-    {% for i in range(0,5) %}
-    <a style="color:black" onclick="stars({{ i+1 }})" id="star{{ i+1 }}">{{ star()}}</a>
-    {% endfor %}
-</div>
+    <div class="control" style="padding: 1em; padding-bottom:2em;">
+        {% for i in range(0,5) %}
+            <a style="color:black" onclick="stars({{ i+1 }})" id="star{{ i+1 }}">{{ star()}}</a>
+        {% endfor %}
+    </div>
 {%- endmacro -%}
-{%- macro review(data) -%}
-<div class="card">
-    <header class="card-header">
-        <p class="card-header-title">{{ data.username }}</p>
-        <div class="control" style="padding: 1em; padding-bottom:2em;">
-            <div>
-                {% for i in range(0,5) %}
-                {% if i < data.rating %} <b style="color:gold;">
-                    {{ star()}}
-                    </b>
+{%- macro review(data,sn) -%}
+    <div class="card">
+        <header class="card-header">
+            <p class="card-header-title">
+                {% if session["admin"] or session["username"] == data.username %}
+                    {% if session["admin"] %}
+                        <a style="color:black" href="/admin/manage_user/{{ data.email }}">{{ data.username }}</a>
                     {% else %}
-                    <b style="color:black;">
-                        {{ star()}}
-                    </b>
+                        <a style="color:black" href="/user/profile">{{ data.username }}</a>
                     {% endif %}
-                    {% endfor %}
+                {% else %}
+                    {{ data.username }}
+                {% endif %}
+            </p>
+            {% if session["admin"] or session["username"] == data.username %}</a>{% endif %}
+            <div class="level is-mobile">
+                <div class="level-item">
+                    <div style="padding: 1em; padding-bottom:2em;">
+                        <div>
+                            {% for i in range(0,5) %}
+                                {% if i < data.rating %}
+                                    <b style="color:gold;">
+                                        {{ star()}}
+                                    </b>
+                                {% else %}
+                                    <b style="color:black;">
+                                        {{ star()}}
+                                    </b>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% if session["admin"] or session["username"] == data.username %}
+                        <div class="level-item">
+                            <a style="color:black;" onclick="delete_review('{{sn}}')">
+                                <i class="fa-regular fa-trash-can"></i>
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
             </div>
+        </header>
+        <div class="card-content">
+            {% if session["admin"] or session["username"] == data.username %}
+                <textarea class="textarea"
+                          id="{{data.username}}_review"
+                          placeholder="{{ data.text }}"></textarea>
+                <div class="control">
+                    <button class="button is-link"
+                            onclick="update_review('{{ data.username }}_review',{{ sn }})">Update</button>
+                </div>
+            {% else %}
+                <div class="level-item">{{ data.text }}</div>
+            {% endif %}
         </div>
-    </header>
-    <div class="card-content">{{ data.text }}</div>
-</div>
+    </div>
 {%- endmacro -%}
 <!-- We want to replace the sidebar -->
 {% block head %}
-<script src="../../static/js/order.js"></script>
-<script src="../../static/js/review.js"></script>
-<script src="../../static/js/inventory.js"></script>
+    <script src="../../static/js/order.js"></script>
+    <script src="../../static/js/review.js"></script>
+    <script src="../../static/js/inventory.js"></script>
 {% endblock %}
 {% block sidebar %}
-<p class="menu-label">
-    <b>Profile</b>
-</p>
-<ul class="menu-list">
-    <li>
-        <a href="/user/profile">Profile</a>
-    </li>
-    <li>
-        <a href="/user/orders">Orders</a>
-    </li>
-</ul>
+    <p class="menu-label">
+        <b>Profile</b>
+    </p>
+    <ul class="menu-list">
+        <li>
+            <a href="/user/profile">Profile</a>
+        </li>
+        <li>
+            <a href="/user/orders">Orders</a>
+        </li>
+    </ul>
 {% endblock %}
 {% block right_col %}
-<div class="column is-8" style="max-height:fit-content;
+    <div class="column is-8"
+         style="max-height:fit-content;
                 overflow-x:hidden;
                 overflow-y:auto">
-    <article class="media">
-        <figure class="media-left">
-            <img class="center" src="{{ item.image }}" alt="Image for : {{ item.name }}" style="max-height:50em;
+        <article class="media">
+            <figure class="media-left">
+                <img class="center"
+                     src="{{ item.image }}"
+                     alt="Image for : {{ item.name }}"
+                     style="max-height:50em;
                             max-width:12em;
                             height:auto;
                             width:auto;
                             padding-right: 15%">
-        </figure>
-        <div class="media-content">
-            <div class="content">
+            </figure>
+            <div class="media-content">
                 <div class="content">
-                    <h3>
-                        <strong>{{ item.name }}</strong>
-                    </h3>
-                    <p class="price">Price = {{ item.price }} kr/bottle</p>
-                    <p class="stock">Stock = {{ item.stock }}</p>
-                    {% if item.stock > 0 %}
-                    <div class="field has-addons" style="padding-top: 2%">
-                        <div class="control">
-                            <input class="input" type="number" max="{{ item.stock }}" min="0"
-                                placeholder="Amount to buy" id="Amount">
-                        </div>
-                        <div class="control">
-                            <a class="button is-info" onclick="add_to_cart('{{ item.name }}')">Buy</a>
-                        </div>
+                    <div class="content">
+                        <h3>
+                            <strong>{{ item.name }}</strong>
+                        </h3>
+                        <p class="price">Price = {{ item.price }} kr/bottle</p>
+                        <p class="stock">Stock = {{ item.stock }}</p>
+                        {% if item.stock > 0 %}
+                            <div class="field has-addons" style="padding-top: 2%">
+                                <div class="control">
+                                    <input class="input"
+                                           type="number"
+                                           max="{{ item.stock }}"
+                                           min="0"
+                                           placeholder="Amount to buy"
+                                           id="Amount">
+                                </div>
+                                <div class="control">
+                                    <a class="button is-info" onclick="add_to_cart('{{ item.name }}')">Buy</a>
+                                </div>
+                            </div>
+                        {% else %}
+                            <fieldset disabled>
+                                <div class="field has-addons" style="padding-top: 2%">
+                                    <div class="control">
+                                        <input class="input" type="text" placeholder="">
+                                    </div>
+                                    <div class="control">
+                                        <a class="button is-info">Out of stock</a>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        {% endif %}
+                        <p style="padding-top: 2%;">{{ item.description }}</p>
                     </div>
-                    {% else %}
-                    <fieldset disabled>
-                        <div class="field has-addons" style="padding-top: 2%">
-                            <div class="control">
-                                <input class="input" type="text" placeholder="">
-                            </div>
-                            <div class="control">
-                                <a class="button is-info">Out of stock</a>
-                            </div>
-                        </div>
-                    </fieldset>
-                    {% endif %}
-                    <p style="padding-top: 2%;">{{ item.description }}</p>
+                </div>
+            </div>
+        </article>
+        <hr style="border:0;
+                   border-top: 1px dotted black"
+            class="has-background-grey-lighter"/>
+        <div style="padding-top: 2em;">
+            <div class="field">
+                <label class="label">Add a review</label>
+                {{ rating() }}
+                <div class="control">
+                    <textarea class="textarea" placeholder="Your perfect review here"></textarea>
+                </div>
+            </div>
+            <div class="field is-grouped">
+                <div class="control">
+                    <button class="button is-link"
+                            onclick="submit_review('{{ item.serial_number }}')">Submit</button>
+                </div>
+                <div class="control">
+                    <button class="button is-link is-light" onclick="window.location.href = '/'">Cancel</button>
+                </div>
+            </div>
+            <div style="padding-top: 2em;">
+                <p style="font-size:30px; text-align:center; padding-bottom:1em;">
+                    <strong>Reviews</strong>
+                </p>
+                {% for r in reviews %}
+                    {{ review(r,item.serial_number) }}
+                    <hr style="border: 0;
+                               border-top:1px dotted black"
+                        class="has-background-grey-lighter"/>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block admin_modify_products %}
+    {% if session["admin"] %}
+        <div class="column is-4"
+             style="max-height:fit-content;
+                    overflow-x:hidden;
+                    overflow-y:auto">
+            <h4>
+                <strong>Admin: Modify products</strong>
+            </h4>
+            <div class="field has-addons" style="padding-top: 2%">
+                <div class="control">
+                    <input class="input"
+                           type="number"
+                           min="0"
+                           placeholder="Modify stock"
+                           id="stock_amount">
+                </div>
+                <div class="control">
+                    <a class="button is-info"
+                       onclick="stock_update('{{ item.serial_number }}')">Modify stock</a>
+                </div>
+            </div>
+            <div class="field has-addons" style="padding-top: 2%">
+                <div class="control">
+                    <input class="input"
+                           type="number"
+                           min="0"
+                           placeholder="Modify price"
+                           id="price_amount">
+                </div>
+                <div class="control">
+                    <a class="button is-info"
+                       onclick="price_update('{{ item.serial_number }}')">Modify price</a>
                 </div>
             </div>
         </div>
-    </article>
-    <hr style="border:0;
-                   border-top: 1px dotted black" class="has-background-grey-lighter" />
-    <div style="padding-top: 2em;">
-        <div class="field">
-            <label class="label">Add a review</label>
-            {{ rating() }}
-            <div class="control">
-                <textarea class="textarea" placeholder="Your perfect review here"></textarea>
-            </div>
-        </div>
-        <div class="field is-grouped">
-            <div class="control">
-                <button class="button is-link" onclick="submit_review('{{ item.serial_number }}')">Submit</button>
-            </div>
-            <div class="control">
-                <button class="button is-link is-light" onclick="window.location.href = '/'">Cancel</button>
-            </div>
-        </div>
-    </div>
-    <div style="padding-top: 2em;">
-        <p style="font-size:30px; text-align:center; padding-bottom:1em;">
-            <strong>Reviews</strong>
-        </p>
-        {% for r in reviews %}
-        {{ review(r) }}
-        <hr style="border: 0; border-top:1px dotted black" class="has-background-grey-lighter" />
-        {% endfor %}
-    </div>
-</div>
-{% endblock %}
-
-{% block admin_modify_products %}
-{% if session["admin"] %}
-<div class="column is-4" style="max-height:fit-content;
-                overflow-x:hidden;
-                overflow-y:auto">
-    <h4>
-        <strong>Admin: Modify products</strong>
-    </h4>
-    <div class="field has-addons" style="padding-top: 2%">
-        <div class="control">
-            <input class="input" type="number" min="0" placeholder="Modify stock" id="stock_amount">
-        </div>
-        <div class="control">
-            <a class="button is-info" onclick="stock_update('{{ item.serial_number }}')">
-                Modify stock
-            </a>
-        </div>
-    </div>
-    <div class="field has-addons" style="padding-top: 2%">
-        <div class="control">
-            <input class="input" type="number" min="0" placeholder="Modify price" id="price_amount">
-        </div>
-        <div class="control">
-            <a class="button is-info" onclick="price_update('{{ item.serial_number }}')">
-                Modify price
-            </a>
-        </div>
-    </div>
-</div>
-{% endif %}
+    {% endif %}
 {% endblock %}

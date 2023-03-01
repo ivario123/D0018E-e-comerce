@@ -12,6 +12,7 @@ from sql.inventory.management import (
     create_review,
     update_stock,
     update_price,
+    delete_review,
 )
 
 
@@ -64,8 +65,27 @@ product_blueprint.register_blueprint(review_blueprint)
 @login_required
 @fields(request)
 def new_review(SerialNumber, Review, Rating):
-    print("IN review", SerialNumber, Review, Rating)
     ret = create_review(SerialNumber, Review, Rating, session["email"])
     if ret:
         return response("Review created")
     return response("Error when creating review", code=400)
+
+
+@review_blueprint.route("/update", methods=["POST"])
+@login_required
+@fields(request)
+def update_review_endpoint(SerialNumber, Review):
+    ret = update_review(SerialNumber, Review, session["email"])
+    if ret:
+        return response("Review updated")
+    return response("Error when updating review", code=400)
+
+
+@review_blueprint.route("/delete", methods=["POST"])
+@login_required
+@fields(request)
+def delete_review_endpoint(SerialNumber):
+    ret = delete_review(SerialNumber, session["email"])
+    if ret:
+        return response("Review updated")
+    return response("Error when updating review", code=400)
