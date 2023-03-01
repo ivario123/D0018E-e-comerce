@@ -31,7 +31,9 @@ def update_review(
     connection: MySQLConnection = None,
     cursor: MySQLCursor = None,
 ):
-    print(f"UPDATE REVIEW SET REVIEW.Text = {Review} WHERE REVIEW.SN = {SerialNumber} AND REVIEW.Email = {Email};")
+    print(
+        f"UPDATE REVIEW SET REVIEW.Text = {Review} WHERE REVIEW.SN = {SerialNumber} AND REVIEW.Email = {Email};"
+    )
     cursor.execute(
         "UPDATE REVIEW SET REVIEW.Text = %s WHERE REVIEW.SN = %s AND REVIEW.Email = %s;",
         (
