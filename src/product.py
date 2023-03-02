@@ -39,7 +39,7 @@ def product_info(serial_number):
 @product_blueprint.route("/change_stock", methods=["POST", "GET"])
 @login_required
 @fields(request)
-def change_stock(SN, stock):
+def change_stock(SN: int, stock: int):
     ret = update_stock(SN, stock)
     if ret:
         return response("Stock updated")
@@ -49,7 +49,7 @@ def change_stock(SN, stock):
 @product_blueprint.route("/change_price", methods=["POST", "GET"])
 @login_required
 @fields(request)
-def change_price(SN, price):
+def change_price(SN: int, price: int):
     ret = update_price(SN, price)
     if ret:
         return response("Price updated")

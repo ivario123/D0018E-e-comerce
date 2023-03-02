@@ -116,19 +116,18 @@ function submit_category() {
 
 function stock_update(SN) {
     let stock = document.getElementById("stock_amount").value;
-
     fetch("/product/change_stock", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
         },
         body: JSON.stringify({
-            "SN": SN,
-            "stock": stock
+            "SN": Number(SN),
+            "stock": Number(stock)
         })
     }).then(response => {
         if (response.status == 200) {
-            window.location.href = "/";
+            window.location.reload()
             alert("Stock updated!")
         }
         else {
@@ -146,12 +145,12 @@ function price_update(SN) {
             "Content-Type": "application/json"
         },
         body: JSON.stringify({
-            "SN": SN,
-            "price": price
+            "SN": Number(SN),
+            "price": Number(price)
         })
     }).then(response => {
         if (response.status == 200) {
-            window.location.href = "/";
+            window.location.reload()
             alert("Price updated!")
         }
         else {
