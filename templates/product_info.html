@@ -25,7 +25,6 @@
                     {{ data.username }}
                 {% endif %}
             </p>
-            {% if session["admin"] or session["username"] == data.username %}</a>{% endif %}
             <div class="level is-mobile">
                 <div class="level-item">
                     <div style="padding: 1em; padding-bottom:2em;">
@@ -43,27 +42,38 @@
                             {% endfor %}
                         </div>
                     </div>
-                    {% if session["admin"] or session["username"] == data.username %}
-                        <div class="level-item">
-                            <a style="color:black;" onclick="delete_review('{{sn}}')">
-                                <i class="fa-regular fa-trash-can"></i>
-                            </a>
-                        </div>
-                    {% endif %}
                 </div>
             </div>
         </header>
         <div class="card-content">
+            <p onclick="edit('{{ data.username }}_review_text','{{ data.username }}_review_edit',0)"
+               id="{{ data.username }}_review_text"
+               style="display:block">
+                {{ data.text }}
+            </p>
             {% if session["admin"] or session["username"] == data.username %}
-                <textarea class="textarea"
-                          id="{{data.username}}_review"
-                          placeholder="{{ data.text }}"></textarea>
-                <div class="control">
-                    <button class="button is-link"
-                            onclick="update_review('{{ data.username }}_review',{{ sn }})">Update</button>
+                <div id="{{ data.username }}_review_edit"style="display:none;">
+                    <textarea class="textarea"
+                              id="{{data.username}}_review"
+                              placeholder="{{ data.text }}"></textarea>
+                    <div class="level is-mobile">
+                        <div class="leve-left">
+                            <div class="level-item">
+                                <div class="control">
+                                    <button class="button is-link"
+                                            onclick="update_review('{{ data.username }}_review',{{ sn }})">Update</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="leve-right">
+                            <div class="level-item">
+                                <a style="color:black;" onclick="delete_review('{{sn}}')">
+                                    <i class="fa-regular fa-trash-can"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            {% else %}
-                <div class="level-item">{{ data.text }}</div>
             {% endif %}
         </div>
     </div>

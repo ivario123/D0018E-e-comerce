@@ -91,3 +91,28 @@ function stars(num) {
         }
     }
 }
+
+cnt = 0;
+function edit(text_view, input_view, counter = 0) {
+    // Only change to edit view on double click
+    const batcher = async () => {
+        edit(text_view, input_view, counter + 1);
+
+    }
+    console.log(counter, cnt)
+    if (counter == cnt && counter < 2) {
+        cnt = cnt + 1;
+        setTimeout(
+            batcher, 500
+        )
+        return
+    }
+    else if (counter == 2) {
+        counter = 0;
+        cnt = 0;
+        return
+    }
+
+    document.getElementById(text_view).style.display = "none";
+    document.getElementById(input_view).style.display = "block";
+}
