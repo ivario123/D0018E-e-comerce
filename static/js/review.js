@@ -43,24 +43,3 @@ function stars(num) {
         }
     }
 }
-
-function delete_review(SN, email) {
-    fetch("/product/review/delete_review", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            "SN": SN,
-            "email": email
-        })
-    }).then(response => {
-        if (response.status == 200) {
-            window.location.reload()
-            alert("Review deleted!")
-        }
-        else {
-            alert("The review wasn't deleted.");
-        }
-    })
-}

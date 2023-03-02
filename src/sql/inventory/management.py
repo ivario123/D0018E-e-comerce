@@ -24,21 +24,6 @@ def create_review(
 
 
 @ssql_builder.base(ssql)
-def delete_review(
-    SN: int, email: str, connection: MySQLConnection = None, cursor: MySQLCursor = None
-) -> bool:
-    query = """DELETE FROM REVIEW WHERE REVIEW.SN=%% AND REVIEW.Email=%%;"""
-    cursor.execute(
-        query,
-        (
-            SN,
-            email,
-        ),
-    )
-    return cursor.rowcount != 0
-
-
-@ssql_builder.base(ssql)
 def checkout_basket(
     Address: str,
     Zip: int,

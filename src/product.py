@@ -12,7 +12,6 @@ from sql.inventory.management import (
     create_review,
     update_stock,
     update_price,
-    delete_review,
 )
 
 
@@ -70,13 +69,3 @@ def new_review(SerialNumber, Review, Rating):
     if ret:
         return response("Review created")
     return response("Error when creating review", code=400)
-
-
-@review_blueprint.route("/delete_review", methods=["POST", "GET"])
-@login_required
-@fields(request)
-def review_delete(SN, email):
-    ret = delete_review(SN, email)
-    if ret:
-        return response("Review deleted")
-    return response("Error when deleting review", code=400)
