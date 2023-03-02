@@ -25,6 +25,6 @@ config = {
 
 ssql = SSql(config["ssh"], config["mysql"])
 """
-our ssql connection, this should not be in global scope since python has no mutex 
-locking, but it's fine for now
+Our sql connection, this is fine to have in the global scope since the `SSql` abstraction introduces a mutex
+on the sql connection.
 """

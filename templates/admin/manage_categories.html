@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+{% from "jinja_macros/form.html" import
+form_field,form_button,form_title,form_field_with_icon,form_field_with_icon_and_event %}
+{% block head %}<script src="../static/js/category_management.js"></script>{% endblock %}
+{%- macro create_category_modal(group) -%}
+    <script>
+    // Script for closing the product information modal
+    document.addEventListener('DOMContentLoaded', () => {
+        function closeModal($el) {
+            $el.classList.remove('is-active');
+        }
+
+        (document.querySelectorAll('.modal-background, .modal-close, .modal-card-head .delete') || []).forEach(($close) => {
+            const $target = $close.closest('.modal');
+            $close.addEventListener('click', () => {
+                closeModal($target);
+            });
+        });
+    });
+    </script>
+    <div class="modal" id="{{ group.name }}_modal">
+        <div class="modal-background"></div>
+        <div class="modal-card"style="border-radius: 1em;">
+            <header class="modal-card-head">
+                <p class="modal-card-title">Create a new category</p>
+                <button class="delete is-large" aria-label="close"></button>
+            </header>
+            <section class="modal-card-body">
+                <div class="has-text-centered is-vertical">
+                    {{ form_field("Name",group.name+"_name","text")}}
+                    {{ form_button("Create","submit_category('"+group.name+"')")}}
+                </div>
+            </section>
+        </div>
+    </div>
+{%- endmacro -%}
+{%- macro super_category(category_group) -%}
+    <thead>
+        <tr>
+            <th>
+                <abbr title="Position">
+                    <div class="level is-mobile">
+                        <div class="level-left">
+                            <p class="level-item">
+                                <a style="color:black"
+                                   onclick="toggle_modal('{{ category_group.name }}_modal')">
+                                    <i class="fa-regular fa-plus"></i>
+                                </a>
+                            </p>
+                            <p class="level-item">
+                                <div class="tag is-{{ category_group.color }}"
+                                     onclick="show('{{ category_group.name }}')"
+                                     id="{{ category_group.name }}tag"
+                                     style="width:75%">
+                                    <input class="input"
+                                           id="{{ category_group.name }}_input"
+                                           style="background:rgba(0,0,0,0);
+                                                  outline:none;
+                                                  border:none;
+                                                  height:75%"
+                                           type="text"
+                                           value="{{ category_group.name }}"
+                                           onkeypress="input_name(event,'grp','{{ category_group.name }}')"/>
+                                </div>
+                            </p>
+                        </div>
+                        <div class="level-right">
+                            <p class="level-item">
+                                <a style="color:black"
+                                   onclick="delete_by_id('grp','{{ category_group.name }}')">
+                                    <i class="fa-regular fa-trash-can"></i>
+                                </a>
+                            </p>
+                        </div>
+                    </div>
+                </abbr>
+            </th>
+            <div class="color_selector"
+                 style="display:none"
+                 id="{{ category_group.name }}color_selector">
+                {% for color in valid_colors %}
+                    <a class="tag is-{{ color }}"
+                       id="{{ color }}"
+                       onclick="select_color('{{ category_group.name }}','{{ color }}')"
+                       style="padding:1em">
+                        {{ color }}
+                    </a>
+                {% endfor %}
+            </div>
+        </tr>
+    </thead>
+{%- endmacro -%}
+{%- macro category(cat) -%}
+    <tr id="{{ cat.name }}_wrapper">
+        <th>
+            <div class="level is-mobile">
+                <div class="level-left" style="width: 50%;">
+                    <p class="level-item">
+                        <input class="input"
+                               id="{{ cat.name }}_input"
+                               style="background:rgba(0,0,0,0);
+                                      outline:none;
+                                      border:none;
+                                      height:50%;
+                                      overflow:visible"
+                               type="text"
+                               value="{{ cat.name }}"
+                               onkeypress="input(event,'cat','{{ cat.name }}')"/>
+                    </p>
+                </div>
+                <div class="level-right">
+                    <a style="color:black" onclick="delete_by_id('cat','{{ cat.name }}')">
+                        <i class="fa-regular fa-trash-can"></i>
+                    </a>
+                </div>
+            </div>
+        </th>
+    </tr>
+{%- endmacro -%}
+{%- macro group_view(category_group) -%}
+    {{ create_category_modal(category_group)}}
+    <article class="media"
+             style="padding: 1em"
+             id="{{ category_group.name }}_wrapper">
+        <div class="media-content">
+            <div class="content">
+                <div class="box">
+                    <table class="table">
+                        {{ super_category(category_group)}}
+                        <tbody>
+                            {% for cat in category_group.categories %}{{ category(cat)}}{% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </article>
+{% endmacro %}
+{% block content %}
+    {% set ns = namespace(counter=0) %}
+    <div class="tile has-background-grey-lighter is-ancestor is-centered center">
+        <div class="tile is-vertical is-fullwidth">
+            {% for category_group in category_groups %}
+                {% if ns.counter % 3 == 0 %}
+                    <div class="tile center">
+                        <div class="tile  is-parent">
+                        {% endif %}
+                        <div class="tile is-child  is-vcentered">
+                            {{ group_view(category_group) }}
+                            {% set ns.counter = ns.counter + 1 %}
+                        </div>
+                        {% if ns.counter % 3 == 0 %}
+                        </div>
+                    </div>
+                    <hr class="has-background-grey-lighter"
+                        style="outline:0;
+                               border-top:1px solid gray">
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

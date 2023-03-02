@@ -118,6 +118,7 @@ def fetch_all(filter_input, method):
 
 def fetch_items(search_input, filter_input, method):
     search_category = get_all_items_with_category([search_input])
+    os = search_input
     search_input = f"%{search_input}%"
     search_result = get_item_by_search_name(search_input)
     super_result = get_all_items_with_super(search_input)
@@ -132,7 +133,11 @@ def fetch_items(search_input, filter_input, method):
     # If search is empty
     if search_result == []:
         return render_template(
-            "search.html", user=current_user, items=search_result, category_groups=[]
+            "search.html",
+            user=current_user,
+            items=search_result,
+            category_groups=[],
+            search_input=os,
         )
 
     # Get exact categories
@@ -146,6 +151,7 @@ def fetch_items(search_input, filter_input, method):
         search_result = filter(search_result)
         categories = selected_categories()
         session["selected_categories"] = categories
+        selected_category_groups = get_all_super_categories_for_categories(categories)
 
     # if sorting
     if method:
@@ -182,10 +188,12 @@ def fetch_items(search_input, filter_input, method):
             items=search_result,
             category_groups=exact_category,
             category=categories,
+            selected_category_groups=selected_category_groups,
             selected_categories=categories,
             pagination=pagination,
             first_index=first_index,
             last_index=last_index,
+            search_input=os,
         )
 
     return render_template(
@@ -196,6 +204,7 @@ def fetch_items(search_input, filter_input, method):
         pagination=pagination,
         first_index=first_index,
         last_index=last_index,
+        search_input=os,
     )
 
 

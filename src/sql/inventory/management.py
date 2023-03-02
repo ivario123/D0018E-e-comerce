@@ -67,10 +67,68 @@ def checkout_basket(
 
 
 @ssql_builder.base(ssql)
+def category_name_change(
+    Type: str,
+    NewName: str,
+    OldName: str,
+    connection: MySQLConnection = None,
+    cursor: MySQLCursor = None,
+) -> bool:
+    lbl = "SUPERCATEGORY" if Type == "grp" else "CATEGORY"
+    query = f"""UPDATE {lbl} SET {lbl}.Name=%s WHERE {lbl}.Name = %s;"""
+
+    cursor.execute(
+        query,
+        (
+            NewName,
+            OldName,
+        ),
+    )
+    return cursor.rowcount != 0
+
+
+@ssql_builder.base(ssql)
+def update_super_category_color_by_name(
+    Name: str,
+    Color: str,
+    connection: MySQLConnection = None,
+    cursor: MySQLCursor = None,
+) -> bool:
+    print(Name)
+    query = """UPDATE SUPERCATEGORY SET SUPERCATEGORY.COLOR=%s WHERE SUPERCATEGORY.Name = %s;"""
+
+    cursor.execute(
+        query,
+        (
+            Color,
+            Name,
+        ),
+    )
+    return cursor.rowcount != 0
+
+
+@ssql_builder.base(ssql)
+def delete_category_by_name(
+    CategoryName: str,
+    Type: str,
+    connection: MySQLConnection = None,
+    cursor: MySQLCursor = None,
+) -> bool:
+    lbl = "SUPERCATEGORY" if Type == "grp" else "CATEGORY"
+    query = f"""DELETE FROM {lbl} WHERE {lbl}.Name = %s;"""
+
+    cursor.execute(
+        query,
+        (CategoryName,),
+    )
+    return cursor.rowcount != 0
+
+
+@ssql_builder.base(ssql)
 def update_stock(
     SN: int, Stock: int, connection: MySQLConnection = None, cursor: MySQLCursor = None
 ) -> bool:
-    query = """UPDATE PRODUCT SET PRODUCT.Inventory=%s WHERE PRODUCT.SN = %s;"""
+    query = """UPDATE PRODUCT SET PRODUCT.Inventory = %s WHERE PRODUCT.SN = %s;"""
     cursor.execute(
         query,
         (
@@ -184,12 +242,22 @@ def assign_category_to_item(
 
 @ssql_builder.insert(ssql, "SUPERCATEGORY")
 def create_super_category(
-    Name, sql_query=None, connection: MySQLConnection = None, cursor: MySQLCursor = None
+    Name: str,
+    Color: str,
+    sql_query=None,
+    connection: MySQLConnection = None,
+    cursor: MySQLCursor = None,
 ):
     """
     Create a super_category
     """
-    cursor.execute(sql_query, (Name,))
+    cursor.execute(
+        sql_query,
+        (
+            Name,
+            Color,
+        ),
+    )
     return cursor.rowcount != 0
 
 

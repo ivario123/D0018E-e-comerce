@@ -1,11 +1,19 @@
+<!--
+    A generic formfield with no icons and no actions on input.
+    Makes it easy to create uniform inputs
+-->
 {%- macro form_field(name,id,type)%}
     <div class="field">
         <p class="label">{{ name }}</p>
-        <input class="input" type="{{ type }}" id="{{ id }}" placeholder="{{name }}">
+        <input class="input"
+               type="{{ type }}"
+               id="{{ id }}"
+               placeholder="{{ name }}">
     </div>
 {%- endmacro %}
 <!-- 
-    Meant to be used with font awesome icons
+    Creates a simple input without an action oninput.
+    Makes it easy to create uniform inputs
 -->
 {%- macro form_field_with_icon(name,id,type,icon_left="",icon_right="")%}
     <div class="field">
@@ -17,7 +25,10 @@
             {% set ns.class = ns.class + " has-icons-right" %}
         {% endif %}
         <p class="control {{ ns.class }}">
-            <input class="input" id="{{ id }}" type="{{type }}" placeholder="{{ Name }}">
+            <input class="input"
+                   id="{{ id }}"
+                   type="{{ type }}"
+                   placeholder="{{ Name }}">
             {% if icon_left %}
                 <span class="icon is-small is-left">
                     <i class="{{ icon_left }}"></i>
@@ -31,6 +42,10 @@
         </p>
     </div>
 {%- endmacro %}
+<!--
+    Creates a simple input that has an action oninput.
+    Makes it easy to create uniform inputs
+-->
 {%- macro form_field_with_icon_and_event(name,id,type,icon_left="",icon_right="",on_event="")%}
     <div class="field">
         {% set ns = namespace(class = "") %}
@@ -59,6 +74,9 @@
         </p>
     </div>
 {%- endmacro %}
+<!--
+    Creates a button, allows for easier uniform buttons
+-->
 {%- macro form_button(name,onclick,extra_class_args="")%}
     <button class="button is-primary is-outlined is-small {{ extra_class_args }}"
             type="submit"
@@ -66,6 +84,9 @@
         {{ name }}
     </button>
 {%- endmacro %}
+<!--
+    Wraps the title string in a title div.
+-->
 {%- macro form_title(title)%}
     <div class="title has-text-centered is-size-2">{{ title }}</div>
 {%- endmacro %}

@@ -1,5 +1,5 @@
 from passlib.hash import sha256_crypt
-from models import User
+from models.user import User
 from result import Result, Error, Ok
 from . import ssql
 from ssql_builder import SSqlBuilder as ssql_builder

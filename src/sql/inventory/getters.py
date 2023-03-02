@@ -1,4 +1,4 @@
-from models import Item
+from models.item import Item
 from models.category import Category, CategoryGroup
 from models.review import Review
 from models.order import Order
@@ -71,14 +71,29 @@ def top5_products(
     ret = cursor.fetchall()
     if not ret:
         return []
-    return [item_from_sql(item) for item in ret]
+
+    def get_categories_for_sn(item: Item) -> Item:
+        query = """SELECT SUPERCATEGORY.Name,CATEGORY.Name,SUPERCATEGORY.Color FROM SUPERCATEGORY INNER JOIN CATEGORY ON SUPERCATEGORY.Name=CATEGORY.Super INNER JOIN CATEGORY_ASSIGN ON CATEGORY_ASSIGN.Category=CATEGORY.Name WHERE CATEGORY_ASSIGN.SN = %s;"""
+
+        cursor.execute(query, (item.serial_number,))
+        item.assign_categories(
+            [
+                CategoryGroup(x[0], x[2], [Category(x[1], x[0])])
+                for x in cursor.fetchall()
+            ]
+        )
+        return item
+
+    res = [item_from_sql(item) for item in ret]
+    res = [get_categories_for_sn(item) for item in res]
+    return res
 
 
 @ssql_builder.select(ssql, "REVIEW", ["Rating,Text,Email"])
 def get_reviews_for(
     sn, sql_query=None, connection: MySQLConnection = None, cursor: MySQLCursor = None
 ):
-    # Gets all the reviews for a given product,
+    # Gets all the reviews for a given product
     cursor.execute(sql_query, (sn,))
 
     def get_uname(email):
@@ -203,11 +218,25 @@ def get_all_items_with_category(
         (SELECT SN FROM CATEGORY_ASSIGN WHERE Category IN ({fmt}) GROUP BY SN HAVING COUNT(*)={len(categories)}) ORDER BY ProductName;"""
     cursor.execute(query, categories)
     result = cursor.fetchall()
-    if result:
-        ret = [item_from_sql(item) for item in result]
-        return ret
-    else:
+    if not result:
         return []
+
+    res = [item_from_sql(item) for item in result]
+
+    def get_categories_for_sn(item: Item) -> Item:
+        query = """SELECT SUPERCATEGORY.Name,CATEGORY.Name,SUPERCATEGORY.Color FROM SUPERCATEGORY INNER JOIN CATEGORY ON SUPERCATEGORY.Name=CATEGORY.Super INNER JOIN CATEGORY_ASSIGN ON CATEGORY_ASSIGN.Category=CATEGORY.Name WHERE CATEGORY_ASSIGN.SN = %s;"""
+
+        cursor.execute(query, (item.serial_number,))
+        item.assign_categories(
+            [
+                CategoryGroup(x[0], x[2], [Category(x[1], x[0])])
+                for x in cursor.fetchall()
+            ]
+        )
+        return item
+
+    res = [get_categories_for_sn(item) for item in res]
+    return res
 
 
 @ssql_builder.base(ssql)
@@ -216,10 +245,25 @@ def get_all_items(connection: MySQLConnection = None, cursor: MySQLCursor = None
         "SELECT ProductName,ProductDescription,Price,Inventory,Image,SN FROM PRODUCT;"
     )
     result = cursor.fetchall()
-    if result:
-        return [item_from_sql(item) for item in result]
-    else:
+    if not result:
         return []
+
+    res = [item_from_sql(item) for item in result]
+
+    def get_categories_for_sn(item: Item) -> Item:
+        query = """SELECT SUPERCATEGORY.Name,CATEGORY.Name,SUPERCATEGORY.Color FROM SUPERCATEGORY INNER JOIN CATEGORY ON SUPERCATEGORY.Name=CATEGORY.Super INNER JOIN CATEGORY_ASSIGN ON CATEGORY_ASSIGN.Category=CATEGORY.Name WHERE CATEGORY_ASSIGN.SN = %s;"""
+
+        cursor.execute(query, (item.serial_number,))
+        item.assign_categories(
+            [
+                CategoryGroup(x[0], x[2], [Category(x[1], x[0])])
+                for x in cursor.fetchall()
+            ]
+        )
+        return item
+
+    res = [get_categories_for_sn(item) for item in res]
+    return res
 
 
 @ssql_builder.select(
@@ -284,7 +328,7 @@ def get_all_super_categories_for_categories(
     ret = cursor.fetchall()
     if not ret:
         return []
-    return ret
+    return [CategoryGroup(x[0], x[2], [Category(x[1], x[0])]) for x in ret]
 
 
 @ssql_builder.base(ssql)
@@ -303,11 +347,11 @@ def get_all_super_categories(
 def super_categories_and_sub(
     connection: MySQLConnection = None, cursor: MySQLCursor = None
 ):
-    cursor.execute("SELECT Name FROM SUPERCATEGORY;")
+    cursor.execute("SELECT Name,Color FROM SUPERCATEGORY;")
     super = cursor.fetchall()
     cursor.execute(f"SELECT Name,Super FROM CATEGORY;")
     result = cursor.fetchall()
-    category_groups = [CategoryGroup(x[0], []) for x in super]
+    category_groups = [CategoryGroup(x[0], x[1], []) for x in super]
     if not result:
         return []
     super_cats = {x[0]: [] for x in super}
@@ -359,8 +403,23 @@ def get_item_by_search_name(
         (name,),
     )
     result = cursor.fetchall()
+
+    def get_categories_for_sn(item: Item) -> Item:
+        query = """SELECT SUPERCATEGORY.Name,CATEGORY.Name,SUPERCATEGORY.Color FROM SUPERCATEGORY INNER JOIN CATEGORY ON SUPERCATEGORY.Name=CATEGORY.Super INNER JOIN CATEGORY_ASSIGN ON CATEGORY_ASSIGN.Category=CATEGORY.Name WHERE CATEGORY_ASSIGN.SN = %s;"""
+
+        cursor.execute(query, (item.serial_number,))
+        item.assign_categories(
+            [
+                CategoryGroup(x[0], x[2], [Category(x[1], x[0])])
+                for x in cursor.fetchall()
+            ]
+        )
+        return item
+
     if result:
-        return [item_from_sql(item) for item in result]
+        ret = [item_from_sql(item) for item in result]
+        ret = [get_categories_for_sn(item) for item in ret]
+        return ret
     else:
         return []
 
@@ -374,8 +433,22 @@ def get_all_items_with_super(
         (super,),
     )
     result = cursor.fetchall()
+
+    def get_categories_for_sn(item: Item) -> Item:
+        query = """SELECT SUPERCATEGORY.Name,CATEGORY.Name,SUPERCATEGORY.Color FROM SUPERCATEGORY INNER JOIN CATEGORY ON SUPERCATEGORY.Name=CATEGORY.Super INNER JOIN CATEGORY_ASSIGN ON CATEGORY_ASSIGN.Category=CATEGORY.Name WHERE CATEGORY_ASSIGN.SN = %s;"""
+
+        cursor.execute(query, (item.serial_number,))
+        item.assign_categories(
+            [
+                CategoryGroup(x[0], x[2], [Category(x[1], x[0])])
+                for x in cursor.fetchall()
+            ]
+        )
+        return item
+
     if result:
         ret = [item_from_sql(item) for item in result]
+        ret = [get_categories_for_sn(item) for item in ret]
         return ret
     else:
         return []
@@ -385,7 +458,7 @@ def get_all_items_with_super(
 def search_get_categories(SN: List[int], connection=None, cursor=None):
     list_SN = ",".join(["%s" for _ in SN])
 
-    query = f"""SELECT DISTINCT CATEGORY.Super FROM CATEGORY INNER JOIN CATEGORY_ASSIGN ON CATEGORY.Name = CATEGORY_ASSIGN.Category WHERE SN in ({list_SN});"""
+    query = f"""SELECT DISTINCT SUPERCATEGORY.Name,SUPERCATEGORY.Color FROM SUPERCATEGORY INNER JOIN CATEGORY ON CATEGORY.Super=SUPERCATEGORY.Name INNER JOIN CATEGORY_ASSIGN ON CATEGORY.Name = CATEGORY_ASSIGN.Category WHERE SN in ({list_SN});"""
     cursor.execute(query, SN)
     super = cursor.fetchall()
     if not super:
@@ -395,7 +468,7 @@ def search_get_categories(SN: List[int], connection=None, cursor=None):
     cursor.execute(query, SN)
     result = cursor.fetchall()
 
-    category_groups = [CategoryGroup(x[0], []) for x in super]
+    category_groups = [CategoryGroup(x[0], x[1], []) for x in super]
     if not result:
         return []
     super_cats = {x[0]: [] for x in super}

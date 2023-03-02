@@ -11,6 +11,12 @@ function select_elements(elements) {
     return ret
 }
 
+function input(event) {
+    if (event.key == "Enter") {
+        submit_search();
+    }
+}
+
 function submit_search() {
     var search = get_el("search").value;
     console.log(search);
