@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from "jinja_macros/product_listing.html" import list_container, dropdown %}
+{% from "jinja_macros/product_listing.html" import list_container, dropdown,category_tags %}
 {% block head %}
     <script src="../static/js/inventory.js"></script>
     <script src="../static/js/sort.js"></script>
@@ -8,18 +8,11 @@
     {% include "jinja_macros/sidebar.html" %}
 {% endblock %}
 {% block listings %}
-    {{ dropdown()}}
+    {{ dropdown() }}
     <p class="title is-3">
         <div class="level is-mobile">
             <div class="level-left">
-                {% for cat in category %}
-                    <p class="level-item">
-                        <div class="tags has-addons">
-                            <div class="tag is-{{ cat[2] }}">{{ cat[0] }}</div>
-                            <div class="tag">{{ cat[1] }}</div>
-                        </div>
-                    </p>
-                {% endfor %}
+                {{category_tags(category)}}
             </div>
         </div>
     </p>

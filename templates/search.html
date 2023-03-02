@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from "jinja_macros/product_listing.html" import list_container, dropdown %}
+{% from "jinja_macros/product_listing.html" import list_container, dropdown, category_tags %}
 
 {%block head%}
     <script src="../static/js/inventory.js"></script>
@@ -61,6 +61,7 @@
 {% block listings %}
 
 {{dropdown()}}
+{{category_tags(selected_category_groups)}}
 
 {{ list_container(items[first_index : last_index]) }}
 {{ pagination.links }}
