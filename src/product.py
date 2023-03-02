@@ -13,6 +13,7 @@ from sql.inventory.management import (
     update_stock,
     update_price,
     delete_review,
+    update_review,
 )
 
 
