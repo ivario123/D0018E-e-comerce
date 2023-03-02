@@ -64,7 +64,7 @@ product_blueprint.register_blueprint(review_blueprint)
 @review_blueprint.route("/new", methods=["POST"])
 @login_required
 @fields(request)
-def new_review(SerialNumber, Review, Rating):
+def new_review(SerialNumber: int, Review: str, Rating: int):
     ret = create_review(SerialNumber, Review, Rating, session["email"])
     if ret:
         return response("Review created")
@@ -74,7 +74,7 @@ def new_review(SerialNumber, Review, Rating):
 @review_blueprint.route("/update", methods=["POST"])
 @login_required
 @fields(request)
-def update_review_endpoint(SerialNumber, Review):
+def update_review_endpoint(SerialNumber: int, Review: str):
     ret = update_review(SerialNumber, Review, session["email"])
     if ret:
         return response("Review updated")
@@ -84,7 +84,7 @@ def update_review_endpoint(SerialNumber, Review):
 @review_blueprint.route("/delete", methods=["POST"])
 @login_required
 @fields(request)
-def delete_review_endpoint(SerialNumber):
+def delete_review_endpoint(SerialNumber: int):
     ret = delete_review(SerialNumber, session["email"])
     if ret:
         return response("Review updated")

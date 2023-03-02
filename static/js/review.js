@@ -18,8 +18,8 @@ function submit_review(id) {
             "Content-Type": "application/json"
         },
         body: JSON.stringify({
-            "SerialNumber": id,
-            "Rating": number_of_stars,
+            "SerialNumber": Number(id),
+            "Rating": Number(number_of_stars),
             "Review": review
         })
     }).then(response => {
@@ -47,7 +47,7 @@ function update_review(id, sn) {
             "Content-Type": "application/json"
         },
         body: JSON.stringify({
-            "SerialNumber": sn,
+            "SerialNumber": Number(sn),
             "Review": review
         })
     }).then(response => {
@@ -68,7 +68,7 @@ function delete_review(sn) {
             "Content-Type": "application/json"
         },
         body: JSON.stringify({
-            "SerialNumber": sn,
+            "SerialNumber": Number(sn),
         })
     }).then(response => {
         if (response.status == 200) {
