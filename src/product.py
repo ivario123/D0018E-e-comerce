@@ -8,7 +8,11 @@ from sql.inventory.getters import (
     get_item_by_serial_number,
     get_reviews_for,
 )
-from sql.inventory.management import create_review
+from sql.inventory.management import (
+    create_review,
+    update_stock,
+    update_price,
+)
 
 
 product_blueprint = Blueprint("product", __name__, url_prefix="/product")
@@ -30,6 +34,26 @@ def product_info(serial_number):
         category_groups=category_groups,
         reviews=reviews,
     )
+
+
+@product_blueprint.route("/change_stock", methods=["POST", "GET"])
+@login_required
+@fields(request)
+def change_stock(SN: int, stock: int):
+    ret = update_stock(SN, stock)
+    if ret:
+        return response("Stock updated")
+    return response("Error when updating stock", code=400)
+
+
+@product_blueprint.route("/change_price", methods=["POST", "GET"])
+@login_required
+@fields(request)
+def change_price(SN: int, price: int):
+    ret = update_price(SN, price)
+    if ret:
+        return response("Price updated")
+    return response("Error when updating price", code=400)
 
 
 review_blueprint = Blueprint("review", __name__, url_prefix="/review")

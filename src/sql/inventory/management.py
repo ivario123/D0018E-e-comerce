@@ -140,6 +140,21 @@ def update_stock(
 
 
 @ssql_builder.base(ssql)
+def update_price(
+    SN: int, Price: int, connection: MySQLConnection = None, cursor: MySQLCursor = None
+) -> bool:
+    query = """UPDATE PRODUCT SET PRODUCT.Price=%s WHERE PRODUCT.SN = %s;"""
+    cursor.execute(
+        query,
+        (
+            Price,
+            SN,
+        ),
+    )
+    return cursor.rowcount != 0
+
+
+@ssql_builder.base(ssql)
 def add_to_basket(
     Email: str,
     ProductName: str,
