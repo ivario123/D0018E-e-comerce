@@ -33,24 +33,24 @@ def item_from_sql(item, *args):
 
 @ssql_builder.base(ssql)
 def get_recommendations_for_user(
-    Email: str, connection: MySQLConnection = None, cursor: MySQLCursor = None
+    UID: str, connection: MySQLConnection = None, cursor: MySQLCursor = None
 ) -> bool:
     query = """
 WITH FREQ AS (SELECT USERORDER.PARCEL,COUNT(USERORDER.PARCEL) as similarity FROM USERORDER INNER JOIN PRODUCT ON USERORDER.SN = PRODUCT.SN 
 	WHERE PRODUCT.SN IN (
-		SELECT BASKET.SN FROM BASKET WHERE BASKET.Email = %s
+		SELECT BASKET.SN FROM BASKET WHERE BASKET.UID = %s
 	)
 GROUP BY USERORDER.PARCEL ORDER BY similarity DESC)
 
 -- Assuming we know the most similar order ids, we can find the most similar largest order
 
 SELECT DISTINCT PRODUCT.ProductName,PRODUCT.ProductDescription,PRODUCT.Price,PRODUCT.Inventory,PRODUCT.Image,PRODUCT.SN FROM PRODUCT INNER JOIN USERORDER ON USERORDER.SN = PRODUCT.SN INNER JOIN REVIEW ON REVIEW.SN=PRODUCT.SN  WHERE PRODUCT.SN IN (
-    SELECT USERORDER.SN FROM USERORDER JOIN FREQ ON FREQ.PARCEL = USERORDER.PARCEL WHERE USERORDER.SN NOT IN (SELECT BASKET.SN FROM BASKET WHERE BASKET.Email = %s) GROUP BY USERORDER.PARCEL
+    SELECT USERORDER.SN FROM USERORDER JOIN FREQ ON FREQ.PARCEL = USERORDER.PARCEL WHERE USERORDER.SN NOT IN (SELECT BASKET.SN FROM BASKET WHERE BASKET.UID = %s) GROUP BY USERORDER.PARCEL
 ) AND PRODUCT.Inventory > 0
 LIMIT 4 ;
 
 """
-    cursor.execute(query, (Email, Email))
+    cursor.execute(query, (UID, UID))
     ret = cursor.fetchall()
     if not ret:
         return []
@@ -68,7 +68,7 @@ def top5_products(
         return []
 
     def get_categories_for_sn(item: Item) -> Item:
-        query = """SELECT SUPERCATEGORY.Name,CATEGORY.Name,SUPERCATEGORY.Color FROM SUPERCATEGORY INNER JOIN CATEGORY ON SUPERCATEGORY.Name=CATEGORY.Super INNER JOIN CATEGORY_ASSIGN ON CATEGORY_ASSIGN.Category=CATEGORY.Name WHERE CATEGORY_ASSIGN.SN = %s;"""
+        query = """SELECT SUPERCATEGORY.Name,CATEGORY.Name,SUPERCATEGORY.Color FROM SUPERCATEGORY INNER JOIN CATEGORY ON SUPERCATEGORY.ID=CATEGORY.SID INNER JOIN CATEGORY_ASSIGN ON CATEGORY_ASSIGN.Category=CATEGORY.Name WHERE CATEGORY_ASSIGN.SN = %s;"""
 
         cursor.execute(query, (item.serial_number,))
         item.assign_categories(
@@ -84,26 +84,6 @@ def top5_products(
     return res
 
 
-@ssql_builder.select(ssql, "REVIEW", ["Rating,Text,Email"])
-def get_reviews_for(
-    sn, sql_query=None, connection: MySQLConnection = None, cursor: MySQLCursor = None
-):
-    # Gets all the reviews for a given product
-    cursor.execute(sql_query, (sn,))
-
-    def get_uname(email):
-        sql_query = "SELECT UserName FROM USER WHERE Email=%s"
-        cursor.execute(sql_query, (email,))
-        return cursor.fetchone()[0]
-
-    ret = cursor.fetchall()
-    if not ret:
-        connection.rollback()
-        return []
-
-    return [Review.from_sql(x, get_uname(x[2])) for x in ret]
-
-
 @ssql_builder.base(ssql)
 def get_average_review_for(
     SN, connection: MySQLConnection = None, cursor: MySQLCursor = None
@@ -116,33 +96,33 @@ def get_average_review_for(
     return 0
 
 
-@ssql_builder.select(ssql, "REVIEW", ["Rating,Text,Email"])
+@ssql_builder.select(ssql, "REVIEW", ["Rating,Text,UID"])
 def get_reviews_for(
     sn, sql_query=None, connection: MySQLConnection = None, cursor: MySQLCursor = None
 ):
     # Gets all the reviews for a given product,
     cursor.execute(sql_query, (sn,))
 
-    def get_uname(email):
-        sql_query = "SELECT UserName FROM USER WHERE Email=%s"
-        cursor.execute(sql_query, (email,))
-        return cursor.fetchone()[0]
+    def get_uname(UID):
+        sql_query = "SELECT UserName,Email FROM USER WHERE UID=%s"
+        cursor.execute(sql_query, (UID,))
+        return cursor.fetchone()
 
     ret = cursor.fetchall()
     if not ret:
         connection.rollback()
         return []
 
-    return [Review.from_sql(x, get_uname(x[2])) for x in ret]
+    return [Review.from_sql(x, *get_uname(x[2])) for x in ret]
 
 
 @ssql_builder.base(ssql)
 def get_orders_for_user(
-    Email: str, connection: MySQLConnection = None, cursor: MySQLCursor = None
+    UID: str, connection: MySQLConnection = None, cursor: MySQLCursor = None
 ) -> Dict[int, List[Order]]:
     query = """SELECT PARCEL.NR AS parcelId,PARCEL.Address,PARCEL.Zip,PARCEL.Status,PRODUCT.ProductName,PRODUCT.Image,USERORDER.Amount,USERORDER.Price FROM PRODUCT 
-INNER JOIN USERORDER  ON PRODUCT.SN = USERORDER.SN INNER JOIN  PARCEL ON USERORDER.PARCEL = PARCEL.NR WHERE USERORDER.Email=%s ORDER BY PARCEL.NR;;"""
-    cursor.execute(query, (Email,))
+INNER JOIN USERORDER  ON PRODUCT.SN = USERORDER.SN INNER JOIN  PARCEL ON USERORDER.PARCEL = PARCEL.NR WHERE USERORDER.UID=%s ORDER BY PARCEL.NR;"""
+    cursor.execute(query, (UID,))
     ret = cursor.fetchall()
     if not ret:
         return {}
@@ -167,35 +147,12 @@ def get_average_review_for(
     return 0
 
 
-@ssql_builder.select(ssql, "REVIEW", ["Rating", "Text", "Email"])
-def get_reviews_for(
-    sn,
-    sql_query: str = None,
-    connection: MySQLConnection = None,
-    cursor: MySQLCursor = None,
-):
-    # Gets all the reviews for a given product,
-    cursor.execute(sql_query, (sn,))
-
-    def get_uname(email):
-        sql_query = "SELECT UserName FROM USER WHERE Email=%s"
-        cursor.execute(sql_query, (email,))
-        return cursor.fetchone()[0]
-
-    ret = cursor.fetchall()
-    if not ret:
-        connection.rollback()
-        return []
-
-    return [Review.from_sql(x, get_uname(x[2])) for x in ret]
-
-
 @ssql_builder.base(ssql)
 def get_cart_for_user(
-    email: str, connection: MySQLConnection = None, cursor: MySQLCursor = None
+    uid: int, connection: MySQLConnection = None, cursor: MySQLCursor = None
 ) -> List[Tuple[Item, int]]:
-    query = f"""SELECT PRODUCT.ProductName,PRODUCT.ProductDescription,PRODUCT.Price,PRODUCT.Inventory,PRODUCT.Image,PRODUCT.SN,BASKET.Amount FROM PRODUCT INNER JOIN BASKET ON PRODUCT.SN = BASKET.SN WHERE BASKET.Email=%s ;"""
-    cursor.execute(query, (email,))
+    query = f"""SELECT PRODUCT.ProductName,PRODUCT.ProductDescription,PRODUCT.Price,PRODUCT.Inventory,PRODUCT.Image,PRODUCT.SN,BASKET.Amount FROM PRODUCT INNER JOIN BASKET ON PRODUCT.SN = BASKET.SN WHERE BASKET.UID=%s ;"""
+    cursor.execute(query, (uid,))
     result = cursor.fetchall()
     if result:
         return [(item_from_sql(x), x[-1]) for x in result]
@@ -210,7 +167,7 @@ def get_all_items_with_category(
 ):
     fmt = ",".join(["%s" for _ in categories])
     query = f"""SELECT ProductName,ProductDescription,Price,Inventory,Image,SN FROM PRODUCT WHERE SN IN
-        (SELECT SN FROM CATEGORY_ASSIGN WHERE Category IN ({fmt}) GROUP BY SN HAVING COUNT(*)={len(categories)}) ORDER BY ProductName;"""
+        (SELECT SN FROM CATEGORY_ASSIGN INNER JOIN CATEGORY ON CATEGORY_ASSIGN.Category=CATEGORY.id WHERE CATEGORY.Name IN ({fmt}) GROUP BY SN HAVING COUNT(*)={len(categories)}) ORDER BY ProductName;"""
     cursor.execute(query, categories)
     result = cursor.fetchall()
     if not result:
@@ -219,12 +176,12 @@ def get_all_items_with_category(
     res = [item_from_sql(item) for item in result]
 
     def get_categories_for_sn(item: Item) -> Item:
-        query = """SELECT SUPERCATEGORY.Name,CATEGORY.Name,SUPERCATEGORY.Color FROM SUPERCATEGORY INNER JOIN CATEGORY ON SUPERCATEGORY.Name=CATEGORY.Super INNER JOIN CATEGORY_ASSIGN ON CATEGORY_ASSIGN.Category=CATEGORY.Name WHERE CATEGORY_ASSIGN.SN = %s;"""
+        query = """SELECT SUPERCATEGORY.Name,CATEGORY.Name,SUPERCATEGORY.Color,CATEGORY.ID,CATEGORY.SID FROM SUPERCATEGORY INNER JOIN CATEGORY ON SUPERCATEGORY.ID=CATEGORY.SID INNER JOIN CATEGORY_ASSIGN ON CATEGORY_ASSIGN.Category=CATEGORY.ID WHERE CATEGORY_ASSIGN.SN = %s;"""
 
         cursor.execute(query, (item.serial_number,))
         item.assign_categories(
             [
-                CategoryGroup(x[0], x[2], [Category(x[1], x[0])])
+                CategoryGroup(x[4], x[0], x[2], [Category(x[3], x[1], x[4])])
                 for x in cursor.fetchall()
             ]
         )
@@ -246,12 +203,12 @@ def get_all_items(connection: MySQLConnection = None, cursor: MySQLCursor = None
     res = [item_from_sql(item) for item in result]
 
     def get_categories_for_sn(item: Item) -> Item:
-        query = """SELECT SUPERCATEGORY.Name,CATEGORY.Name,SUPERCATEGORY.Color FROM SUPERCATEGORY INNER JOIN CATEGORY ON SUPERCATEGORY.Name=CATEGORY.Super INNER JOIN CATEGORY_ASSIGN ON CATEGORY_ASSIGN.Category=CATEGORY.Name WHERE CATEGORY_ASSIGN.SN = %s;"""
+        query = """SELECT SUPERCATEGORY.Name,CATEGORY.Name,SUPERCATEGORY.Color,SUPERCATEGORY.ID,CATEGORY.ID FROM SUPERCATEGORY INNER JOIN CATEGORY ON SUPERCATEGORY.ID=CATEGORY.SID INNER JOIN CATEGORY_ASSIGN ON CATEGORY_ASSIGN.Category=CATEGORY.ID WHERE CATEGORY_ASSIGN.SN = %s;"""
 
         cursor.execute(query, (item.serial_number,))
         item.assign_categories(
             [
-                CategoryGroup(x[0], x[2], [Category(x[1], x[0])])
+                CategoryGroup(x[4], x[0], x[2], [Category(x[3], x[1], x[4])])
                 for x in cursor.fetchall()
             ]
         )
@@ -317,23 +274,23 @@ def get_all_super_categories_for_categories(
     cursor: MySQLCursor = None,
 ):
     fmt = ",".join(["%s" for _ in categories])
-    query = f"""SELECT SUPERCATEGORY.Name,CATEGORY.Name,SUPERCATEGORY.Color FROM SUPERCATEGORY JOIN CATEGORY ON SUPERCATEGORY.Name=CATEGORY.Super WHERE CATEGORY.Name IN ({fmt});"""
+    query = f"""SELECT SUPERCATEGORY.ID,SUPERCATEGORY.Name,SUPERCATEGORY.Color,CATEGORY.Name,CATEGORY.ID FROM SUPERCATEGORY INNER JOIN CATEGORY ON SUPERCATEGORY.ID=CATEGORY.SID WHERE CATEGORY.Name IN ({fmt});"""
     cursor.execute(query, categories)
 
     ret = cursor.fetchall()
     if not ret:
         return []
-    return [CategoryGroup(x[0], x[2], [Category(x[1], x[0])]) for x in ret]
+    return [CategoryGroup(x[0], x[1], x[2], [Category(x[4], x[3], x[0])]) for x in ret]
 
 
 @ssql_builder.base(ssql)
 def get_all_super_categories(
     connection: MySQLConnection = None, cursor: MySQLCursor = None
 ):
-    cursor.execute("SELECT Name FROM SUPERCATEGORY;")
+    cursor.execute("SELECT Name,ID FROM SUPERCATEGORY;")
     result = cursor.fetchall()
     if result:
-        return [item[0] for item in result]
+        return result  # [item for item in result]
     else:
         return []
 
@@ -342,18 +299,20 @@ def get_all_super_categories(
 def super_categories_and_sub(
     connection: MySQLConnection = None, cursor: MySQLCursor = None
 ):
-    cursor.execute("SELECT Name,Color FROM SUPERCATEGORY;")
+    cursor.execute("SELECT ID,Name,Color FROM SUPERCATEGORY;")
     super = cursor.fetchall()
-    cursor.execute(f"SELECT Name,Super FROM CATEGORY;")
+    cursor.execute(f"SELECT ID,Name,SID FROM CATEGORY;")
     result = cursor.fetchall()
-    category_groups = [CategoryGroup(x[0], x[1], []) for x in super]
+    print(super)
+    print(result)
+    category_groups = [CategoryGroup(*x, []) for x in super]
     if not result:
         return []
     super_cats = {x[0]: [] for x in super}
     for category in result:
-        super_cats[category[1]].append(Category(category[0], supercategory=category[1]))
+        super_cats[category[2]].append(Category(*category))
     for group in category_groups:
-        group.categories = super_cats[group.name]
+        group.categories = super_cats[group.id]
     return category_groups
 
 
@@ -400,7 +359,7 @@ def get_item_by_search_name(
     result = cursor.fetchall()
 
     def get_categories_for_sn(item: Item) -> Item:
-        query = """SELECT SUPERCATEGORY.Name,CATEGORY.Name,SUPERCATEGORY.Color FROM SUPERCATEGORY INNER JOIN CATEGORY ON SUPERCATEGORY.Name=CATEGORY.Super INNER JOIN CATEGORY_ASSIGN ON CATEGORY_ASSIGN.Category=CATEGORY.Name WHERE CATEGORY_ASSIGN.SN = %s;"""
+        query = """SELECT SUPERCATEGORY.Name,CATEGORY.Name,SUPERCATEGORY.Color FROM SUPERCATEGORY INNER JOIN CATEGORY ON SUPERCATEGORY.ID=CATEGORY.SID INNER JOIN CATEGORY_ASSIGN ON CATEGORY_ASSIGN.Category=CATEGORY.ID WHERE CATEGORY_ASSIGN.SN = %s;"""
 
         cursor.execute(query, (item.serial_number,))
         item.assign_categories(
@@ -424,13 +383,13 @@ def get_all_items_with_super(
     super, connection: MySQLConnection = None, cursor: MySQLCursor = None
 ):
     cursor.execute(
-        "SELECT DISTINCT ProductName,ProductDescription,Price,Inventory,Image,SN FROM PRODUCT WHERE SN IN (SELECT SN FROM CATEGORY_ASSIGN INNER JOIN CATEGORY ON CATEGORY_ASSIGN.Category = CATEGORY.Name WHERE CATEGORY.Super LIKE %s);",
+        "SELECT DISTINCT ProductName,ProductDescription,Price,Inventory,Image,SN FROM PRODUCT WHERE SN IN (SELECT SN FROM CATEGORY_ASSIGN INNER JOIN CATEGORY ON CATEGORY_ASSIGN.Category = CATEGORY.ID INNER JOIN SUPERCATEGORY ON SUPERCATEGORY.ID = CATEGORY.SID WHERE CATEGORY.Name LIKE %s);",
         (super,),
     )
     result = cursor.fetchall()
 
     def get_categories_for_sn(item: Item) -> Item:
-        query = """SELECT SUPERCATEGORY.Name,CATEGORY.Name,SUPERCATEGORY.Color FROM SUPERCATEGORY INNER JOIN CATEGORY ON SUPERCATEGORY.Name=CATEGORY.Super INNER JOIN CATEGORY_ASSIGN ON CATEGORY_ASSIGN.Category=CATEGORY.Name WHERE CATEGORY_ASSIGN.SN = %s;"""
+        query = """SELECT SUPERCATEGORY.Name,CATEGORY.Name,SUPERCATEGORY.Color FROM SUPERCATEGORY INNER JOIN CATEGORY ON SUPERCATEGORY.ID=CATEGORY.SID INNER JOIN CATEGORY_ASSIGN ON CATEGORY_ASSIGN.Category=CATEGORY.ID WHERE CATEGORY_ASSIGN.SN = %s;"""
 
         cursor.execute(query, (item.serial_number,))
         item.assign_categories(
@@ -453,22 +412,22 @@ def get_all_items_with_super(
 def search_get_categories(SN: List[int], connection=None, cursor=None):
     list_SN = ",".join(["%s" for _ in SN])
 
-    query = f"""SELECT DISTINCT SUPERCATEGORY.Name,SUPERCATEGORY.Color FROM SUPERCATEGORY INNER JOIN CATEGORY ON CATEGORY.Super=SUPERCATEGORY.Name INNER JOIN CATEGORY_ASSIGN ON CATEGORY.Name = CATEGORY_ASSIGN.Category WHERE SN in ({list_SN});"""
+    query = f"""SELECT DISTINCT SUPERCATEGORY.ID,SUPERCATEGORY.Name,SUPERCATEGORY.Color FROM SUPERCATEGORY INNER JOIN CATEGORY ON CATEGORY.SID=SUPERCATEGORY.ID INNER JOIN CATEGORY_ASSIGN ON CATEGORY.ID = CATEGORY_ASSIGN.Category WHERE SN in ({list_SN});"""
     cursor.execute(query, SN)
     super = cursor.fetchall()
     if not super:
         return []
 
-    query = f"""SELECT DISTINCT CATEGORY.name, CATEGORY.Super FROM CATEGORY INNER JOIN CATEGORY_ASSIGN ON CATEGORY.Name = CATEGORY_ASSIGN.Category WHERE SN in ({list_SN});"""
+    query = f"""SELECT DISTINCT CATEGORY.ID, CATEGORY.name, CATEGORY.SID FROM CATEGORY INNER JOIN CATEGORY_ASSIGN ON CATEGORY.ID = CATEGORY_ASSIGN.Category WHERE SN in ({list_SN});"""
     cursor.execute(query, SN)
     result = cursor.fetchall()
 
-    category_groups = [CategoryGroup(x[0], x[1], []) for x in super]
+    category_groups = [CategoryGroup(*x, []) for x in super]
     if not result:
         return []
     super_cats = {x[0]: [] for x in super}
     for category in result:
-        super_cats[category[1]].append(Category(category[0], supercategory=category[1]))
+        super_cats[category[-1]].append(Category(*category))
     for group in category_groups:
-        group.categories = super_cats[group.name]
+        group.categories = super_cats[group.id]
     return category_groups

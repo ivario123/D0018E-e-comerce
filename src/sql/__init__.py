@@ -19,7 +19,7 @@ config = {
         "port": int(ssql_secrets.get("mysql", "port")),
         "user": ssql_secrets.get("mysql", "user_name"),
         "pass": ssql_secrets.get("mysql", "password"),
-        "database": "first_test",
+        "database": "V0.5",
     },
 }
 

@@ -1,5 +1,6 @@
 class Category:
-    def __init__(self, name, supercategory):
+    def __init__(self, id: int, name: str, supercategory: int):
+        self.id = id
         self.name = name
         self.supercategory = supercategory
         self.selected = False
@@ -14,12 +15,13 @@ class Category:
 
 
 class CategoryGroup:
-    def __init__(self, name, color, categories):
+    def __init__(self, id: int, name: str, color: str, categories: list):
+        self.id = id
         self.name = name
         self.color = color
         self.categories = categories
         if isinstance(categories, list):
-            self.categories = [Category(cat, name) for cat in categories]
+            self.categories = [Category(-1, cat, name) for cat in categories]
 
     def __eq__(self, __o: object) -> bool:
         if not isinstance(__o, CategoryGroup):

@@ -53,8 +53,8 @@ function submit_category(group) {
             "Content-Type": "application/json"
         },
         body: JSON.stringify({
-            "name": name,
-            "super_category": group
+            "Name": name,
+            "SID": Number(group)
         })
     }).then(response => {
         if (response.status == 200) {
@@ -112,7 +112,7 @@ function select_color(id, color) {
             "Content-Type": "application/json"
         },
         body: JSON.stringify({
-            "Name": id,
+            "ID": Number(id),
             "Color": color
         })
     }).then(response => {

@@ -16,7 +16,7 @@ from sql.inventory.getters import *
 
 # Create app
 app = Flask(__name__)
-app.secret_key = "some good secret key"
+app.secret_key = "some good secret "
 # ---
 
 # Register folders

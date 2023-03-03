@@ -156,6 +156,22 @@ async function batch(id, ordered_amount, total_price, old_ordered_amount, old_to
 
 }
 
+
+function update_order_amount(id, direction, stock) {
+    let ordered_amount = document.getElementById(id + "_order_amount");
+    let old_ordered_amount = ordered_amount.innerHTML;
+    if (direction) {
+        if (Number(ordered_amount.innerHTML) == stock) {
+            return;
+        }
+        // Added one
+        ordered_amount.innerHTML = Number(ordered_amount.innerHTML) + 1;
+    }
+    else if (Number(old_ordered_amount) > 1) {
+        // Removed one
+        ordered_amount.innerHTML = Number(ordered_amount.innerHTML) - 1;
+    }
+}
 function update_element(id, direction, stock) {
     let product_price = Number(document.getElementById(id + "_orderd_price").innerHTML);
     let ordered_amount = document.getElementById(id + "_ordered_amount");
@@ -185,7 +201,7 @@ function update_element(id, direction, stock) {
         batch(id, ordered_amount, total_price, old_ordered_amount, old_total_price)
     }
     if (!Number(ordered_amount.innerHTML)) {
-        remove_all_tasks();
+        remove_idall_tasks();
         target[id] = -1;
         remove(id);
 
@@ -200,7 +216,7 @@ function update_element(id, direction, stock) {
 
 
 function add_to_cart(item_name) {
-    let amount = document.getElementById("Amount").value;
+    let amount = document.getElementById(item_name + "_order_amount").innerHTML;
     let base = window.location.origin;
 
     fetch(base + "/order/basket/add", {

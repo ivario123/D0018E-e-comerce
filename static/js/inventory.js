@@ -99,8 +99,8 @@ function submit_category() {
             "Content-Type": "application/json"
         },
         body: JSON.stringify({
-            "name": name,
-            "super_category": super_category
+            "Name": name,
+            "SID": Number(super_category)
         })
     }).then(response => {
         if (response.status == 200) {

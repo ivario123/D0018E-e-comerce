@@ -12,7 +12,7 @@ def create_review(
     SN: int,
     Text: str,
     Rating: int,
-    Email: str,
+    UID: str,
     sql_query=None,
     connection=None,
     cursor=None,
@@ -23,7 +23,7 @@ def create_review(
             SN,
             Text,
             Rating,
-            Email,
+            UID,
         ),
     )
     return True
@@ -33,16 +33,16 @@ def create_review(
 def update_review(
     SerialNumber: int,
     Review: str,
-    Email: str,
+    UID: str,
     connection: MySQLConnection = None,
     cursor: MySQLCursor = None,
 ):
     cursor.execute(
-        "UPDATE REVIEW SET REVIEW.Text = %s WHERE REVIEW.SN = %s AND REVIEW.Email = %s;",
+        "UPDATE REVIEW SET REVIEW.Text = %s WHERE REVIEW.SN = %s AND REVIEW.UID = %s;",
         (
             Review,
             SerialNumber,
-            Email,
+            UID,
         ),
     )
     return cursor.rowcount != 0
@@ -51,15 +51,15 @@ def update_review(
 @ssql_builder.base(ssql)
 def delete_review(
     SerialNumber: int,
-    Email: str,
+    UID: str,
     connection: MySQLConnection = None,
     cursor: MySQLCursor = None,
 ):
     cursor.execute(
-        "DELETE FROM REVIEW WHERE SN = %s AND Email = %s;",
+        "DELETE FROM REVIEW WHERE SN = %s AND UID = %s;",
         (
             SerialNumber,
-            Email,
+            UID,
         ),
     )
     return cursor.rowcount != 0
@@ -69,7 +69,7 @@ def delete_review(
 def checkout_basket(
     Address: str,
     Zip: int,
-    Email: int,
+    UID: int,
     connection: MySQLConnection = None,
     cursor: MySQLCursor = None,
 ) -> bool:
@@ -78,9 +78,9 @@ def checkout_basket(
     """
     # Raise exceptions to force rollback if any errors
     create_parcel_query = "INSERT INTO PARCEL (Address,Zip) VALUE (%s,%s);"
-    insert_query = "INSERT INTO USERORDER (Email,SN,Amount,PARCEL,Price) SELECT %s,BASKET.SN,BASKET.Amount, PARCEL.NR,PRODUCT.Price FROM PARCEL,BASKET INNER JOIN PRODUCT ON PRODUCT.SN = BASKET.SN WHERE NR = LAST_INSERT_ID() AND BASKET.Email = %s;"
-    update_stock = "UPDATE PRODUCT JOIN BASKET ON PRODUCT.SN = BASKET.SN SET PRODUCT.Inventory = PRODUCT.Inventory - BASKET.Amount WHERE BASKET.Email=%s;"
-    remove_query = "DELETE FROM BASKET WHERE BASKET.Email=%s;"
+    insert_query = "INSERT INTO USERORDER (UID,SN,Amount,PARCEL,Price) SELECT %s,BASKET.SN,BASKET.Amount, PARCEL.NR,PRODUCT.Price FROM PARCEL,BASKET INNER JOIN PRODUCT ON PRODUCT.SN = BASKET.SN WHERE NR = LAST_INSERT_ID() AND BASKET.UID = %s;"
+    update_stock = "UPDATE PRODUCT JOIN BASKET ON PRODUCT.SN = BASKET.SN SET PRODUCT.Inventory = PRODUCT.Inventory - BASKET.Amount WHERE BASKET.UID=%s;"
+    remove_query = "DELETE FROM BASKET WHERE BASKET.UID=%s;"
     cursor.execute(
         create_parcel_query,
         (
@@ -93,16 +93,16 @@ def checkout_basket(
     cursor.execute(
         insert_query,
         (
-            Email,
-            Email,
+            UID,
+            UID,
         ),
     )
     if cursor.rowcount == 0:
         raise Exception("Invalid order creation")
-    cursor.execute(update_stock, (Email,))
+    cursor.execute(update_stock, (UID,))
     if cursor.rowcount == 0:
         raise Exception("Invalid stock adjustment")
-    cursor.execute(remove_query, (Email,))
+    cursor.execute(remove_query, (UID,))
     if cursor.rowcount == 0:
         raise Exception("Invalid clear basket")
     return True
@@ -131,19 +131,18 @@ def category_name_change(
 
 @ssql_builder.base(ssql)
 def update_super_category_color_by_name(
-    Name: str,
+    ID: int,
     Color: str,
     connection: MySQLConnection = None,
     cursor: MySQLCursor = None,
 ) -> bool:
-    print(Name)
-    query = """UPDATE SUPERCATEGORY SET SUPERCATEGORY.COLOR=%s WHERE SUPERCATEGORY.Name = %s;"""
+    query = """UPDATE SUPERCATEGORY SET SUPERCATEGORY.COLOR=%s WHERE SUPERCATEGORY.ID = %s;"""
 
     cursor.execute(
         query,
         (
             Color,
-            Name,
+            ID,
         ),
     )
     return cursor.rowcount != 0
@@ -198,29 +197,30 @@ def update_price(
 
 @ssql_builder.base(ssql)
 def add_to_basket(
-    Email: str,
+    UID: str,
     ProductName: str,
     Amount: int,
     connection: MySQLConnection = None,
     cursor: MySQLCursor = None,
 ) -> bool:
-    query = """INSERT INTO BASKET (SN,Email,Amount) VALUES ((SELECT SN FROM PRODUCT WHERE ProductName=%s),%s,%s);"""
-    cursor.execute(query, (ProductName, Email, Amount))
+    query = """INSERT INTO BASKET (SN,UID,Amount) VALUES ((SELECT SN FROM PRODUCT WHERE ProductName=%s),%s,%s);"""
+    print(f"{ProductName=}, {UID=}, {Amount=}")
+    cursor.execute(query, (ProductName, UID, Amount))
     return cursor.rowcount != 0
 
 
 @ssql_builder.base(ssql)
 def remove_element_from_basket(
-    Email: str,
+    UID: str,
     ProductName: str,
     connection: MySQLConnection = None,
     cursor: MySQLCursor = None,
 ) -> bool:
-    query = """DELETE FROM BASKET WHERE BASKET.Email=%s AND BASKET.SN=(SELECT SN FROM PRODUCT WHERE PRODUCT.ProductName=%s);"""
+    query = """DELETE FROM BASKET WHERE BASKET.UID=%s AND BASKET.SN=(SELECT SN FROM PRODUCT WHERE PRODUCT.ProductName=%s);"""
     cursor.execute(
         query,
         (
-            Email,
+            UID,
             ProductName,
         ),
     )
@@ -229,18 +229,18 @@ def remove_element_from_basket(
 
 @ssql_builder.base(ssql)
 def update_basket(
-    Email: str,
+    UID: int,
     ProductName: str,
     Amount: int,
     connection: MySQLConnection = None,
     cursor: MySQLCursor = None,
 ) -> bool:
-    query = """UPDATE BASKET SET BASKET.Amount=%s WHERE BASKET.Email=%s AND BASKET.SN=(SELECT SN FROM PRODUCT WHERE PRODUCT.ProductName=%s);"""
+    query = """UPDATE BASKET SET BASKET.Amount=%s WHERE BASKET.UID=%s AND BASKET.SN=(SELECT SN FROM PRODUCT WHERE PRODUCT.ProductName=%s);"""
     cursor.execute(
         query,
         (
             Amount,
-            Email,
+            UID,
             ProductName,
         ),
     )
@@ -249,11 +249,11 @@ def update_basket(
 
 @ssql_builder.insert(ssql, "PRODUCT")
 def create_item(
-    ProductName,
-    ProductDescription,
-    Price,
-    Image,
-    Inventory,
+    ProductName: str,
+    ProductDescription: str,
+    Price: int,
+    Image: str,
+    Inventory: int,
     sql_query=None,
     connection: MySQLConnection = None,
     cursor: MySQLCursor = None,
@@ -269,8 +269,8 @@ def create_item(
 
 @ssql_builder.insert(ssql, "CATEGORY_ASSIGN")
 def assign_category_to_item(
-    SN,
-    Category,
+    SN: int,
+    Category: int,
     sql_query=None,
     connection: MySQLConnection = None,
     cursor: MySQLCursor = None,
@@ -305,8 +305,8 @@ def create_super_category(
 
 @ssql_builder.insert(ssql, "CATEGORY")
 def create_category(
-    Name,
-    Super,
+    Name: str,
+    SID: int,
     sql_query=None,
     connection: MySQLConnection = None,
     cursor: MySQLCursor = None,
@@ -314,5 +314,5 @@ def create_category(
     """
     Create a category
     """
-    cursor.execute(sql_query, (Name, Super))
+    cursor.execute(sql_query, (Name, SID))
     return cursor.rowcount != 0

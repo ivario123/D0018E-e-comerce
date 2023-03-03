@@ -78,7 +78,6 @@
         </div>
     </div>
 {%- endmacro -%}
-<!-- We want to replace the sidebar -->
 {% block head %}
     <script src="../../static/js/order.js"></script>
     <script src="../../static/js/review.js"></script>
@@ -122,6 +121,27 @@
                         <p class="price">Price = {{ item.price }} kr/bottle</p>
                         <p class="stock">Stock = {{ item.stock }}</p>
                         {% if item.stock > 0 %}
+                            <div class="level is-mobile">
+                                <div class="level-left">
+                                    <div class="level-item">
+                                        <a style="color:black"
+                                           onclick="update_order_amount('{{ item.name }}',true,{{ item.stock }})">
+                                            <i class="fa-solid fa-plus"></i>
+                                        </a>
+                                    </div>
+                                    <div class="level-item">
+                                        <div class="control">
+                                            <a class="button is-info" onclick="add_to_cart('{{ item.name }}')">Buy:<b id="{{ item.name }}_order_amount">1</b></a>
+                                        </div>
+                                    </div>
+                                    <div class="level-item">
+                                        <a style="color:black"
+                                           onclick="update_order_amount('{{ item.name }}',false,{{ item.stock }})">
+                                            <i class="fa-solid fa-minus"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="field has-addons" style="padding-top: 2%">
                                 <div class="control">
                                     <input class="input"
