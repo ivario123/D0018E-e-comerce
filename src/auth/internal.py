@@ -33,6 +33,7 @@ def handle_login(email, password):
             session["logged_in"] = False
             return Error((NoSuchUser, 400))
         session["email"] = res.email
+        session["username"] = res.username
         session["admin"] = res.role == "admin"
         session["logged_in"] = True
         return Ok(res)

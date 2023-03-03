@@ -9,7 +9,13 @@ from ssql_builder import SSqlBuilder as ssql_builder
 
 @ssql_builder.insert(ssql, "REVIEW")
 def create_review(
-    SN, Text, Rating, Email, sql_query=None, connection=None, cursor=None
+    SN: int,
+    Text: str,
+    Rating: int,
+    Email: str,
+    sql_query=None,
+    connection=None,
+    cursor=None,
 ):
     cursor.execute(
         sql_query,
@@ -21,6 +27,42 @@ def create_review(
         ),
     )
     return True
+
+
+@ssql_builder.base(ssql)
+def update_review(
+    SerialNumber: int,
+    Review: str,
+    Email: str,
+    connection: MySQLConnection = None,
+    cursor: MySQLCursor = None,
+):
+    cursor.execute(
+        "UPDATE REVIEW SET REVIEW.Text = %s WHERE REVIEW.SN = %s AND REVIEW.Email = %s;",
+        (
+            Review,
+            SerialNumber,
+            Email,
+        ),
+    )
+    return cursor.rowcount != 0
+
+
+@ssql_builder.base(ssql)
+def delete_review(
+    SerialNumber: int,
+    Email: str,
+    connection: MySQLConnection = None,
+    cursor: MySQLCursor = None,
+):
+    cursor.execute(
+        "DELETE FROM REVIEW WHERE SN = %s AND Email = %s;",
+        (
+            SerialNumber,
+            Email,
+        ),
+    )
+    return cursor.rowcount != 0
 
 
 @ssql_builder.base(ssql)

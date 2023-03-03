@@ -23,8 +23,10 @@ def orders():
 @user_blueprint.route("/update", methods=["POST"])
 @login_required
 @fields(request)
-def update_profile(UserName: str, Name: str, Surname: str):
-    ret = update_user_by_email(session["email"], UserName, Name, Surname)
+def update_profile(UserName: str, Name: str, Surname: str, Email: str):
+    if Email == "":
+        Email = session["email"]
+    ret = update_user_by_email(Email, UserName, Name, Surname)
     print(ret)
     return ("Success", 200) if ret else ("Error", 400)
 
