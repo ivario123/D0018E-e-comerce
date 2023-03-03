@@ -28,7 +28,7 @@ def handle_login(email, password):
     def valid_login(user):
         if not login_user(user):
             return Error((InvalidLogin, 400))
-        res:User = get_user_by_email(email)
+        res: User = get_user_by_email(email)
         if res is None:
             session["logged_in"] = False
             return Error((NoSuchUser, 400))

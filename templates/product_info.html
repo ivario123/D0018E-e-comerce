@@ -142,20 +142,6 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="field has-addons" style="padding-top: 2%">
-                                <div class="control">
-                                    <input class="input"
-                                           type="number"
-                                           max="{{ item.stock }}"
-                                           min="0"
-                                           placeholder="Amount to buy"
-                                           id="Amount"
-                                           style="min-width:max-content">
-                                </div>
-                                <div class="control">
-                                    <a class="button is-info" onclick="add_to_cart('{{ item.name }}')">Buy</a>
-                                </div>
-                            </div>
                         {% else %}
                             <fieldset disabled>
                                 <div class="field has-addons" style="padding-top: 2%">

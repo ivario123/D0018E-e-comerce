@@ -9,7 +9,7 @@ form_field_with_icon_and_event %}
     <div class="columns is-centered">
         <div class="column is-6 has-text-centered">
             <div class="box is-center has-text-centered">
-                {% set ns.items = get_cart_for_user(session["email"]) %}
+                {% set ns.items = get_cart_for_user(session["UID"]) %}
                 <table class="table is-center" style="margin: auto;">
                     <thead>
                         <tr>

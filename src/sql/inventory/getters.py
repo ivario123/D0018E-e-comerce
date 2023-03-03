@@ -359,12 +359,12 @@ def get_item_by_search_name(
     result = cursor.fetchall()
 
     def get_categories_for_sn(item: Item) -> Item:
-        query = """SELECT SUPERCATEGORY.Name,CATEGORY.Name,SUPERCATEGORY.Color FROM SUPERCATEGORY INNER JOIN CATEGORY ON SUPERCATEGORY.ID=CATEGORY.SID INNER JOIN CATEGORY_ASSIGN ON CATEGORY_ASSIGN.Category=CATEGORY.ID WHERE CATEGORY_ASSIGN.SN = %s;"""
+        query = """SELECT SUPERCATEGORY.Name,CATEGORY.Name,SUPERCATEGORY.Color,CATEGORY.ID,CATEGORY.SID FROM SUPERCATEGORY INNER JOIN CATEGORY ON SUPERCATEGORY.ID=CATEGORY.SID INNER JOIN CATEGORY_ASSIGN ON CATEGORY_ASSIGN.Category=CATEGORY.ID WHERE CATEGORY_ASSIGN.SN = %s;"""
 
         cursor.execute(query, (item.serial_number,))
         item.assign_categories(
             [
-                CategoryGroup(x[0], x[2], [Category(x[1], x[0])])
+                CategoryGroup(x[4], x[0], x[2], [Category(x[3], x[1], x[4])])
                 for x in cursor.fetchall()
             ]
         )
@@ -389,12 +389,12 @@ def get_all_items_with_super(
     result = cursor.fetchall()
 
     def get_categories_for_sn(item: Item) -> Item:
-        query = """SELECT SUPERCATEGORY.Name,CATEGORY.Name,SUPERCATEGORY.Color FROM SUPERCATEGORY INNER JOIN CATEGORY ON SUPERCATEGORY.ID=CATEGORY.SID INNER JOIN CATEGORY_ASSIGN ON CATEGORY_ASSIGN.Category=CATEGORY.ID WHERE CATEGORY_ASSIGN.SN = %s;"""
+        query = """SELECT SUPERCATEGORY.Name,CATEGORY.Name,SUPERCATEGORY.Color,CATEGORY.ID,CATEGORY.SID FROM SUPERCATEGORY INNER JOIN CATEGORY ON SUPERCATEGORY.ID=CATEGORY.SID INNER JOIN CATEGORY_ASSIGN ON CATEGORY_ASSIGN.Category=CATEGORY.ID WHERE CATEGORY_ASSIGN.SN = %s;"""
 
         cursor.execute(query, (item.serial_number,))
         item.assign_categories(
             [
-                CategoryGroup(x[0], x[2], [Category(x[1], x[0])])
+                CategoryGroup(x[4], x[0], x[2], [Category(x[3], x[1], x[4])])
                 for x in cursor.fetchall()
             ]
         )

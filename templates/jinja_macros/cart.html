@@ -3,7 +3,7 @@
     {% set ns = namespace() %}
     {% set ns.total_cost=0 %}
     {% if session.get("email",none) != none %}
-        {% set ns.items = get_cart_for_user(session["email"]) %}
+        {% set ns.items = get_cart_for_user(session["UID"]) %}
         <script></script>
         <div class="navbar-item has-dropdown is-hoverable">
             <a class="navbar-link is-arrowless">
