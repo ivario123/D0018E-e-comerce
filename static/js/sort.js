@@ -24,7 +24,6 @@ function sort(method) {
 function fold_away(id) {
     var x = document.getElementById("category_group_" + id);
     var icon = document.getElementById(id + "_icon");
-    console.log(icon);
     if (x.style.display === "none") {
         x.style.display = "block";
         icon.innerHTML = "<i class='fa fa-caret-down'></i>";

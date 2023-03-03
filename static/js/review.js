@@ -99,7 +99,6 @@ function edit(text_view, input_view, counter = 0) {
         edit(text_view, input_view, counter + 1);
 
     }
-    console.log(counter, cnt)
     if (counter == cnt && counter < 2) {
         cnt = cnt + 1;
         setTimeout(

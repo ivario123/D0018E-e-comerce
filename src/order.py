@@ -17,7 +17,7 @@ order_blueprint.register_blueprint(basket_blueprint)
 @basket_blueprint.route("/update", methods=["POST"])
 @login_required
 @fields(request)
-def update_bakset(ProductName, Amount):
+def update_bakset(ProductName: str, Amount: int):
     if Amount == 0 and remove_element_from_basket(session["UID"], ProductName):
         return "Removed element successfully", 200
     if update_basket(session["UID"], ProductName, Amount):
@@ -28,14 +28,14 @@ def update_bakset(ProductName, Amount):
 @basket_blueprint.route("/add", methods=["POST"])
 @login_required
 @fields(request)
-def add_bakset(ProductName, Amount):
+def add_bakset(ProductName: str, Amount: int):
     if add_to_basket(session["UID"], ProductName, Amount):
         return "Updated successfully", 200
     return "Error when updating", 400
 
 
 @fields(request)
-def handle_checkout(Address, Zip):
+def handle_checkout(Address: str, Zip: int):
     if checkout_basket(Address=Address, Zip=Zip, UID=session["UID"]):
         return "Checkout complete"
     return "Error in checkout", 400

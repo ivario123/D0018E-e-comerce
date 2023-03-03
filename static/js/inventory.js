@@ -25,7 +25,6 @@ function get_multi_select(id) {
 function submit_form() {
     let [name, description, price, image] = select_elements(["name", "description", "price", "image"]);
     let category = get_multi_select("category")
-    console.log(category)
 
     fetch("/admin/create_product", {
         method: "POST",
@@ -166,7 +165,6 @@ function close_all_modals() {
     }
 }
 function toggle_modal(id) {
-    console.log("toggle :" + id)
     let modal = document.getElementById(id);
     let bkgr = modal.querySelector(".modal-background");
     bkgr.addEventListener("click", function (e) {

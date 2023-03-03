@@ -74,7 +74,7 @@ async function remove(id) {
         },
         body: JSON.stringify({
             "ProductName": id,
-            "Amount": 0
+            "Amount": Number(0)
         })
     }).then(response => {
         if (response.status == 200) {
@@ -136,7 +136,7 @@ async function batch(id, ordered_amount, total_price, old_ordered_amount, old_to
         },
         body: JSON.stringify({
             "ProductName": id,
-            "Amount": old_order,
+            "Amount": Number(old_order),
         })
     }).then(response => {
         if (response.status == 200) {
@@ -226,7 +226,7 @@ function add_to_cart(item_name) {
         },
         body: JSON.stringify({
             "ProductName": item_name,
-            "Amount": amount
+            "Amount": Number(amount)
         })
     }).then(response => {
         if (response.status == 200) {
@@ -248,7 +248,7 @@ function submit() {
         },
         body: JSON.stringify({
             "Address": address,
-            "Zip": zip,
+            "Zip": Number(zip),
 
         })
     }).then(response => {

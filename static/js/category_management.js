@@ -80,7 +80,6 @@ function toggle_modal(id) {
 
 
 function delete_by_id(type, id) {
-    console.log("Deleting things from the server ")
     url = "/admin/delete/category";
     fetch(url, {
         method: "POST",

@@ -2,11 +2,9 @@ function get_el(id) {
     return document.getElementById(id);
 }
 function select_elements(elements) {
-    var ret = []
-    console.log(elements)
+    var ret = [];
     for (var i = 0; i < elements.length; i++) {
-        console.log(elements[i])
-        ret.push(document.getElementById(elements[i]).value)
+        ret.push(document.getElementById(elements[i]).value);
     }
     return ret
 }
@@ -19,7 +17,6 @@ function input(event) {
 
 function submit_search() {
     var search = get_el("search").value;
-    console.log(search);
     if (!search.replace(/\s/g, '').length) {
         window.location.href = "/"
     }

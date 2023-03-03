@@ -22,7 +22,7 @@ product_blueprint = Blueprint("product", __name__, url_prefix="/product",static_
 
 @product_blueprint.route("/info/<int:serial_number>", methods=["POST", "GET"])
 @login_required
-def product_info(serial_number):
+def product_info(serial_number:int):
     session["title"] = "Product information"
     category_groups = super_categories_and_sub()
     items = get_all_items()
