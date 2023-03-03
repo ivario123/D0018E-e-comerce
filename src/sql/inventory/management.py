@@ -9,7 +9,13 @@ from ssql_builder import SSqlBuilder as ssql_builder
 
 @ssql_builder.insert(ssql, "REVIEW")
 def create_review(
-    SN, Text, Rating, Email, sql_query=None, connection=None, cursor=None
+    SN: int,
+    Text: str,
+    Rating: int,
+    Email: str,
+    sql_query=None,
+    connection=None,
+    cursor=None,
 ):
     cursor.execute(
         sql_query,
@@ -25,15 +31,12 @@ def create_review(
 
 @ssql_builder.base(ssql)
 def update_review(
-    SerialNumber: str,
+    SerialNumber: int,
     Review: str,
     Email: str,
     connection: MySQLConnection = None,
     cursor: MySQLCursor = None,
 ):
-    print(
-        f"UPDATE REVIEW SET REVIEW.Text = {Review} WHERE REVIEW.SN = {SerialNumber} AND REVIEW.Email = {Email};"
-    )
     cursor.execute(
         "UPDATE REVIEW SET REVIEW.Text = %s WHERE REVIEW.SN = %s AND REVIEW.Email = %s;",
         (
@@ -47,7 +50,7 @@ def update_review(
 
 @ssql_builder.base(ssql)
 def delete_review(
-    SerialNumber: str,
+    SerialNumber: int,
     Email: str,
     connection: MySQLConnection = None,
     cursor: MySQLCursor = None,

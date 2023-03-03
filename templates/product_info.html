@@ -46,7 +46,7 @@
             </div>
         </header>
         <div class="card-content">
-            <p onclick="edit('{{ data.username }}_review_text','{{ data.username }}_review_edit',0)"
+            <p {% if session["admin"] or session["username"] == data.username %} onclick="edit('{{ data.username }}_review_text','{{ data.username }}_review_edit',0)" {% endif %}
                id="{{ data.username }}_review_text"
                style="display:block">
                 {{ data.text }}
@@ -129,7 +129,8 @@
                                            max="{{ item.stock }}"
                                            min="0"
                                            placeholder="Amount to buy"
-                                           id="Amount">
+                                           id="Amount"
+                                           style="min-width:max-content;">
                                 </div>
                                 <div class="control">
                                     <a class="button is-info" onclick="add_to_cart('{{ item.name }}')">Buy</a>
