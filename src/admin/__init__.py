@@ -126,8 +126,8 @@ def manage_categories():
 @login_required
 @admin_required(non_admin_callback)
 @fields(request)
-def delete_category(Name: str, Type: str):
-    return ("Success", 200) if delete_category_by_name(Name, Type) else ("Error", 400)
+def delete_category(ID: int, Type: str):
+    return ("Success", 200) if delete_category_by_name(ID, Type) else ("Error", 400)
 
 
 @admin.route("/update_super_category/color", methods=["POST"])

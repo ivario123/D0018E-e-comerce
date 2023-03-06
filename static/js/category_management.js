@@ -87,7 +87,7 @@ function delete_by_id(type, id) {
             "Content-Type": "application/json"
         },
         body: JSON.stringify({
-            "Name": id,
+            "ID": Number(id),
             "Type": type
         })
     }).then(response => {

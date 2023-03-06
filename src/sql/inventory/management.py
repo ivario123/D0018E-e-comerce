@@ -150,17 +150,16 @@ def update_super_category_color_by_name(
 
 @ssql_builder.base(ssql)
 def delete_category_by_name(
-    CategoryName: str,
+    ID: int,
     Type: str,
     connection: MySQLConnection = None,
     cursor: MySQLCursor = None,
 ) -> bool:
     lbl = "SUPERCATEGORY" if Type == "grp" else "CATEGORY"
-    query = f"""DELETE FROM {lbl} WHERE {lbl}.Name = %s;"""
-
+    query = f"""DELETE FROM {lbl} WHERE {lbl}.ID = %s;"""
     cursor.execute(
         query,
-        (CategoryName,),
+        (ID,),
     )
     return cursor.rowcount != 0
 

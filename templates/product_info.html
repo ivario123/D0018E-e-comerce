@@ -119,8 +119,8 @@
                             <strong>{{ item.name }}</strong>
                         </h3>
                         <p class="price">Price = {{ item.price }} kr/bottle</p>
-                        <p class="stock">Stock = {{ item.stock }}</p>
                         {% if item.stock > 0 %}
+                            <p class="stock">Stock = {{ item.stock }}</p>
                             <div class="level is-mobile">
                                 <div class="level-left">
                                     <div class="level-item">
@@ -143,26 +143,36 @@
                                 </div>
                             </div>
                         {% else %}
-                            <fieldset disabled>
-                                <div class="field has-addons" style="padding-top: 2%">
-                                    <div class="control">
-                                        <input class="input" type="text" placeholder="">
-                                    </div>
-                                    <div class="control">
-                                        <a class="button is-info">Out of stock</a>
-                                    </div>
-                                </div>
-                            </fieldset>
+                            <p class="stock">
+                                <b>OUT OF STOCK</b>
+                            </p>
                         {% endif %}
-                        <p style="padding-top: 2%;">{{ item.description }}</p>
                     </div>
                 </div>
             </div>
         </article>
-        <hr style="border:0;
-                   border-top: 1px dotted black"
+        <script></script>
+        <div class="tabs is-centered">
+            <ul>
+                <li id="details_tag" class="is-active">
+                    <a onclick="select('details')">
+                        <span class="icon is-small"><i class="fas fa-file-alt" aria-hidden="true"></i></span>
+                        <span>Product details</span>
+                    </a>
+                </li>
+                <li id="review_tag">
+                    <a onclick="select('review')">
+                        <span class="icon is-small"><i class="fas fa-star" aria-hidden="true"></i></span>
+                        <span>Reviews</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <hr style="padding-top:-1px;
+                   border:0;
+                   border-top: 1px solid black"
             class="has-background-grey-lighter"/>
-        <div style="padding-top: 2em;">
+        <div id="review_body" style="display:none;padding-top: 2em;">
             <div class="field">
                 <label class="label">Add a review</label>
                 {{ rating() }}
@@ -190,6 +200,9 @@
                         class="has-background-grey-lighter"/>
                 {% endfor %}
             </div>
+        </div>
+        <div id = "details_body" style="display:block;">
+            <p style="padding-top: 2%;">{{ item.description }}</p>
         </div>
     </div>
 {% endblock %}

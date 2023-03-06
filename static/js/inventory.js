@@ -1,3 +1,23 @@
+
+old = "details";
+function select(id) {
+    if (id === old)
+        return;
+    target_tag = document.getElementById(id + "_tag");
+    target_body = document.getElementById(id + "_body");
+    old_tag = document.getElementById(old + "_tag");
+    old_body = document.getElementById(old + "_body");
+    old = id;
+
+    old_tag.classList.remove("is-active");
+    target_tag.classList.add("is-active");
+
+    target_body.style.display = "block";
+    old_body.style.display = "none";
+
+
+}
+
 function get_el(id) {
     return document.getElementById(id);
 }
