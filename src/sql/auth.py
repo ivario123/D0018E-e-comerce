@@ -41,13 +41,15 @@ def update_user_by_email(
 
 
 @ssql_builder.select(
-    ssql, table_name="USER", select_fields=["Email", "Username", "Role"]
+    ssql,
+    table_name="USER",
+    select_fields=["UserName", "Email", "Name", "Surname", "Password", "UID", "Role"],
 )
 def get_user_by_email(Email, sql_query=None, connection=None, cursor=None):
     cursor.execute(sql_query, (Email,))
     result = cursor.fetchone()
     if result:
-        return User.from_sql(result)
+        return User(*result)
     else:
         return None
 
@@ -70,7 +72,6 @@ def auth_user(email, sugested_pass) -> Result:
 
 
 def add_new_user(user: User) -> Result:
-    # Not using ssql_builder.select because we do might need a lot of time to execute multiple queries
     with ssql as (conn, curs):
         curs.execute("SELECT * FROM USER WHERE email = %s", (user.email,))
         if curs.fetchone():

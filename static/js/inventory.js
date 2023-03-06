@@ -1,3 +1,23 @@
+
+old = "details";
+function select(id) {
+    if (id === old)
+        return;
+    target_tag = document.getElementById(id + "_tag");
+    target_body = document.getElementById(id + "_body");
+    old_tag = document.getElementById(old + "_tag");
+    old_body = document.getElementById(old + "_body");
+    old = id;
+
+    old_tag.classList.remove("is-active");
+    target_tag.classList.add("is-active");
+
+    target_body.style.display = "block";
+    old_body.style.display = "none";
+
+
+}
+
 function get_el(id) {
     return document.getElementById(id);
 }
@@ -25,7 +45,6 @@ function get_multi_select(id) {
 function submit_form() {
     let [name, description, price, image] = select_elements(["name", "description", "price", "image"]);
     let category = get_multi_select("category")
-    console.log(category)
 
     fetch("/admin/create_product", {
         method: "POST",
@@ -99,8 +118,8 @@ function submit_category() {
             "Content-Type": "application/json"
         },
         body: JSON.stringify({
-            "name": name,
-            "super_category": super_category
+            "Name": name,
+            "SID": Number(super_category)
         })
     }).then(response => {
         if (response.status == 200) {
@@ -166,7 +185,6 @@ function close_all_modals() {
     }
 }
 function toggle_modal(id) {
-    console.log("toggle :" + id)
     let modal = document.getElementById(id);
     let bkgr = modal.querySelector(".modal-background");
     bkgr.addEventListener("click", function (e) {

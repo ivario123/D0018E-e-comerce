@@ -5,8 +5,8 @@ class Review:
         self.text = text
         self.email = email
 
-    def from_sql(sql, username):
+    def from_sql(sql, username, email):
         """
         Creates a new review from the return of a sql request
         """
-        return Review(username=username, rating=sql[0], text=sql[1], email=sql[2])
+        return Review(rating=sql[0], text=sql[1], email=email, username=username)

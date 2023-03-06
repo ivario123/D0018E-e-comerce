@@ -62,7 +62,8 @@
 
 {{dropdown()}}
 {{category_tags(selected_category_groups)}}
-
+{%if items|length > 0%}
 {{ list_container(items[first_index : last_index]) }}
 {{ pagination.links }}
+{%endif%}
 {% endblock %}

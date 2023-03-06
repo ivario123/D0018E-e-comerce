@@ -4,7 +4,7 @@
     {% set ns = namespace() %}
     {% set ns.total_cost=0 %}
     {% set ns.total_nr_items=0 %}
-    {% set ns.items = get_orders_for_user(session["email"]) %}
+    {% set ns.items = get_orders_for_user(session["UID"]) %}
     <div class="columns is-centered">
         {% if ns.items|length > 0 %}
             <div class="column is-6 has-text-centered">

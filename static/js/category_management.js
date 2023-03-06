@@ -53,8 +53,8 @@ function submit_category(group) {
             "Content-Type": "application/json"
         },
         body: JSON.stringify({
-            "name": name,
-            "super_category": group
+            "Name": name,
+            "SID": Number(group)
         })
     }).then(response => {
         if (response.status == 200) {
@@ -80,7 +80,6 @@ function toggle_modal(id) {
 
 
 function delete_by_id(type, id) {
-    console.log("Deleting things from the server ")
     url = "/admin/delete/category";
     fetch(url, {
         method: "POST",
@@ -88,7 +87,7 @@ function delete_by_id(type, id) {
             "Content-Type": "application/json"
         },
         body: JSON.stringify({
-            "Name": id,
+            "ID": Number(id),
             "Type": type
         })
     }).then(response => {
@@ -112,7 +111,7 @@ function select_color(id, color) {
             "Content-Type": "application/json"
         },
         body: JSON.stringify({
-            "Name": id,
+            "ID": Number(id),
             "Color": color
         })
     }).then(response => {

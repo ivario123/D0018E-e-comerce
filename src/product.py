@@ -17,12 +17,14 @@ from sql.inventory.management import (
 )
 
 
-product_blueprint = Blueprint("product", __name__, url_prefix="/product")
+product_blueprint = Blueprint(
+    "product", __name__, url_prefix="/product", static_folder="../static"
+)
 
 
 @product_blueprint.route("/info/<int:serial_number>", methods=["POST", "GET"])
 @login_required
-def product_info(serial_number):
+def product_info(serial_number: int):
     session["title"] = "Product information"
     category_groups = super_categories_and_sub()
     items = get_all_items()
@@ -66,7 +68,7 @@ product_blueprint.register_blueprint(review_blueprint)
 @login_required
 @fields(request)
 def new_review(SerialNumber: int, Review: str, Rating: int):
-    ret = create_review(SerialNumber, Review, Rating, session["email"])
+    ret = create_review(SerialNumber, Review, Rating, session["UID"])
     if ret:
         return response("Review created")
     return response("Error when creating review", code=400)
@@ -76,7 +78,7 @@ def new_review(SerialNumber: int, Review: str, Rating: int):
 @login_required
 @fields(request)
 def update_review_endpoint(SerialNumber: int, Review: str):
-    ret = update_review(SerialNumber, Review, session["email"])
+    ret = update_review(SerialNumber, Review, session["UID"])
     if ret:
         return response("Review updated")
     return response("Error when updating review", code=400)
@@ -86,7 +88,7 @@ def update_review_endpoint(SerialNumber: int, Review: str):
 @login_required
 @fields(request)
 def delete_review_endpoint(SerialNumber: int):
-    ret = delete_review(SerialNumber, session["email"])
+    ret = delete_review(SerialNumber, session["UID"])
     if ret:
         return response("Review updated")
     return response("Error when updating review", code=400)

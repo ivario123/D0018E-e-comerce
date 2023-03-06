@@ -59,5 +59,7 @@ def logout():
     session["admin"] = False
     session["title"] = "Logout"
     session["email"] = None
+    session["username"] = None
     session["logged_in"] = False
+    session["UID"] = None
     return redirect(url_for("index"))

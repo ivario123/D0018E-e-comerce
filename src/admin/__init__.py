@@ -82,7 +82,8 @@ def create_product():
 @admin_required(non_admin_callback)
 def create_category_endpoint():
     if request.method == "POST":
-        return response(create_category_internal(), code=200)
+        print(request.json)
+        return create_category_internal()
     else:
         session["title"] = "Create category"
         return render_template(
@@ -125,18 +126,18 @@ def manage_categories():
 @login_required
 @admin_required(non_admin_callback)
 @fields(request)
-def delete_category(Name: str, Type: str):
-    return ("Success", 200) if delete_category_by_name(Name, Type) else ("Error", 400)
+def delete_category(ID: int, Type: str):
+    return ("Success", 200) if delete_category_by_name(ID, Type) else ("Error", 400)
 
 
 @admin.route("/update_super_category/color", methods=["POST"])
 @login_required
 @admin_required(non_admin_callback)
 @fields(request)
-def update_super_category_color(Name: str, Color: str):
+def update_super_category_color(ID: int, Color: str):
     return (
         ("Success", 200)
-        if update_super_category_color_by_name(Name, Color)
+        if update_super_category_color_by_name(ID, Color)
         else ("Error", 400)
     )
 

@@ -78,7 +78,6 @@
         </div>
     </div>
 {%- endmacro -%}
-<!-- We want to replace the sidebar -->
 {% block head %}
     <script src="../../static/js/order.js"></script>
     <script src="../../static/js/review.js"></script>
@@ -120,43 +119,60 @@
                             <strong>{{ item.name }}</strong>
                         </h3>
                         <p class="price">Price = {{ item.price }} kr/bottle</p>
-                        <p class="stock">Stock = {{ item.stock }}</p>
                         {% if item.stock > 0 %}
-                            <div class="field has-addons" style="padding-top: 2%">
-                                <div class="control">
-                                    <input class="input"
-                                           type="number"
-                                           max="{{ item.stock }}"
-                                           min="0"
-                                           placeholder="Amount to buy"
-                                           id="Amount"
-                                           style="min-width:max-content;">
-                                </div>
-                                <div class="control">
-                                    <a class="button is-info" onclick="add_to_cart('{{ item.name }}')">Buy</a>
+                            <p class="stock">Stock = {{ item.stock }}</p>
+                            <div class="level is-mobile">
+                                <div class="level-left">
+                                    <div class="level-item">
+                                        <a style="color:black"
+                                           onclick="update_order_amount('{{ item.name }}',true,{{ item.stock }})">
+                                            <i class="fa-solid fa-plus"></i>
+                                        </a>
+                                    </div>
+                                    <div class="level-item">
+                                        <div class="control">
+                                            <a class="button is-info" onclick="add_to_cart('{{ item.name }}')">Buy:<b id="{{ item.name }}_order_amount">1</b></a>
+                                        </div>
+                                    </div>
+                                    <div class="level-item">
+                                        <a style="color:black"
+                                           onclick="update_order_amount('{{ item.name }}',false,{{ item.stock }})">
+                                            <i class="fa-solid fa-minus"></i>
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         {% else %}
-                            <fieldset disabled>
-                                <div class="field has-addons" style="padding-top: 2%">
-                                    <div class="control">
-                                        <input class="input" type="text" placeholder="">
-                                    </div>
-                                    <div class="control">
-                                        <a class="button is-info">Out of stock</a>
-                                    </div>
-                                </div>
-                            </fieldset>
+                            <p class="stock">
+                                <b>OUT OF STOCK</b>
+                            </p>
                         {% endif %}
-                        <p style="padding-top: 2%;">{{ item.description }}</p>
                     </div>
                 </div>
             </div>
         </article>
-        <hr style="border:0;
-                   border-top: 1px dotted black"
+        <script></script>
+        <div class="tabs is-centered">
+            <ul>
+                <li id="details_tag" class="is-active">
+                    <a onclick="select('details')">
+                        <span class="icon is-small"><i class="fas fa-file-alt" aria-hidden="true"></i></span>
+                        <span>Product details</span>
+                    </a>
+                </li>
+                <li id="review_tag">
+                    <a onclick="select('review')">
+                        <span class="icon is-small"><i class="fas fa-star" aria-hidden="true"></i></span>
+                        <span>Reviews</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <hr style="padding-top:-1px;
+                   border:0;
+                   border-top: 1px solid black"
             class="has-background-grey-lighter"/>
-        <div style="padding-top: 2em;">
+        <div id="review_body" style="display:none;padding-top: 2em;">
             <div class="field">
                 <label class="label">Add a review</label>
                 {{ rating() }}
@@ -184,6 +200,9 @@
                         class="has-background-grey-lighter"/>
                 {% endfor %}
             </div>
+        </div>
+        <div id = "details_body" style="display:block;">
+            <p style="padding-top: 2%;">{{ item.description }}</p>
         </div>
     </div>
 {% endblock %}

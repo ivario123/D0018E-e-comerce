@@ -18,8 +18,8 @@ form_field,form_button,form_title,form_field_with_icon,form_field_with_icon_and_
                                 Select Category Group
                             </option>
                             {% for super_category in super_categories %}
-                                <option value="{{ super_category }}">
-                                    {{ super_category }}
+                                <option value="{{ super_category[1] }}">
+                                    {{ super_category[0] }}
                                 </option>
                             {% endfor %}
                         </select>
