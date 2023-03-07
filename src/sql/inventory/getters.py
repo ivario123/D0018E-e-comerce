@@ -136,6 +136,26 @@ INNER JOIN USERORDER  ON PRODUCT.SN = USERORDER.SN INNER JOIN  PARCEL ON USERORD
 
 
 @ssql_builder.base(ssql)
+def get_all_orders(
+    connection: MySQLConnection = None, cursor: MySQLCursor = None
+) -> Dict[int, List[Order]]:
+    cursor.execute(
+        "SELECT PARCEL.NR AS parcelId,PARCEL.Address,PARCEL.Zip,PARCEL.Status,PRODUCT.ProductName,PRODUCT.Image,USERORDER.Amount,USERORDER.Price FROM PRODUCT INNER JOIN USERORDER ON PRODUCT.SN = USERORDER.SN INNER JOIN  PARCEL ON USERORDER.PARCEL = PARCEL.NR ORDER BY PARCEL.NR;"
+    )
+    ret = cursor.fetchall()
+    print(ret)
+    if not ret:
+        return {}
+    result: Dict[int, List[Order]] = {}
+    for row in ret:
+        (parcelId, _, _, _, _, _, _, _) = row
+        if parcelId not in result.keys():
+            result[parcelId] = []
+        result[parcelId].append(Order(*row))
+    return result
+
+
+@ssql_builder.base(ssql)
 def get_average_review_for(
     SN, connection: MySQLConnection = None, cursor: MySQLCursor = None
 ):
