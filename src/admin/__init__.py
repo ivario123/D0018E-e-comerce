@@ -165,6 +165,13 @@ def manage_user(email):
         user=user,
     )
 
+@admin.route("/manage_orders", methods = ["GET"])
+@login_required
+@admin_required(non_admin_callback)
+def manage_orders():
+    session["title"] = "Manage orders"
+    orders = get_all_orders()
+    return render_template("/admin/manage_orders.html", orders = orders)
 
 @admin.route("/", methods=["GET"])
 @login_required
