@@ -31,22 +31,22 @@
                                 <button class="button is-warning" onclick="manage_order('1,{{order_nr}}')">Shipped</button>
                                 <button class="button is-danger" onclick="manage_order('3,{{order_nr}}')">Refund</button>
                                 {% elif ns.items[order_nr][0].status == 1 %}
-                                <!-- Can be used if you want the buttons to just be disabled and not disappear
+                                {# Can be used if you want the buttons to just be disabled and not disappear
                                 <button class="button is-warning" disabled>Shipped</button>
                                 <button class="button is-danger" disabled>Refund</button> 
-                                -->
-                                <!-- this only exists for demo purpose-->
+                                #}
+                                {# this only exists for demo purpose #}
                                 <button class="button is-warning" onclick="manage_order('2,{{order_nr}}')">Arrived</button>
                                 {% elif ns.items[order_nr][0].status == 2 %}
-                                <!-- Can be used if you want the buttons to just be disabled and not disappear
+                                {# Can be used if you want the buttons to just be disabled and not disappear
                                 <button class="button is-warning" disabled>Shipped </button> 
-                                -->
+                                #}
                                 <button class="button is-danger" onclick="manage_order('3,{{order_nr}}')">Refund</button>
                                 {% elif ns.items[order_nr][0].status == 3 %}
-                                <!-- Can be used if you want the buttons to just be disabled and not disappear
+                                {# Can be used if you want the buttons to just be disabled and not disappear
                                 <button class="button is-warning" disabled>Shipped</button>
                                 <button class="button is-danger" disabled>Refund</button> 
-                                -->
+                                #}
                                 {% endif %}
 
                             </div>
