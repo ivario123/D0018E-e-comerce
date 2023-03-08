@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% block head %}
+<script src="../../static/js/order.js"></script>{% endblock %}
+{% block content %}
+{% set ns = namespace() %}
+{% set ns.total_cost=0 %}
+{% set ns.total_nr_items=0 %}
+{% set ns.items = orders %}
+<div class="columns is-centered">
+    {% if ns.items|length > 0 %}
+    <div class="column is-6 has-text-centered">
+        {% for order_nr in ns.items %}
+        {% set ns.background = "has-background-grey-light" %}
+        {% set ns.status = "is being packaged" %}
+        {% if ns.items[order_nr][0].status == 1 %}
+        {% set ns.background = "has-background-info" %}
+        {% set ns.status = "is in route to you" %}
+        {% elif ns.items[order_nr][0].status == 2 %}
+        {% set ns.background = "has-background-success" %}
+        {% set ns.status = "has been delivered" %}
+        {% elif ns.items[order_nr][0].status == 3 %}
+        {% set ns.background = "has-background-danger" %}
+        {% set ns.status = "has been refunded" %}
+        {% endif %}
+        <div class="box is-center has-text-centered {{ ns.background }} ">
+            <nav class="level is-mobile">
+                <div class="level-left">
+                    Order number&nbsp; <b>{{ order_nr }}</b>
+                </div>
+                <div class="" level-right>
+                    {% if ns.items[order_nr][0].status == 0 %}
+                    <button class="button is-warning" onclick="manage_order('1,{{order_nr}}')">Shipped</button>
+                    <button class="button is-danger" onclick="manage_order('3,{{order_nr}}')">Refund</button>
+                    {% elif ns.items[order_nr][0].status == 1 %}
+                    {# Can be used if you want the buttons to just be disabled and not disappear
+                    <button class="button is-warning" disabled>Shipped</button>
+                    <button class="button is-danger" disabled>Refund</button>
+                    #}
+                    {# this only exists for demo purpose #}
+                    <button class="button is-warning" onclick="manage_order('2,{{order_nr}}')">Arrived</button>
+                    {% elif ns.items[order_nr][0].status == 2 %}
+                    {# Can be used if you want the buttons to just be disabled and not disappear
+                    <button class="button is-warning" disabled>Shipped </button>
+                    #}
+                    <button class="button is-danger" onclick="manage_order('3,{{order_nr}}')">Refund</button>
+                    {% elif ns.items[order_nr][0].status == 3 %}
+                    {# Can be used if you want the buttons to just be disabled and not disappear
+                    <button class="button is-warning" disabled>Shipped</button>
+                    <button class="button is-danger" disabled>Refund</button>
+                    #}
+                    {% endif %}
+
+                </div>
+            </nav>
+            <table class="table is-center {{ ns.background }}" style="margin: auto;">
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>
+                            <abbr title="Position">Product</abbr>
+                        </th>
+                        <th>Qty</th>
+                        <th>Price [kr]</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in ns.items[order_nr] %}
+                    <tr>
+                        <th>
+                            <img height="40" width="30" src="{{ order.image }}"
+                                alt="Image for : {{ order.productName }}" />
+                        </th>
+                        <th>
+                            <div>{{ order.productName }}</div>
+                        </th>
+                        <th>{{ order.amount }}</th>
+                        <th>{{ order.price }}</th>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <nav class="level is-mobile">
+                <div class="level-left">
+                    Status: &nbsp;<b>{{ns.status}}</b>
+                </div>
+                <div>
+                    Address: &nbsp;<b>{{ ns.items[order_nr][0].address}}</b>
+                </div>
+                <div class="level-right">
+                    Zip: &nbsp;<b>{{ ns.items[order_nr][0].zip}}</b>
+                </div>
+            </nav>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="column is-6 has-text-centered">
+        <div class="box is-center has-text-centered">
+            <p>Nobody has placed an order.</p>
+            <p>*crickets*</p>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -260,3 +260,28 @@ function submit() {
         }
     })
 }
+
+function manage_order(order_change){
+    var input = order_change.split(',')
+    var status = input[0]
+    var parcelId = input[1]
+
+    fetch("/admin/manage_orders/update", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            "status": Number(status),
+            "parcelId": Number(parcelId)
+        })
+    }).then(response => {
+        if (response.status == 200) {
+            window.location.reload()
+        }
+        else {
+            alert("Something went wrong");
+        }
+    })
+
+}

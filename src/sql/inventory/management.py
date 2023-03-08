@@ -246,6 +246,24 @@ def update_basket(
     return cursor.rowcount != 0
 
 
+@ssql_builder.base(ssql)
+def update_order(
+    status: int,
+    parcelId: int,
+    connection: MySQLConnection = None,
+    cursor: MySQLCursor = None,
+) -> bool:
+    query = """UPDATE PARCEL SET Status = %s WHERE NR = %s;"""
+    cursor.execute(
+        query,
+        (
+            status,
+            parcelId,
+        ),
+    )
+    return cursor.rowcount != 0
+
+
 @ssql_builder.insert(ssql, "PRODUCT")
 def create_item(
     ProductName: str,
