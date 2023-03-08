@@ -165,26 +165,28 @@ def manage_user(email):
         user=user,
     )
 
-@admin.route("/manage_orders", methods = ["GET"])
+
+@admin.route("/manage_orders", methods=["GET"])
 @login_required
 @admin_required(non_admin_callback)
 def manage_orders():
     session["title"] = "Manage orders"
     orders = get_all_orders()
-    return render_template("/admin/manage_orders.html", orders = orders)
+    return render_template("/admin/manage_orders.html", orders=orders)
 
-@admin.route("/manage_orders/update", methods = ["POST"])
+
+@admin.route("/manage_orders/update", methods=["POST"])
 @login_required
 @admin_required(non_admin_callback)
 @fields(request)
 def update_orders():
     body = request.json
-    status = body['status']
-    parcelId = body['parcelId']
+    status = body["status"]
+    parcelId = body["parcelId"]
 
     if update_order(status, parcelId):
-        return(("Sucess", 200))
-    return(("Error"), 400)
+        return ("Success", 200)
+    return (("Error"), 400)
 
 
 @admin.route("/", methods=["GET"])

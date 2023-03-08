@@ -245,6 +245,7 @@ def update_basket(
     )
     return cursor.rowcount != 0
 
+
 @ssql_builder.base(ssql)
 def update_order(
     status: int,
@@ -261,7 +262,6 @@ def update_order(
         ),
     )
     return cursor.rowcount != 0
-
 
 
 @ssql_builder.insert(ssql, "PRODUCT")
