@@ -17,6 +17,9 @@
                     {% elif ns.items[order_nr][0].status == 2 %}
                         {% set ns.background = "has-background-success" %}
                         {% set ns.status = "has been delivered" %}
+                    {% elif ns.items[order_nr][0].status == 3 %}
+                        {% set ns.background = "has-background-danger" %}
+                        {% set ns.status = "has been refunded" %}
                     {% endif %}
                     <div class="box is-center has-text-centered {{ ns.background }} ">
                         <table class="table is-center {{ ns.background }}" style="margin: auto;">
@@ -35,9 +38,9 @@
                                     <tr>
                                         <th>
                                             <img height="40"
-                                                 width="30"
-                                                 src="{{ order.image }}"
-                                                 alt="Image for : {{ order.productName }}"/>
+                                                width="30"
+                                                src="{{ order.image }}"
+                                                alt="Image for : {{ order.productName }}"/>
                                         </th>
                                         <th>
                                             <div>{{ order.productName }}</div>
@@ -54,13 +57,13 @@
                         
                         <nav class="level is-mobile">
                             <div class="level-left">
-                                Status: <b>{{ns.status}}</b>
+                                Status:&nbsp; <b>{{ns.status}}</b>
                             </div>
                             <div>
-                                Address: <b>{{ ns.items[order_nr][0].address}}</b>
+                                Address: &nbsp;<b>{{ ns.items[order_nr][0].address}}</b>
                             </div>
                             <div class="level-right">
-                                Zip: <b>{{ ns.items[order_nr][0].zip}}</b>
+                                Zip: &nbsp;<b>{{ ns.items[order_nr][0].zip}}</b>
                             </div>
                         </nav>
                     </div>

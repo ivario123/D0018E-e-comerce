@@ -140,7 +140,7 @@ def get_all_orders(
     connection: MySQLConnection = None, cursor: MySQLCursor = None
 ) -> Dict[int, List[Order]]:
     cursor.execute(
-        "SELECT PARCEL.NR AS parcelId,PARCEL.Address,PARCEL.Zip,PARCEL.Status,PRODUCT.ProductName,PRODUCT.Image,USERORDER.Amount,USERORDER.Price FROM PRODUCT INNER JOIN USERORDER ON PRODUCT.SN = USERORDER.SN INNER JOIN  PARCEL ON USERORDER.PARCEL = PARCEL.NR ORDER BY PARCEL.NR;"
+        "SELECT PARCEL.NR AS parcelId,PARCEL.Address,PARCEL.Zip,PARCEL.Status,PRODUCT.ProductName,PRODUCT.Image,USERORDER.Amount,USERORDER.Price FROM PRODUCT INNER JOIN USERORDER ON PRODUCT.SN = USERORDER.SN INNER JOIN PARCEL ON USERORDER.PARCEL = PARCEL.NR ORDER BY PARCEL.NR;"
     )
     ret = cursor.fetchall()
     print(ret)
