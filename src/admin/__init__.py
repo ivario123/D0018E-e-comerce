@@ -166,16 +166,20 @@ def manage_user(email):
     )
 
 
-manage_orders_blueprint = Blueprint("manage_orders", __name__, url_prefix="/manage_orders", static_folder="../static")
+manage_orders_blueprint = Blueprint(
+    "manage_orders", __name__, url_prefix="/manage_orders", static_folder="../static"
+)
 admin.register_blueprint(manage_orders_blueprint)
 
-@manage_orders_blueprint.route("",methods=["GET"])
+
+@manage_orders_blueprint.route("", methods=["GET"])
 @login_required
 @admin_required(non_admin_callback)
 def manage_orders():
     session["title"] = "Manage orders"
     orders = get_all_orders()
     return render_template("/admin/manage_orders.html", orders=orders)
+
 
 @manage_orders_blueprint.route("/update", methods=["POST"])
 @login_required
