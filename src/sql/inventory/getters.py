@@ -323,10 +323,8 @@ def super_categories_and_sub(
     super = cursor.fetchall()
     cursor.execute(f"SELECT ID,Name,SID FROM CATEGORY;")
     result = cursor.fetchall()
-    print(super)
-    print(result)
     category_groups = [CategoryGroup(*x, []) for x in super]
-    if not result:
+    if not result and not super:
         return []
     super_cats = {x[0]: [] for x in super}
     for category in result:
