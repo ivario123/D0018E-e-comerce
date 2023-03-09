@@ -33,28 +33,48 @@ def item_from_sql(item, *args):
 
 @ssql_builder.base(ssql)
 def get_recommendations_for_user(
-    UID: str, connection: MySQLConnection = None, cursor: MySQLCursor = None
+    UID: int, connection: MySQLConnection = None, cursor: MySQLCursor = None
 ) -> bool:
-    query = """
-WITH FREQ AS (SELECT USERORDER.PARCEL,COUNT(USERORDER.PARCEL) as similarity FROM USERORDER INNER JOIN PRODUCT ON USERORDER.SN = PRODUCT.SN 
+    similar_orders = """
+SELECT USERORDER.PARCEL,COUNT(USERORDER.PARCEL) as similarity FROM USERORDER INNER JOIN PRODUCT ON USERORDER.SN = PRODUCT.SN 
 	WHERE PRODUCT.SN IN (
 		SELECT BASKET.SN FROM BASKET WHERE BASKET.UID = %s
 	)
-GROUP BY USERORDER.PARCEL ORDER BY similarity DESC)
-
--- Assuming we know the most similar order ids, we can find the most similar largest order
-
-SELECT DISTINCT PRODUCT.ProductName,PRODUCT.ProductDescription,PRODUCT.Price,PRODUCT.Inventory,PRODUCT.Image,PRODUCT.SN FROM PRODUCT INNER JOIN USERORDER ON USERORDER.SN = PRODUCT.SN INNER JOIN REVIEW ON REVIEW.SN=PRODUCT.SN  WHERE PRODUCT.SN IN (
-    SELECT USERORDER.SN FROM USERORDER JOIN FREQ ON FREQ.PARCEL = USERORDER.PARCEL WHERE USERORDER.SN NOT IN (SELECT BASKET.SN FROM BASKET WHERE BASKET.UID = %s) GROUP BY USERORDER.PARCEL
-) AND PRODUCT.Inventory > 0
-LIMIT 4 ;
-
+GROUP BY USERORDER.PARCEL ORDER BY similarity DESC;
 """
-    cursor.execute(query, (UID, UID))
+    product_query = """
+SELECT PRODUCT.ProductName,PRODUCT.ProductDescription,PRODUCT.Price,PRODUCT.Inventory,PRODUCT.Image,PRODUCT.SN FROM PRODUCT RIGHT JOIN REVIEW ON REVIEW.SN=PRODUCT.SN  WHERE PRODUCT.SN IN(
+SELECT USERORDER.SN FROM USERORDER JOIN PARCEL ON PARCEL.NR = USERORDER.PARCEL WHERE PARCEL.NR = %s AND USERORDER.SN NOT IN 
+    (
+        SELECT BASKET.SN FROM BASKET WHERE BASKET.UID=%s
+    )
+);
+    """
+    print(UID)
+
+    cursor.execute(similar_orders, (UID,))
+
     ret = cursor.fetchall()
-    if not ret:
-        return []
-    return [item_from_sql(item) for item in ret]
+    print(ret)
+    recommendations = []
+    for el in ret:
+        (pid, _) = el
+        cursor.execute(
+            product_query,
+            (
+                pid,
+                UID,
+            ),
+        )
+        products = cursor.fetchall()
+
+        recommendations.extend([item_from_sql(item) for item in products])
+        print(el)
+    print(f"{recommendations=}")
+    if len(recommendations) > 4:
+        return recommendations[:4]
+
+    return recommendations
 
 
 @ssql_builder.base(ssql)
