@@ -44,6 +44,10 @@ function get_multi_select(id) {
 
 function submit_form() {
     let [name, description, price, image] = select_elements(["name", "description", "price", "image"]);
+    if (price <= 0) {
+        alert("Price needs to be higher than 0");
+        return;
+    }
     let category = get_multi_select("category")
 
     fetch("/admin/create_product", {
@@ -135,6 +139,10 @@ function submit_category() {
 
 function stock_update(SN) {
     let stock = document.getElementById("stock_amount").value;
+    if (stock < 0) {
+        alert("Stock needs to be >= 0");
+        return;
+    }
     fetch("/product/change_stock", {
         method: "POST",
         headers: {
@@ -157,6 +165,10 @@ function stock_update(SN) {
 
 function price_update(SN) {
     let price = document.getElementById("price_amount").value;
+    if (price <= 0) {
+        alert("Price needs to be higher than 0");
+        return;
+    }
 
     fetch("/product/change_price", {
         method: "POST",

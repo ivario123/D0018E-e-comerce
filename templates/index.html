@@ -8,7 +8,7 @@
     {% include "jinja_macros/sidebar.html" %}
 {% endblock %}
 {% block listings %}
-    {% set ns = namespace(recommendations=get_recommendations_for_user(session["email"])) %}
+    {% set ns = namespace(recommendations=get_recommendations_for_user(session["UID"])) %}
     {% if ns.recommendations|length == 0 %}
         {% set ns.recommendations = top5_products() %}
     {% endif %}
