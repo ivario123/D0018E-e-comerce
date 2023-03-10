@@ -49,14 +49,13 @@ SELECT USERORDER.SN FROM USERORDER JOIN PARCEL ON PARCEL.NR = USERORDER.PARCEL W
         SELECT BASKET.SN FROM BASKET WHERE BASKET.UID=%s
     )
 );
-    """
-    print(UID)
-
+"""
     cursor.execute(similar_orders, (UID,))
-
     ret = cursor.fetchall()
-    print(ret)
     recommendations = []
+    sns = {}
+    cnt = 0
+    # This search should not exceed ~2 orders since most orders are not identical
     for el in ret:
         (pid, _) = el
         cursor.execute(
@@ -67,12 +66,16 @@ SELECT USERORDER.SN FROM USERORDER JOIN PARCEL ON PARCEL.NR = USERORDER.PARCEL W
             ),
         )
         products = cursor.fetchall()
-
-        recommendations.extend([item_from_sql(item) for item in products])
-        print(el)
-    print(f"{recommendations=}")
-    if len(recommendations) > 4:
-        return recommendations[:4]
+        # This is quite limited in depth, should not exceed ~10 products
+        for product in products:
+            sn = product[-1]
+            if sn in sns.keys():
+                continue
+            sns[sn] = True
+            recommendations.append(item_from_sql(product))
+            cnt += 1
+            if cnt == 4:
+                return recommendations
 
     return recommendations
 
